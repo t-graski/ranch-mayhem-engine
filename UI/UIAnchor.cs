@@ -17,9 +17,12 @@ public enum UIAnchor
 
 public static partial class UIAnchorExtension
 {
-    public static Vector2 CalculatePosition(this UIAnchor uiAnchor, Vector2 size)
+    public static Vector2 CalculatePosition(this UIAnchor uiAnchor, Vector2 size, UIComponent? parent = null)
     {
         var viewport = RanchMayhemEngine.UIManager.GraphicsDevice.Viewport;
+        var parentWidth = parent?.Size.X ?? viewport.Width;
+        var parentHeight = parent?.Size.Y ?? viewport.Height;
+
         float x = 0;
         float y = 0;
 
@@ -30,22 +33,24 @@ public static partial class UIAnchorExtension
 
         if (uiAnchor.HasFlag(UIAnchor.Bottom))
         {
-            y = viewport.Height - size.Y;
+            y = parentHeight - size.Y;
         }
 
         if (uiAnchor.HasFlag(UIAnchor.Right))
         {
-            x = viewport.Width - size.X;
+            x = parentWidth - size.X;
         }
 
         if (uiAnchor.HasFlag(UIAnchor.CenterX))
         {
-            x = (viewport.Width - size.X) / 2;
+            x = (parentWidth - size.X) / 2;
+            Console.WriteLine($"x = {x}");
         }
 
         if (uiAnchor.HasFlag(UIAnchor.CenterY))
         {
-            y = (viewport.Height - size.Y) / 2;
+            y = (parentHeight - size.Y) / 2;
+            Console.WriteLine($"y = {y}");
         }
 
         return new Vector2(x, y);

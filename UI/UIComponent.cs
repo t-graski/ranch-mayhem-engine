@@ -8,14 +8,15 @@ namespace ranch_mayhem_engine.UI;
 
 public abstract class UIComponent
 {
-    private UIComponent _parent;
-    protected string Id { get; }
-    private readonly Texture2D _texture;
+    protected UIComponent _parent;
+    public string Id { get; private set; }
+    protected Texture2D _texture;
 
     protected readonly Color _color;
-    // protected readonly Vector2 _size;
+    public Vector2 Size { get; private set; }
 
-    protected Vector2 _position;
+    protected Vector2 _localPosition;
+    protected Vector2 _globalPosition;
     protected UIAnchor _uiAnchor;
 
     private Rectangle _bounds;
@@ -23,80 +24,79 @@ public abstract class UIComponent
 
     protected Action _onClick;
     protected Action _onHover;
+    protected Action _offClick;
+    protected Action _offHover;
+
     private bool _isHovered;
     private bool _isClicked;
 
-    protected UIComponent(string id, Color color, Vector2 position, Vector2 size)
+    protected UIComponent(string id, Color color, Vector2 position, Vector2 size, UIComponent parent = null)
     {
         Id = id;
         _color = color;
 
-        Console.WriteLine($"original pos: {position}");
-        _position = ScaleToGlobal(position);
-        Console.WriteLine($"adjusted pos: {_position}");
-        size = ScaleToGlobal(size);
-        _bounds = new Rectangle((int)_position.X, (int)_position.Y, (int)size.X, (int)size.Y);
+        _localPosition = ScaleToGlobal(position);
+        Size = ScaleToGlobal(size);
+        UpdateBounds(parent);
     }
 
-    protected UIComponent(string id, Color color, UIAnchor uiAnchor, Vector2 size)
+    protected UIComponent(string id, Color color, UIAnchor uiAnchor, Vector2 size, UIComponent parent = null)
     {
         Id = id;
         _color = color;
+        _parent = parent;
+        _uiAnchor = uiAnchor;
 
-        _position = ScaleToGlobal(uiAnchor.CalculatePosition(size));
-        size = ScaleToGlobal(size);
-
-        _bounds = new Rectangle((int)_position.X, (int)_position.Y, (int)size.X, (int)size.Y);
+        Size = ScaleToGlobal(size);
+        _localPosition = uiAnchor.CalculatePosition(Size, parent);
+        UpdateBounds(parent);
     }
 
-    protected UIComponent(string id, Texture2D texture, Vector2 position, Vector2 size)
+    protected UIComponent(string id, Texture2D texture, Vector2 position, Vector2 size, UIComponent parent = null)
     {
         Id = id;
         _texture = texture;
-        _position = ScaleToGlobal(position);
-
-        // 448 / 900 = 0.5 | 450 / 600 = 0.75
-        // 900 / 448 = 2   | 600 / 450 = 1.333
-
-        // 450 / 900 = 0.5
-        // -> < 1 = +1
-        // -> > 1 = -1
+        _localPosition = ScaleToGlobal(position);
 
         var scaleX = size.X / texture.Width;
         var scaleY = size.Y / texture.Height;
         var scale = new Vector2(scaleX, scaleY);
 
         _scale = ScaleToGlobal(scale);
-        Console.WriteLine($"original size: {size}");
-        size = ScaleToGlobal(size);
-        Console.WriteLine($"adjusted size: {size}");
-        _bounds = new Rectangle((int)_position.X, (int)_position.Y, (int)size.X, (int)size.Y);
-
-        Console.WriteLine($"{GetType().FullName}::ctor");
+        Size = ScaleToGlobal(size);
+        UpdateBounds(parent);
     }
 
-    protected UIComponent(string id, Texture2D texture, UIAnchor uiAnchor, Vector2 size)
+    protected UIComponent(string id, Texture2D texture, UIAnchor uiAnchor, Vector2 size, UIComponent parent = null)
     {
         Id = id;
         _texture = texture;
         _uiAnchor = uiAnchor;
 
-        _position = ScaleToGlobal(uiAnchor.CalculatePosition(size));
-        _bounds = new Rectangle((int)_position.X, (int)_position.Y, (int)size.X, (int)size.Y);
+        var scaleX = size.X / texture.Width;
+        var scaleY = size.Y / texture.Height;
+        var scale = new Vector2(scaleX, scaleY);
+        _scale = ScaleToGlobal(scale);
+
+        Size = ScaleToGlobal(size);
+        _localPosition = uiAnchor.CalculatePosition(Size);
+        UpdateBounds(parent);
+
+        Console.WriteLine($"{_localPosition}");
     }
 
-    protected UIComponent(string id, Texture2D texture, Vector2 position, float scale)
+    protected UIComponent(string id, Texture2D texture, Vector2 position, float scale, UIComponent parent = null)
     {
         Id = id;
         _texture = texture;
-        _position = ScaleToGlobal(position);
+        _localPosition = ScaleToGlobal(position);
         _scale = new Vector2(scale);
+        UpdateBounds(parent);
     }
 
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        var globalScale = RanchMayhemEngine.UIManager.GlobalScale;
-        spriteBatch.Draw(_texture, _position, null, Color.White, 0f, Vector2.Zero,
+        spriteBatch.Draw(_texture, _localPosition, null, Color.White, 0f, Vector2.Zero,
             _scale, SpriteEffects.None, 0f);
     }
 
@@ -116,6 +116,7 @@ public abstract class UIComponent
 
         if (_isClicked && mouseState.LeftButton == ButtonState.Released)
         {
+            _offClick?.Invoke();
             _isClicked = !_isClicked;
         }
 
@@ -133,13 +134,36 @@ public abstract class UIComponent
         {
             if (_bounds.Contains(mouseState.Position)) return;
 
+            _offHover?.Invoke();
             _isHovered = !_isHovered;
         }
     }
 
     private static Vector2 ScaleToGlobal(Vector2 position)
     {
+        Console.WriteLine($"scaling from {position} to {position * RanchMayhemEngine.UIManager.GlobalScale}");
         return position * RanchMayhemEngine.UIManager.GlobalScale;
+    }
+
+    private Vector2 CalculateGlobalPosition()
+    {
+        if (_parent == null) return _localPosition;
+        return _parent.CalculateGlobalPosition() + _localPosition;
+    }
+
+    private void UpdateBounds(UIComponent parent)
+    {
+        if (parent == null)
+        {
+            _bounds = new Rectangle((int)_localPosition.X, (int)_localPosition.Y, (int)Size.X, (int)Size.Y);
+            _globalPosition = _localPosition;
+        }
+        else
+        {
+            _globalPosition = CalculateGlobalPosition();
+
+            _bounds = new Rectangle((int)_globalPosition.X, (int)_globalPosition.Y, (int)Size.X, (int)Size.Y);
+        }
     }
 
     public abstract void Update();

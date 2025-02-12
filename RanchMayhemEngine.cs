@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ranch_mayhem_engine.Content;
 using ranch_mayhem_engine.UI;
 
 namespace ranch_mayhem_engine;
@@ -13,14 +14,15 @@ public sealed class RanchMayhemEngine : Game
     private const int Height = 720;
 
 
-    private GraphicsDeviceManager _graphics;
+    private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
     private Texture2D _louis;
-
     public static UIManager UIManager { get; private set; }
+    public static ContentManager ContentManager { get; private set; }
+
     public static bool IsFocused { get; private set; } = true;
-    public static bool WasFocused { get; private set; } = false;
+    private static bool WasFocused { get; set; } = false;
 
     public RanchMayhemEngine()
     {
@@ -44,20 +46,26 @@ public sealed class RanchMayhemEngine : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _louis = Content.Load<Texture2D>("louis");
 
-
         UIManager = new UIManager(_spriteBatch.GraphicsDevice, _spriteBatch);
         UIManager.Initialize();
 
-        UIManager.AddComponent(new Button("louis-0", _louis, new Vector2(100, 100)));
-        UIManager.AddComponent(new Button("louis-1", _louis, new Vector2(400, 400), new Vector2(900, 600)));
+        ContentManager = new ContentManager();
+        ContentManager.LoadContent(Content);
 
-        // UIManager.AddComponent(new Box("test-1", Color.Green, UIAnchor.CenterY | UIAnchor.Right,
-        //     new Vector2(150, 150)));
-        // UIManager.AddComponent(new Box("test-2", Color.Blue, UIAnchor.CenterY | UIAnchor.CenterX,
-        //     new Vector2(150, 150)));
-        // UIManager.AddComponent(new Box("test-3", Color.Orange, UIAnchor.Bottom | UIAnchor.CenterX,
-        //     new Vector2(1920, 150)));
+        UIManager.AddComponent(
+            new Button("button", ContentManager.GetTexture("button"), UIAnchor.CenterX | UIAnchor.CenterY,
+                new Vector2(300, 300)));
 
+        // var testbox3 = new Box("test-3", Color.Orange, UIAnchor.Bottom | UIAnchor.CenterX,
+        //     new Vector2(1920, 250), null);
+        // var testbox1 = new Box("test-1", Color.Green, UIAnchor.CenterX | UIAnchor.CenterY,
+        //     new Vector2(175, 175), testbox3);
+        // var testbox2 = new Box("test-2", Color.Blue, UIAnchor.CenterY | UIAnchor.CenterX,
+        //     new Vector2(75, 75), testbox1);
+        //
+        // UIManager.AddComponent(testbox3);
+        // UIManager.AddComponent(testbox1);
+        // UIManager.AddComponent(testbox2);
         // TODO: use this.Content to load your game content here
     }
 

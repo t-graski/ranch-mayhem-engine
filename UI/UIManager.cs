@@ -14,7 +14,7 @@ public class UIManager
     private float _globalScaleX;
     private float _globalScaleY;
 
-    public Vector2 GlobalScale = Vector2.One;
+    public Vector2 GlobalScale;
 
     public GraphicsDevice GraphicsDevice { get; private set; }
     public SpriteBatch SpriteBatch { get; private set; }
