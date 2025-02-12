@@ -1,2 +1,2 @@
-﻿using var game = new ranch_mayhem_engine.Game1();
+﻿using var game = new ranch_mayhem_engine.RanchMayhemEngine();
 game.Run();
