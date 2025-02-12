@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http.Headers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -8,9 +9,15 @@ namespace ranch_mayhem_engine.UI;
 public abstract class UIComponent
 {
     private UIComponent _parent;
-    private string Id { get; }
+    protected string Id { get; }
     private readonly Texture2D _texture;
-    private Vector2 _position;
+
+    protected readonly Color _color;
+    // protected readonly Vector2 _size;
+
+    protected Vector2 _position;
+    protected UIAnchor _uiAnchor;
+
     private Rectangle _bounds;
     private Vector2 _scale = Vector2.One;
 
@@ -19,30 +26,84 @@ public abstract class UIComponent
     private bool _isHovered;
     private bool _isClicked;
 
-    protected UIComponent(string id, Texture2D texture, Vector2 position)
+    protected UIComponent(string id, Color color, Vector2 position, Vector2 size)
+    {
+        Id = id;
+        _color = color;
+
+        Console.WriteLine($"original pos: {position}");
+        _position = ScaleToGlobal(position);
+        Console.WriteLine($"adjusted pos: {_position}");
+        size = ScaleToGlobal(size);
+        _bounds = new Rectangle((int)_position.X, (int)_position.Y, (int)size.X, (int)size.Y);
+    }
+
+    protected UIComponent(string id, Color color, UIAnchor uiAnchor, Vector2 size)
+    {
+        Id = id;
+        _color = color;
+
+        _position = ScaleToGlobal(uiAnchor.CalculatePosition(size));
+        size = ScaleToGlobal(size);
+
+        _bounds = new Rectangle((int)_position.X, (int)_position.Y, (int)size.X, (int)size.Y);
+    }
+
+    protected UIComponent(string id, Texture2D texture, Vector2 position, Vector2 size)
     {
         Id = id;
         _texture = texture;
-        _position = position;
-        _bounds = new Rectangle((int)_position.X, (int)_position.Y, _texture.Width, _texture.Height);
+        _position = ScaleToGlobal(position);
+
+        // 448 / 900 = 0.5 | 450 / 600 = 0.75
+        // 900 / 448 = 2   | 600 / 450 = 1.333
+
+        // 450 / 900 = 0.5
+        // -> < 1 = +1
+        // -> > 1 = -1
+
+        var scaleX = size.X / texture.Width;
+        var scaleY = size.Y / texture.Height;
+        var scale = new Vector2(scaleX, scaleY);
+
+        _scale = ScaleToGlobal(scale);
+        Console.WriteLine($"original size: {size}");
+        size = ScaleToGlobal(size);
+        Console.WriteLine($"adjusted size: {size}");
+        _bounds = new Rectangle((int)_position.X, (int)_position.Y, (int)size.X, (int)size.Y);
+
+        Console.WriteLine($"{GetType().FullName}::ctor");
     }
 
-    protected UIComponent(string id, Texture2D texture, Vector2 position, Vector2 scale)
+    protected UIComponent(string id, Texture2D texture, UIAnchor uiAnchor, Vector2 size)
     {
         Id = id;
         _texture = texture;
-        _position = position;
-        _scale = scale;
+        _uiAnchor = uiAnchor;
+
+        _position = ScaleToGlobal(uiAnchor.CalculatePosition(size));
+        _bounds = new Rectangle((int)_position.X, (int)_position.Y, (int)size.X, (int)size.Y);
     }
 
-
-    public void Draw(SpriteBatch spriteBatch)
+    protected UIComponent(string id, Texture2D texture, Vector2 position, float scale)
     {
-        spriteBatch.Draw(_texture, _position, null, Color.White, 0f, Vector2.Zero, _scale, SpriteEffects.None, 0f);
+        Id = id;
+        _texture = texture;
+        _position = ScaleToGlobal(position);
+        _scale = new Vector2(scale);
+    }
+
+    public virtual void Draw(SpriteBatch spriteBatch)
+    {
+        var globalScale = RanchMayhemEngine.UIManager.GlobalScale;
+        spriteBatch.Draw(_texture, _position, null, Color.White, 0f, Vector2.Zero,
+            _scale, SpriteEffects.None, 0f);
     }
 
     public void HandleMouse(MouseState mouseState)
     {
+        if (!RanchMayhemEngine.IsFocused) return;
+
         if (mouseState.LeftButton == ButtonState.Pressed &&
             _bounds.Contains(mouseState.Position))
         {
@@ -74,6 +135,11 @@ public abstract class UIComponent
 
             _isHovered = !_isHovered;
         }
+    }
+
+    private static Vector2 ScaleToGlobal(Vector2 position)
+    {
+        return position * RanchMayhemEngine.UIManager.GlobalScale;
     }
 
     public abstract void Update();
