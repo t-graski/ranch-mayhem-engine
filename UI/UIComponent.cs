@@ -7,30 +7,38 @@ namespace ranch_mayhem_engine.UI;
 
 public abstract class UIComponent
 {
+    private UIComponent _parent;
+    private string Id { get; }
     private readonly Texture2D _texture;
     private Vector2 _position;
     private Rectangle _bounds;
+    private Vector2 _scale = Vector2.One;
 
     protected Action _onClick;
     protected Action _onHover;
     private bool _isHovered;
     private bool _isClicked;
 
-    protected UIComponent(Texture2D texture, Vector2 position)
+    protected UIComponent(string id, Texture2D texture, Vector2 position)
     {
+        Id = id;
         _texture = texture;
         _position = position;
         _bounds = new Rectangle((int)_position.X, (int)_position.Y, _texture.Width, _texture.Height);
     }
 
-    public void Draw(SpriteBatch spriteBatch)
+    protected UIComponent(string id, Texture2D texture, Vector2 position, Vector2 scale)
     {
-        spriteBatch.Draw(_texture, _position, Color.White);
+        Id = id;
+        _texture = texture;
+        _position = position;
+        _scale = scale;
     }
 
-    public void Update()
+
+    public void Draw(SpriteBatch spriteBatch)
     {
-        // TODO
+        spriteBatch.Draw(_texture, _position, null, Color.White, 0f, Vector2.Zero, _scale, SpriteEffects.None, 0f);
     }
 
     public void HandleMouse(MouseState mouseState)
@@ -67,4 +75,6 @@ public abstract class UIComponent
             _isHovered = !_isHovered;
         }
     }
+
+    public abstract void Update();
 }

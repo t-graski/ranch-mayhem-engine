@@ -7,16 +7,20 @@ namespace ranch_mayhem_engine.UI;
 public class UIManager(SpriteBatch spriteBatch)
 {
     private List<UIComponent> _components;
-    private SpriteBatch _spriteBatch = spriteBatch;
 
     public void Initialize()
     {
-        _components = [];
+        _components = new List<UIComponent>();
     }
 
     public void AddComponent(UIComponent component)
     {
         _components.Add(component);
+    }
+
+    public void AddComponents(IEnumerable<UIComponent> components)
+    {
+        _components.AddRange(components);
     }
 
     public void UpdateComponents(MouseState mouseState)
@@ -32,7 +36,7 @@ public class UIManager(SpriteBatch spriteBatch)
     {
         foreach (var component in _components)
         {
-            component.Draw(_spriteBatch);
+            component.Draw(spriteBatch);
         }
     }
 }
