@@ -16,7 +16,6 @@ public class ContentManager
 
         foreach (var item in itemsToLoad)
         {
-            Console.WriteLine($"item: {item.name}");
             _contents.Add(item.name, content.Load<Texture2D>(item.name));
         }
     }

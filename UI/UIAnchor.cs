@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Specialized;
 using Microsoft.Xna.Framework;
 
 namespace ranch_mayhem_engine.UI;
@@ -17,11 +18,19 @@ public enum UIAnchor
 
 public static partial class UIAnchorExtension
 {
-    public static Vector2 CalculatePosition(this UIAnchor uiAnchor, Vector2 size, UIComponent parent = null)
+    public static Vector2 CalculatePosition(this UIAnchor uiAnchor, Vector2 size, Vector2 virtualParent,
+        UIComponent parent = null)
     {
         var viewport = RanchMayhemEngine.UIManager.GraphicsDevice.Viewport;
-        var parentWidth = parent?._options.Size.X ?? viewport.Width;
-        var parentHeight = parent?._options.Size.Y ?? viewport.Height;
+        var parentWidth = parent?.Options.Size.X ?? viewport.Width;
+        var parentHeight = parent?.Options.Size.Y ?? viewport.Height;
+
+        if (virtualParent.X >= 0)
+        {
+            Console.WriteLine("Entering virtual parent mode");
+            parentWidth = virtualParent.X;
+            parentHeight = virtualParent.Y;
+        }
 
         float x = 0;
         float y = 0;
@@ -44,13 +53,13 @@ public static partial class UIAnchorExtension
         if (uiAnchor.HasFlag(UIAnchor.CenterX))
         {
             x = (parentWidth - size.X) / 2;
-            Console.WriteLine($"x = {x}");
+            // Console.WriteLine($"x = {x}");
         }
 
         if (uiAnchor.HasFlag(UIAnchor.CenterY))
         {
             y = (parentHeight - size.Y) / 2;
-            Console.WriteLine($"y = {y}");
+            // Console.WriteLine($"y = {y}");
         }
 
         return new Vector2(x, y);

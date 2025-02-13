@@ -10,5 +10,5 @@ public class UIComponentOptions
     public Vector2 Position;
     public UIAnchor UiAnchor;
     public Vector2 Size;
-    public float Scale;
+    public Vector2 Scale;
 }

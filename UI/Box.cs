@@ -1,33 +1,30 @@
-﻿using System.Drawing;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Color = Microsoft.Xna.Framework.Color;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace ranch_mayhem_engine.UI;
 
 public class Box : UIComponent
 {
-    public Box(string id, UIComponentOptions options, UIComponent parent = null) : base(id, options,
-        parent)
+    public Box(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true) : base(id, options,
+        parent, scale)
     {
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
         var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
-        texture.SetData([_options.Color]);
+        texture.SetData([Options.Color]);
         if (Parent is null)
         {
             RanchMayhemEngine.UIManager.SpriteBatch.Draw(texture,
-                new Rectangle((int)_localPosition.X, (int)_localPosition.Y, (int)_options.Size.X, (int)_options.Size.Y),
-                _options.Color);
+                new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X, (int)Options.Size.Y),
+                Options.Color);
         }
         else
         {
             RanchMayhemEngine.UIManager.SpriteBatch.Draw(texture,
-                new Rectangle((int)_globalPosition.X, (int)_globalPosition.Y, (int)_options.Size.X,
-                    (int)_options.Size.Y), _options.Color);
+                new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
+                    (int)Options.Size.Y), Options.Color);
         }
     }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net.Http.Headers;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -9,46 +8,83 @@ namespace ranch_mayhem_engine.UI;
 public abstract class UIComponent
 {
     protected UIComponent Parent { get; set; }
-    protected string Id { get; private set; }
-    // protected Texture2D _texture;
-
-    // protected readonly Color _color;
-    // public Vector2 Size { get; private set; }
-
-    protected Vector2 _localPosition;
-    protected Vector2 _globalPosition;
-    // protected UIAnchor _uiAnchor;
-
+    public string Id { get; private set; }
+    public Vector2 LocalPosition;
+    public Vector2 GlobalPosition;
     private Rectangle _bounds;
-    // private Vector2 _scale = Vector2.One;
 
-    public UIComponentOptions _options { get; protected set; } = new();
+    public UIComponentOptions Options { get; protected set; } = new();
 
-    protected Action _onClick;
-    protected Action _onHover;
-    protected Action _offClick;
-    protected Action _offHover;
+    protected Action OnClick;
+    protected Action OnHover;
+    protected Action OffClick;
+    protected Action OffHover;
 
     private bool _isHovered;
     private bool _isClicked;
 
-    protected UIComponent(string id, UIComponentOptions options, UIComponent parent = null)
+    protected UIComponent(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true)
     {
         Id = id;
         Parent = parent;
-        ApplyOptions(options);
+        if (scale)
+        {
+            ApplyOptions(options);
+        }
+        else
+        {
+            Options = options;
+            LocalPosition = options.Position;
+            GlobalPosition = CalculateGlobalPosition();
+            UpdateBounds(parent);
+        }
     }
 
     private void ApplyOptions(UIComponentOptions options)
     {
         if (options.Position == Vector2.Zero && options.Size != Vector2.Zero)
         {
-            _options.Size = ScaleToGlobal(options.Size);
-            _localPosition = options.UiAnchor.CalculatePosition(_options.Size, Parent);
+            Options.UiAnchor = options.UiAnchor;
+            Options.Size = ScaleToGlobal(options.Size);
+            LocalPosition = options.UiAnchor.CalculatePosition(Options.Size, new Vector2(-1), Parent);
             UpdateBounds(Parent);
         }
 
-        _options.Color = options.Color;
+        if (options.Position != Vector2.Zero)
+        {
+            Console.WriteLine($"this {Id}");
+            LocalPosition = ScaleToGlobal(options.Position);
+            Options.Size = ScaleToGlobal(options.Size);
+            UpdateBounds(Parent);
+        }
+
+        if (options.Texture != null)
+        {
+            var scaleX = options.Size.X / options.Texture.Width;
+            var scaleY = options.Size.Y / options.Texture.Height;
+            var scale = new Vector2(scaleX, scaleY);
+            Options.Scale = ScaleToGlobal(scale);
+            Options.Texture = options.Texture;
+        }
+        else
+        {
+            Options.Color = options.Color;
+        }
+    }
+
+    public void UpdatePosition(Vector2 position, Vector2 size, UIComponent parent)
+    {
+        LocalPosition = position;
+        GlobalPosition = CalculateGlobalPosition();
+        Options.Size = size;
+
+        // var scaleX = size.X / Options.Texture?.Width;
+        // var scaleY = size.Y / Options.Texture?.Height;
+        // var scale = new Vector2(scaleX ?? 1, scaleY ?? 1);
+        //
+        // Options.Scale = scale;
+
+        UpdateBounds(parent);
     }
 
     // protected UIComponent(string id, Color color, Vector2 position, Vector2 size, UIComponent parent = null)
@@ -117,8 +153,8 @@ public abstract class UIComponent
 
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(_options.Texture, _localPosition, null, Color.White, 0f, Vector2.Zero,
-            _options.Scale, SpriteEffects.None, 0f);
+        spriteBatch.Draw(Options.Texture, GlobalPosition, null, Color.White, 0f, Vector2.Zero,
+            Options.Scale, SpriteEffects.None, 0f);
     }
 
     public void HandleMouse(MouseState mouseState)
@@ -130,14 +166,14 @@ public abstract class UIComponent
         {
             if (!_isClicked)
             {
-                _onClick?.Invoke();
+                OnClick?.Invoke();
                 _isClicked = !_isClicked;
             }
         }
 
         if (_isClicked && mouseState.LeftButton == ButtonState.Released)
         {
-            _offClick?.Invoke();
+            OffClick?.Invoke();
             _isClicked = !_isClicked;
         }
 
@@ -146,7 +182,7 @@ public abstract class UIComponent
         {
             if (!_isHovered)
             {
-                _onHover?.Invoke();
+                OnHover?.Invoke();
                 _isHovered = !_isHovered;
             }
         }
@@ -155,15 +191,21 @@ public abstract class UIComponent
         {
             if (_bounds.Contains(mouseState.Position)) return;
 
-            _offHover?.Invoke();
+            OffHover?.Invoke();
             _isHovered = !_isHovered;
         }
     }
 
-    private static Vector2 ScaleToGlobal(Vector2 position)
+    protected static Vector2 ScaleToGlobal(Vector2 position)
     {
-        // Console.WriteLine($"scaling from {position} to {position * RanchMayhemEngine.UIManager.GlobalScale}");
         return position * RanchMayhemEngine.UIManager.GlobalScale;
+    }
+
+    protected static Vector4 ScaleToGlobal(Vector4 position)
+    {
+        var globalScale = RanchMayhemEngine.UIManager.GlobalScale;
+        return new Vector4(position.X * globalScale.Y, position.Y * globalScale.X, position.Z * globalScale.Y,
+            position.W * globalScale.X);
     }
 
     public void SetParent(UIComponent parent)
@@ -174,21 +216,21 @@ public abstract class UIComponent
 
     private Vector2 CalculateGlobalPosition()
     {
-        if (Parent == null) return _localPosition;
-        return Parent.CalculateGlobalPosition() + _localPosition;
+        if (Parent == null) return LocalPosition;
+        return Parent.CalculateGlobalPosition() + LocalPosition;
     }
 
     private void UpdateGlobalPosition()
     {
         if (Parent == null)
         {
-            _globalPosition = _localPosition;
+            GlobalPosition = LocalPosition;
         }
         else
         {
-            if (_options.UiAnchor != UIAnchor.None)
+            if (Options.UiAnchor != UIAnchor.None)
             {
-                _localPosition = _options.UiAnchor.CalculatePosition(_options.Size, Parent);
+                LocalPosition = Options.UiAnchor.CalculatePosition(Options.Size, new Vector2(-1), Parent);
             }
 
             UpdateBounds(Parent);
@@ -199,16 +241,16 @@ public abstract class UIComponent
     {
         if (parent == null)
         {
-            _bounds = new Rectangle((int)_localPosition.X, (int)_localPosition.Y, (int)_options.Size.X,
-                (int)_options.Size.Y);
-            _globalPosition = _localPosition;
+            _bounds = new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X,
+                (int)Options.Size.Y);
+            GlobalPosition = LocalPosition;
         }
         else
         {
-            _globalPosition = CalculateGlobalPosition();
+            GlobalPosition = CalculateGlobalPosition();
 
-            _bounds = new Rectangle((int)_globalPosition.X, (int)_globalPosition.Y, (int)_options.Size.X,
-                (int)_options.Size.Y);
+            _bounds = new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
+                (int)Options.Size.Y);
         }
     }
 

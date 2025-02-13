@@ -6,51 +6,79 @@ namespace ranch_mayhem_engine.UI;
 
 public class Button : UIComponent
 {
-    // public Button(string id, Texture2D texture, UIAnchor uiAnchor, Vector2 size, UIComponent parent = null) : base(id,
-    //     texture, uiAnchor, size, parent)
-    // {
-    //     _onHover = HandleOnHover;
-    //     _onClick = HandleOnClick;
-    //     _offHover = HandleOffHover;
-    //     _offClick = HandleOffClick;
-    // }
-    //
-    //
-    // public Button(string id, Texture2D texture, Vector2 position, Vector2 size) : base(id, texture, position, size)
-    // {
-    //     _onHover = HandleOnHover;
-    //     _onClick = HandleOnClick;
-    // }
-    //
-    // private void HandleOnHover()
-    // {
-    //     Console.WriteLine($"{GetType().FullName}::HandleOnHover {Id}");
-    //     _texture = RanchMayhemEngine.ContentManager.GetTexture("button_hover");
-    // }
-    //
-    // private void HandleOnClick()
-    // {
-    //     Console.WriteLine($"{GetType().FullName}::HandleOnClick {Id}");
-    //     _texture = RanchMayhemEngine.ContentManager.GetTexture("button_click");
-    // }
-    //
-    // private void HandleOffHover()
-    // {
-    //     Console.WriteLine($"{GetType().FullName}::HandleOffHover {Id}");
-    //     _texture = RanchMayhemEngine.ContentManager.GetTexture("button");
-    // }
-    //
-    // private void HandleOffClick()
-    // {
-    //     Console.WriteLine($"{GetType().FullName}::HandleOffClick {Id}");
-    //     _texture = RanchMayhemEngine.ContentManager.GetTexture("button_hover");
-    // }
+    private readonly ButtonOptions _buttonOptions;
+
+    public Button(string id, UIComponentOptions options, ButtonOptions buttonOptions, UIComponent parent = null) : base(
+        id, options, parent)
+    {
+        OnHover = HandleOnHover;
+        OffHover = HandleOffHover;
+
+        OnClick = HandleOnClick;
+        OffClick = HandleOffClick;
+
+        _buttonOptions = buttonOptions;
+    }
+
+    private void HandleOnHover()
+    {
+        if (_buttonOptions.State == ButtonState.Disabled) return;
+
+        Console.WriteLine($"{GetType().FullName}::HandleOnHover {Id}");
+        Options.Texture = _buttonOptions.HoverTexture;
+    }
+
+    private void HandleOnClick()
+    {
+        if (_buttonOptions.State == ButtonState.Disabled) return;
+
+        Console.WriteLine($"{GetType().FullName}::HandleOnClick {Id}");
+        Options.Texture = _buttonOptions.ClickTexture;
+    }
+
+    private void HandleOffHover()
+    {
+        if (_buttonOptions.State == ButtonState.Disabled) return;
+
+        Console.WriteLine($"{GetType().FullName}::HandleOffHover {Id}");
+        Options.Texture = _buttonOptions.Texture;
+    }
+
+    private void HandleOffClick()
+    {
+        if (_buttonOptions.State == ButtonState.Disabled) return;
+
+        Console.WriteLine($"{GetType().FullName}::HandleOffClick {Id}");
+        Options.Texture = _buttonOptions.HoverTexture;
+    }
+
+    public void ToggleDisabled()
+    {
+        if (_buttonOptions.State == ButtonState.Disabled)
+        {
+            _buttonOptions.State = ButtonState.Normal;
+        }
+        else
+        {
+            _buttonOptions.State = ButtonState.Disabled;
+        }
+    }
 
     public override void Update()
     {
     }
 
-    public Button(string id, UIComponentOptions options, UIComponent parent = null) : base(id, options, parent)
+    public class ButtonOptions
     {
+        public Texture2D Texture;
+        public Texture2D HoverTexture;
+        public Texture2D ClickTexture;
+        public ButtonState State = ButtonState.Normal;
+    }
+
+    public enum ButtonState
+    {
+        Normal,
+        Disabled
     }
 }

@@ -42,6 +42,7 @@ public class UIManager
 
     public void AddComponent(UIComponent component)
     {
+        Console.WriteLine($"adding component with id {component.Id}");
         _components.Add(component);
     }
 

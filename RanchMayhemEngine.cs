@@ -22,6 +22,8 @@ public sealed class RanchMayhemEngine : Game
     public static UIManager UIManager { get; private set; }
     public static ContentManager ContentManager { get; private set; }
 
+    public static MouseState MouseState { get; private set; }
+
     public static bool IsFocused { get; private set; } = true;
     private static bool WasFocused { get; set; } = false;
 
@@ -58,12 +60,6 @@ public sealed class RanchMayhemEngine : Game
         //     new Button("button", ContentManager.GetTexture("button"), UIAnchor.CenterX | UIAnchor.CenterY,
         //         new Vector2(300, 300)));
 
-        // var testbox3 = new Box("test-3", Color.Orange, UIAnchor.Bottom | UIAnchor.CenterX,
-        //     new Vector2(1920, 250), null);
-        // var testbox1 = new Box("test-1", Color.Green, UIAnchor.Left | UIAnchor.CenterY,
-        //     new Vector2(175, 175), null);
-        // var testbox2 = new Box("test-2", Color.Blue, UIAnchor.CenterY | UIAnchor.CenterX,
-        //     new Vector2(75, 75), null);
         //
         // UIManager.AddComponent(testbox3);
         // UIManager.AddComponent(testbox1);
@@ -75,28 +71,99 @@ public sealed class RanchMayhemEngine : Game
         //
         // UIManager.AddComponent(container);
 
+
+        // var container = new Container("container-1", new UIComponentOptions
+        // {
+        //     Color = Color.BlueViolet,
+        //     Position = new Vector2(100, 100),
+        //     Size = new Vector2(960, 540)
+        // }, [testbox4]);
+
+        // UIManager.AddComponent(container);
+
+        var button = new Button("button-1", new UIComponentOptions
+            {
+                Texture = ContentManager.GetTexture("button"),
+                Position = new Vector2(900, 600),
+                Size = new Vector2(200, 20)
+            },
+            new Button.ButtonOptions
+            {
+                Texture = ContentManager.GetTexture("button"),
+                ClickTexture = ContentManager.GetTexture("button_click"),
+                HoverTexture = ContentManager.GetTexture("button_hover")
+            });
+
+        // UIManager.AddComponent(button);
+
+
+        var button2 = new Button("button-2", new UIComponentOptions
+            {
+                Texture = ContentManager.GetTexture("button"),
+                UiAnchor = UIAnchor.CenterX | UIAnchor.Bottom,
+                Size = new Vector2(200, 20)
+            },
+            new Button.ButtonOptions
+            {
+                Texture = ContentManager.GetTexture("button"),
+                ClickTexture = ContentManager.GetTexture("button_click"),
+                HoverTexture = ContentManager.GetTexture("button_hover"),
+            });
+
         var testbox4 = new Box("test-4", new UIComponentOptions
         {
-            Color = Color.Aqua,
+            Color = Color.Blue,
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
-            Size = new Vector2(100, 100)
+            Size = new Vector2(75, 75)
         });
 
-        UIManager.AddComponent(testbox4);
+        var container = new Container("container-1", new UIComponentOptions
+        {
+            Color = Color.Orange,
+        }, [testbox4, button2]);
 
+        // UIManager.AddComponent(button);
+        // UIManager.AddComponent(button2);
+        var testbox3 = new Box("test-3", new UIComponentOptions
+        {
+            Color = Color.Blue,
+        });
+        var testbox2 = new Box("test-2", new UIComponentOptions
+        {
+            Color = Color.Green,
+            Size = new Vector2(150, 150),
+            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
+        });
+
+        var grid1 = new Grid("grid-1", new UIComponentOptions
+            {
+                Color = Color.Red,
+                Position = new Vector2(100, 100),
+                Size = new Vector2(900, 600)
+            },
+            new Grid.GridOptions
+            {
+                Columns = [2, 1, 1],
+                ColumnGap = 0,
+                Rows = [1, 1, 1],
+                RowGap = 0,
+            }, [testbox3, testbox2, container]);
+
+        UIManager.AddComponent(grid1);
+        // UIManager.AddComponent(container);
 
         // TODO: use this.Content to load your game content here
     }
 
     protected override void Update(GameTime gameTime)
     {
-        var mouseState = Mouse.GetState();
+        MouseState = Mouse.GetState();
 
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        UIManager.UpdateComponents(mouseState);
+        UIManager.UpdateComponents(MouseState);
 
         // TODO: Add your update logic here
 
