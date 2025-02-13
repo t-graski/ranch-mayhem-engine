@@ -17,11 +17,11 @@ public enum UIAnchor
 
 public static partial class UIAnchorExtension
 {
-    public static Vector2 CalculatePosition(this UIAnchor uiAnchor, Vector2 size, UIComponent? parent = null)
+    public static Vector2 CalculatePosition(this UIAnchor uiAnchor, Vector2 size, UIComponent parent = null)
     {
         var viewport = RanchMayhemEngine.UIManager.GraphicsDevice.Viewport;
-        var parentWidth = parent?.Size.X ?? viewport.Width;
-        var parentHeight = parent?.Size.Y ?? viewport.Height;
+        var parentWidth = parent?._options.Size.X ?? viewport.Width;
+        var parentHeight = parent?._options.Size.Y ?? viewport.Height;
 
         float x = 0;
         float y = 0;

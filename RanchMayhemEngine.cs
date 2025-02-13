@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -52,20 +53,38 @@ public sealed class RanchMayhemEngine : Game
         ContentManager = new ContentManager();
         ContentManager.LoadContent(Content);
 
-        UIManager.AddComponent(
-            new Button("button", ContentManager.GetTexture("button"), UIAnchor.CenterX | UIAnchor.CenterY,
-                new Vector2(300, 300)));
+
+        // UIManager.AddComponent(
+        //     new Button("button", ContentManager.GetTexture("button"), UIAnchor.CenterX | UIAnchor.CenterY,
+        //         new Vector2(300, 300)));
 
         // var testbox3 = new Box("test-3", Color.Orange, UIAnchor.Bottom | UIAnchor.CenterX,
         //     new Vector2(1920, 250), null);
-        // var testbox1 = new Box("test-1", Color.Green, UIAnchor.CenterX | UIAnchor.CenterY,
-        //     new Vector2(175, 175), testbox3);
+        // var testbox1 = new Box("test-1", Color.Green, UIAnchor.Left | UIAnchor.CenterY,
+        //     new Vector2(175, 175), null);
         // var testbox2 = new Box("test-2", Color.Blue, UIAnchor.CenterY | UIAnchor.CenterX,
-        //     new Vector2(75, 75), testbox1);
+        //     new Vector2(75, 75), null);
         //
         // UIManager.AddComponent(testbox3);
         // UIManager.AddComponent(testbox1);
         // UIManager.AddComponent(testbox2);
+
+        // var container = new Container("container-1", Color.BlueViolet, new Vector2(100, 100), new Vector2(960, 540),
+        //     null,
+        //     [testbox1, testbox2]);
+        //
+        // UIManager.AddComponent(container);
+
+        var testbox4 = new Box("test-4", new UIComponentOptions
+        {
+            Color = Color.Aqua,
+            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
+            Size = new Vector2(100, 100)
+        });
+
+        UIManager.AddComponent(testbox4);
+
+
         // TODO: use this.Content to load your game content here
     }
 
