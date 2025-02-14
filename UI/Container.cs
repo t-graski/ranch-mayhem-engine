@@ -8,7 +8,7 @@ public class Container : UIComponent
 {
     private List<UIComponent> _components;
 
-    public bool IsShown { get; private set; } = true;
+    public bool IsShown { get; private set; } = false;
 
     private void InitializeContainer(List<UIComponent> components)
     {
@@ -28,6 +28,11 @@ public class Container : UIComponent
         base(id, options, parent)
     {
         InitializeContainer(components);
+    }
+
+    public void ToggleVisibility()
+    {
+        IsShown = !IsShown;
     }
 
 

@@ -165,7 +165,7 @@ public sealed class RanchMayhemEngine : Game
             Texture = ContentManager.GetTexture("carrot"),
             // Color = Color.Red,
             // Size = new Vector2(128),
-            SizePercent = new Vector2(50, 25),
+            SizePercent = new Vector2(0, 100),
             SizeUnit = SizeUnit.Percent,
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
         });
@@ -196,10 +196,19 @@ public sealed class RanchMayhemEngine : Game
                 ColumnGap = 10,
                 Rows = [1],
                 RowGap = 0,
-                Padding = new Vector4(0, 10, 0, 10)
+                Padding = new Vector4(5)
             }, [profile, crop1, crop2, crop3]);
 
         UIManager.AddComponent(menubar);
+
+        var container = new Container("test-container", new UIComponentOptions
+        {
+            Color = Color.Red,
+            Size = new Vector2(900, 450),
+            UiAnchor = UIAnchor.Top | UIAnchor.CenterX
+        }, []);
+
+        UIManager.AddComponent(container);
 
 
         // TODO: use this.Content to load your game content here

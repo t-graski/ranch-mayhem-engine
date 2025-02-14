@@ -51,6 +51,11 @@ public class UIManager
         _components.AddRange(components);
     }
 
+    public UIComponent GetComponent(string id)
+    {
+        return _components.Find(component => component.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
+    }
+
     public void UpdateComponents(MouseState mouseState)
     {
         foreach (var component in _components)
