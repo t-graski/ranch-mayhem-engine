@@ -8,8 +8,6 @@ public class Container : UIComponent
 {
     private List<UIComponent> _components;
 
-    public bool IsShown { get; private set; } = false;
-
     private void InitializeContainer(List<UIComponent> components)
     {
         _components = components ?? [];
@@ -30,15 +28,8 @@ public class Container : UIComponent
         InitializeContainer(components);
     }
 
-    public void ToggleVisibility()
-    {
-        IsShown = !IsShown;
-    }
-
-
     public override void Draw(SpriteBatch spriteBatch)
     {
-        if (!IsShown) return;
         var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
         texture.SetData([Options.Color]);
         if (Parent is null)

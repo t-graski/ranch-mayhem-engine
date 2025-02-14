@@ -66,8 +66,6 @@ public class Grid : UIComponent
                 current.RecalculateSize(current.Options.Size, size);
                 var itemPosition = current.Options.UiAnchor.CalculatePosition(current.Options.Size, size);
 
-                Console.WriteLine($"grid - {current.Id} item offset: {itemPosition}, position: {position}");
-
                 current.UpdatePosition(position + itemPosition, current.Options.Size, this, size);
             }
             else

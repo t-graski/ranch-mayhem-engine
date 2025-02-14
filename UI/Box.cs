@@ -8,14 +8,6 @@ public class Box : UIComponent
     public Box(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true) : base(id, options,
         parent, scale)
     {
-        OnClick = () =>
-        {
-            var component = RanchMayhemEngine.UIManager.GetComponent("test-container");
-            if (component is Container container)
-            {
-                container.ToggleVisibility();
-            }
-        };
     }
 
     public override void Draw(SpriteBatch spriteBatch)

@@ -67,5 +67,11 @@
   },
   {
     "name": "wheat"
+  },
+  {
+    "name": "quick_access"
+  },
+  {
+    "name": "crops"
   }
 ]

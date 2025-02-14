@@ -19,7 +19,7 @@ public class UIManager
     public GraphicsDevice GraphicsDevice { get; private set; }
     public SpriteBatch SpriteBatch { get; private set; }
 
-    private List<UIComponent> _components;
+    private List<Page> _pages;
 
     public UIManager(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
@@ -37,31 +37,25 @@ public class UIManager
 
     public void Initialize()
     {
-        _components = [];
+        _pages = [];
     }
 
-    public void AddComponent(UIComponent component)
+    public void AddComponent(Page page)
     {
-        Console.WriteLine($"adding component with id {component.Id}");
-        _components.Add(component);
+        Console.WriteLine($"adding component with id {page.Id}");
+        _pages.Add(page);
     }
 
-    public void AddComponents(IEnumerable<UIComponent> components)
+    public Page GetPage(string id)
     {
-        _components.AddRange(components);
-    }
-
-    public UIComponent GetComponent(string id)
-    {
-        return _components.Find(component => component.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
+        return _pages.Find(component => component.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
     }
 
     public void UpdateComponents(MouseState mouseState)
     {
-        foreach (var component in _components)
+        foreach (var page in _pages)
         {
-            component.HandleMouse(mouseState);
-            component.Update();
+            page.Update(mouseState);
         }
     }
 
@@ -69,9 +63,9 @@ public class UIManager
     {
         // if (!RanchMayhemEngine.IsFocused) return;
 
-        foreach (var component in _components)
+        foreach (var page in _pages)
         {
-            component.Draw(SpriteBatch);
+            page.Draw(SpriteBatch);
         }
     }
 }

@@ -145,6 +145,18 @@
 /processorParam:TextureFormat=Color
 /build:corn.png
 
+#begin crops.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:crops.png
+
 #begin cucumber.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -240,6 +252,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:pumpkin.png
+
+#begin quick_access.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:quick_access.png
 
 #begin raspberry.png
 /importer:TextureImporter

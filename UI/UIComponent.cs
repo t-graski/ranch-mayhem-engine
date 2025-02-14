@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -16,7 +17,7 @@ public abstract class UIComponent
 
     public UIComponentOptions Options { get; protected set; } = new();
 
-    protected Action OnClick;
+    public Action OnClick;
     protected Action OnHover;
     protected Action OffClick;
     protected Action OffHover;
@@ -28,6 +29,11 @@ public abstract class UIComponent
     {
         Id = id;
         Parent = parent;
+
+#if DEBUG
+        ParseOptions(options);
+#endif
+
         if (scale)
         {
             ApplyOptions(options);
@@ -39,6 +45,31 @@ public abstract class UIComponent
             GlobalPosition = CalculateGlobalPosition();
             UpdateBounds(parent);
         }
+    }
+
+    private void ParseOptions(UIComponentOptions options)
+    {
+        var warning = $"\x1b[93mWARNING - {GetType().FullName}::ctor {Id}";
+
+        if (options.SizeUnit == SizeUnit.Pixels && options.Size == Vector2.Zero)
+        {
+            Console.WriteLine($"{warning} SizeUnit is set to Pixels and Size is {Vector2.Zero}.");
+        }
+
+        if (options.SizeUnit == SizeUnit.Percent && options.SizePercent == Vector2.Zero)
+        {
+            if (options.Size == Vector2.Zero)
+            {
+                Console.WriteLine($"{warning} SizeUnit is set to Percent and SizePercent is {Vector2.Zero}");
+            }
+            else
+            {
+                Console.WriteLine(
+                    $"{warning} SizeUnit is set to Percent but 'Size' is being used instead of 'SizePercent'");
+            }
+        }
+
+        Console.Write("\x1b[39m");
     }
 
     private void ApplyOptions(UIComponentOptions options)
@@ -94,26 +125,18 @@ public abstract class UIComponent
             var height = virtualParent?.Y ?? viewport.Height;
             var newSize = Vector2.Zero;
 
-            Console.WriteLine($"percent unit: parentWidth: {width} parentHeight: {height}");
-            Console.WriteLine($"percent unit: optionsPercent: {Options.SizePercent}");
-
             if (Options.SizePercent.X != 0 && Options.SizePercent.Y != 0)
             {
-                Console.WriteLine("1");
                 newSize = new Vector2(width * (Options.SizePercent.X / 100), height * (Options.SizePercent.Y / 100));
             }
             else if (Options.SizePercent.Y == 0)
             {
-                Console.WriteLine("2");
                 newSize = new Vector2(width * (Options.SizePercent.X / 100));
             }
             else if (Options.SizePercent.X == 0)
             {
-                Console.WriteLine("3");
                 newSize = new Vector2(height * (Options.SizePercent.Y / 100));
             }
-
-            Console.WriteLine($"newSize: {newSize}");
 
             Options.Size = newSize;
         }
@@ -123,7 +146,6 @@ public abstract class UIComponent
     {
         LocalPosition = position;
         GlobalPosition = CalculateGlobalPosition();
-        Console.WriteLine($"{Id} local: {LocalPosition} global: {GlobalPosition}");
 
         if (Options.SizeUnit == SizeUnit.Pixels)
         {
@@ -136,26 +158,18 @@ public abstract class UIComponent
             var height = virtualParent?.Y ?? viewport.Height;
             var newSize = Vector2.Zero;
 
-            Console.WriteLine($"percent unit: parentWidth: {width} parentHeight: {height}");
-            Console.WriteLine($"percent unit: optionsPercent: {Options.SizePercent}");
-
             if (Options.SizePercent.X != 0 && Options.SizePercent.Y != 0)
             {
-                Console.WriteLine("1");
                 newSize = new Vector2(width * (Options.SizePercent.X / 100), height * (Options.SizePercent.Y / 100));
             }
             else if (Options.SizePercent.Y == 0)
             {
-                Console.WriteLine("2");
                 newSize = new Vector2(width * (Options.SizePercent.X / 100));
             }
             else if (Options.SizePercent.X == 0)
             {
-                Console.WriteLine("3");
                 newSize = new Vector2(height * (Options.SizePercent.Y / 100));
             }
-
-            Console.WriteLine($"newSize: {newSize}");
 
             Options.Size = newSize;
         }
@@ -172,70 +186,6 @@ public abstract class UIComponent
 
         UpdateBounds(parent);
     }
-
-    // protected UIComponent(string id, Color color, Vector2 position, Vector2 size, UIComponent parent = null)
-    // {
-    //     Id = id;
-    //     _color = color;
-    //
-    //     _localPosition = ScaleToGlobal(position);
-    //     Size = ScaleToGlobal(size);
-    //     UpdateBounds(parent);
-    // }
-    //
-    // protected UIComponent(string id, Color color, UIAnchor uiAnchor, Vector2 size, UIComponent parent = null)
-    // {
-    //     Id = id;
-    //     _color = color;
-    //     Parent = parent;
-    //     _uiAnchor = uiAnchor;
-    //
-    //     Size = ScaleToGlobal(size);
-    //     _localPosition = uiAnchor.CalculatePosition(Size, parent);
-    //     UpdateBounds(parent);
-    // }
-    //
-    // protected UIComponent(string id, Texture2D texture, Vector2 position, Vector2 size, UIComponent parent = null)
-    // {
-    //     Id = id;
-    //     _texture = texture;
-    //     _localPosition = ScaleToGlobal(position);
-    //
-    //     var scaleX = size.X / texture.Width;
-    //     var scaleY = size.Y / texture.Height;
-    //     var scale = new Vector2(scaleX, scaleY);
-    //
-    //     _scale = ScaleToGlobal(scale);
-    //     Size = ScaleToGlobal(size);
-    //     UpdateBounds(parent);
-    // }
-    //
-    // protected UIComponent(string id, Texture2D texture, UIAnchor uiAnchor, Vector2 size, UIComponent parent = null)
-    // {
-    //     Id = id;
-    //     _texture = texture;
-    //     _uiAnchor = uiAnchor;
-    //
-    //     var scaleX = size.X / texture.Width;
-    //     var scaleY = size.Y / texture.Height;
-    //     var scale = new Vector2(scaleX, scaleY);
-    //     _scale = ScaleToGlobal(scale);
-    //
-    //     Size = ScaleToGlobal(size);
-    //     _localPosition = uiAnchor.CalculatePosition(Size);
-    //     UpdateBounds(parent);
-    //
-    //     Console.WriteLine($"{_localPosition}");
-    // }
-    //
-    // protected UIComponent(string id, Texture2D texture, Vector2 position, float scale, UIComponent parent = null)
-    // {
-    //     Id = id;
-    //     _texture = texture;
-    //     _localPosition = ScaleToGlobal(position);
-    //     _scale = new Vector2(scale);
-    //     UpdateBounds(parent);
-    // }
 
     public virtual void Draw(SpriteBatch spriteBatch)
     {
