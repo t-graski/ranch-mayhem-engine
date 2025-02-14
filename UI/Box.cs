@@ -12,19 +12,23 @@ public class Box : UIComponent
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
-        texture.SetData([Options.Color]);
-        if (Parent is null)
-        {
-            RanchMayhemEngine.UIManager.SpriteBatch.Draw(texture,
-                new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X, (int)Options.Size.Y),
-                Options.Color);
-        }
+        if (Options.Texture != null) base.Draw(spriteBatch);
         else
         {
-            RanchMayhemEngine.UIManager.SpriteBatch.Draw(texture,
-                new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
-                    (int)Options.Size.Y), Options.Color);
+            var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
+            texture.SetData([Options.Color]);
+            if (Parent is null)
+            {
+                RanchMayhemEngine.UIManager.SpriteBatch.Draw(texture,
+                    new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X, (int)Options.Size.Y),
+                    Options.Color);
+            }
+            else
+            {
+                RanchMayhemEngine.UIManager.SpriteBatch.Draw(texture,
+                    new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
+                        (int)Options.Size.Y), Options.Color);
+            }
         }
     }
 

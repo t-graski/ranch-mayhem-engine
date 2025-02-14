@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Newtonsoft.Json;
 
 namespace ranch_mayhem_engine.UI;
 
@@ -42,24 +43,32 @@ public abstract class UIComponent
 
     private void ApplyOptions(UIComponentOptions options)
     {
+        Options.Size = ScaleToGlobal(options.Size);
+        Options.SizeUnit = options.SizeUnit;
+        Options.SizePercent = options.SizePercent;
+        Options.UiAnchor = options.UiAnchor;
+
         if (options.Position == Vector2.Zero && options.Size != Vector2.Zero)
         {
             Options.UiAnchor = options.UiAnchor;
-            Options.Size = ScaleToGlobal(options.Size);
             LocalPosition = options.UiAnchor.CalculatePosition(Options.Size, new Vector2(-1), Parent);
             UpdateBounds(Parent);
         }
 
         if (options.Position != Vector2.Zero)
         {
-            Console.WriteLine($"this {Id}");
             LocalPosition = ScaleToGlobal(options.Position);
-            Options.Size = ScaleToGlobal(options.Size);
             UpdateBounds(Parent);
         }
 
         if (options.Texture != null)
         {
+            if (options.Size == Vector2.Zero)
+            {
+                options.Size.X = options.Texture.Width;
+                options.Size.Y = options.Texture.Height;
+            }
+
             var scaleX = options.Size.X / options.Texture.Width;
             var scaleY = options.Size.Y / options.Texture.Height;
             var scale = new Vector2(scaleX, scaleY);
@@ -72,17 +81,94 @@ public abstract class UIComponent
         }
     }
 
-    public void UpdatePosition(Vector2 position, Vector2 size, UIComponent parent)
+    public void RecalculateSize(Vector2 size, Vector2? virtualParent)
+    {
+        if (Options.SizeUnit == SizeUnit.Pixels)
+        {
+            Options.Size = size;
+        }
+        else if (Options.SizeUnit == SizeUnit.Percent)
+        {
+            var viewport = RanchMayhemEngine.UIManager.GraphicsDevice.Viewport;
+            var width = virtualParent?.X ?? viewport.Width;
+            var height = virtualParent?.Y ?? viewport.Height;
+            var newSize = Vector2.Zero;
+
+            Console.WriteLine($"percent unit: parentWidth: {width} parentHeight: {height}");
+            Console.WriteLine($"percent unit: optionsPercent: {Options.SizePercent}");
+
+            if (Options.SizePercent.X != 0 && Options.SizePercent.Y != 0)
+            {
+                Console.WriteLine("1");
+                newSize = new Vector2(width * (Options.SizePercent.X / 100), height * (Options.SizePercent.Y / 100));
+            }
+            else if (Options.SizePercent.Y == 0)
+            {
+                Console.WriteLine("2");
+                newSize = new Vector2(width * (Options.SizePercent.X / 100));
+            }
+            else if (Options.SizePercent.X == 0)
+            {
+                Console.WriteLine("3");
+                newSize = new Vector2(height * (Options.SizePercent.Y / 100));
+            }
+
+            Console.WriteLine($"newSize: {newSize}");
+
+            Options.Size = newSize;
+        }
+    }
+
+    public void UpdatePosition(Vector2 position, Vector2 size, UIComponent parent, Vector2? virtualParent)
     {
         LocalPosition = position;
         GlobalPosition = CalculateGlobalPosition();
-        Options.Size = size;
+        Console.WriteLine($"{Id} local: {LocalPosition} global: {GlobalPosition}");
 
-        // var scaleX = size.X / Options.Texture?.Width;
-        // var scaleY = size.Y / Options.Texture?.Height;
-        // var scale = new Vector2(scaleX ?? 1, scaleY ?? 1);
-        //
-        // Options.Scale = scale;
+        if (Options.SizeUnit == SizeUnit.Pixels)
+        {
+            Options.Size = size;
+        }
+        else if (Options.SizeUnit == SizeUnit.Percent)
+        {
+            var viewport = RanchMayhemEngine.UIManager.GraphicsDevice.Viewport;
+            var width = virtualParent?.X ?? viewport.Width;
+            var height = virtualParent?.Y ?? viewport.Height;
+            var newSize = Vector2.Zero;
+
+            Console.WriteLine($"percent unit: parentWidth: {width} parentHeight: {height}");
+            Console.WriteLine($"percent unit: optionsPercent: {Options.SizePercent}");
+
+            if (Options.SizePercent.X != 0 && Options.SizePercent.Y != 0)
+            {
+                Console.WriteLine("1");
+                newSize = new Vector2(width * (Options.SizePercent.X / 100), height * (Options.SizePercent.Y / 100));
+            }
+            else if (Options.SizePercent.Y == 0)
+            {
+                Console.WriteLine("2");
+                newSize = new Vector2(width * (Options.SizePercent.X / 100));
+            }
+            else if (Options.SizePercent.X == 0)
+            {
+                Console.WriteLine("3");
+                newSize = new Vector2(height * (Options.SizePercent.Y / 100));
+            }
+
+            Console.WriteLine($"newSize: {newSize}");
+
+            Options.Size = newSize;
+        }
+
+        if (Options.Texture != null)
+        {
+            var scaleX = Options.Size.X / Options.Texture?.Width;
+            var scaleY = Options.Size.Y / Options.Texture?.Height;
+            var scale = new Vector2(scaleX ?? 1, scaleY ?? 1);
+
+            Options.Scale = scale;
+        }
+
 
         UpdateBounds(parent);
     }

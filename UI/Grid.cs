@@ -18,7 +18,7 @@ public class Grid : UIComponent
 
         foreach (var component in _components)
         {
-            component.SetParent(this);
+            component?.SetParent(this);
         }
 
         CalculatePositions();
@@ -63,28 +63,22 @@ public class Grid : UIComponent
 
             if (current.Options.UiAnchor != UIAnchor.None)
             {
-                Console.WriteLine($"Grid anchor not none, pos: {position}, size: {size}");
+                current.RecalculateSize(current.Options.Size, size);
                 var itemPosition = current.Options.UiAnchor.CalculatePosition(current.Options.Size, size);
-                Console.WriteLine($"grid: new item pos: {itemPosition}");
-                current.UpdatePosition(position + itemPosition, current.Options.Size, this);
+
+                Console.WriteLine($"grid - {current.Id} item offset: {itemPosition}, position: {position}");
+
+                current.UpdatePosition(position + itemPosition, current.Options.Size, this, size);
             }
             else
             {
-                current.UpdatePosition(position, size, this);
+                current.UpdatePosition(position, size, this, size);
 
                 if (current is Container container)
                 {
                     container.UpdateParentLocation();
                 }
             }
-            // var box = new Box($"box-{i}", new UIComponentOptions
-            // {
-            //     Color = Color.BlueViolet,
-            //     Position = position,
-            //     Size = size
-            // }, this, false);
-            //
-            // _components.Add(box);
 
             if (!isLastColumn)
             {

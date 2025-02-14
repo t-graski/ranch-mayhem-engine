@@ -10,5 +10,13 @@ public class UIComponentOptions
     public Vector2 Position;
     public UIAnchor UiAnchor;
     public Vector2 Size;
+    public Vector2 SizePercent;
+    public SizeUnit SizeUnit = SizeUnit.Pixels;
     public Vector2 Scale;
+}
+
+public enum SizeUnit
+{
+    Pixels,
+    Percent
 }

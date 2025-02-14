@@ -27,7 +27,6 @@ public static partial class UIAnchorExtension
 
         if (virtualParent.X >= 0)
         {
-            Console.WriteLine("Entering virtual parent mode");
             parentWidth = virtualParent.X;
             parentHeight = virtualParent.Y;
         }

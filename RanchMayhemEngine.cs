@@ -81,76 +81,126 @@ public sealed class RanchMayhemEngine : Game
 
         // UIManager.AddComponent(container);
 
-        var button = new Button("button-1", new UIComponentOptions
-            {
-                Texture = ContentManager.GetTexture("button"),
-                Position = new Vector2(900, 600),
-                Size = new Vector2(200, 20)
-            },
-            new Button.ButtonOptions
-            {
-                Texture = ContentManager.GetTexture("button"),
-                ClickTexture = ContentManager.GetTexture("button_click"),
-                HoverTexture = ContentManager.GetTexture("button_hover")
-            });
+        // var button = new Button("button-1", new UIComponentOptions
+        //     {
+        //         Texture = ContentManager.GetTexture("button"),
+        //         Position = new Vector2(900, 600),
+        //         Size = new Vector2(200, 20)
+        //     },
+        //     new Button.ButtonOptions
+        //     {
+        //         Texture = ContentManager.GetTexture("button"),
+        //         ClickTexture = ContentManager.GetTexture("button_click"),
+        //         HoverTexture = ContentManager.GetTexture("button_hover")
+        //     });
 
         // UIManager.AddComponent(button);
 
 
-        var button2 = new Button("button-2", new UIComponentOptions
-            {
-                Texture = ContentManager.GetTexture("button"),
-                UiAnchor = UIAnchor.CenterX | UIAnchor.Bottom,
-                Size = new Vector2(200, 20)
-            },
-            new Button.ButtonOptions
-            {
-                Texture = ContentManager.GetTexture("button"),
-                ClickTexture = ContentManager.GetTexture("button_click"),
-                HoverTexture = ContentManager.GetTexture("button_hover"),
-            });
-
-        var testbox4 = new Box("test-4", new UIComponentOptions
-        {
-            Color = Color.Blue,
-            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
-            Size = new Vector2(75, 75)
-        });
-
-        var container = new Container("container-1", new UIComponentOptions
-        {
-            Color = Color.Orange,
-        }, [testbox4, button2]);
+        // var button2 = new Button("button-2", new UIComponentOptions
+        //     {
+        //         Texture = ContentManager.GetTexture("button"),
+        //         UiAnchor = UIAnchor.CenterX | UIAnchor.Bottom,
+        //         Size = new Vector2(200, 20)
+        //     },
+        //     new Button.ButtonOptions
+        //     {
+        //         Texture = ContentManager.GetTexture("button"),
+        //         ClickTexture = ContentManager.GetTexture("button_click"),
+        //         HoverTexture = ContentManager.GetTexture("button_hover"),
+        //     });
+        //
+        // var testbox4 = new Box("test-4", new UIComponentOptions
+        // {
+        //     Color = Color.Blue,
+        //     UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
+        //     Size = new Vector2(75, 75)
+        // });
+        //
+        // var container = new Container("container-1", new UIComponentOptions
+        // {
+        //     Color = Color.Orange,
+        // }, [testbox4, button2]);
 
         // UIManager.AddComponent(button);
         // UIManager.AddComponent(button2);
-        var testbox3 = new Box("test-3", new UIComponentOptions
+        // var testbox3 = new Box("test-3", new UIComponentOptions
+        // {
+        //     Color = Color.Blue,
+        // });
+        // var testbox2 = new Box("test-2", new UIComponentOptions
+        // {
+        //     Color = Color.Green,
+        //     Size = new Vector2(150, 150),
+        //     UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
+        // });
+        //
+        // var grid1 = new Grid("grid-1", new UIComponentOptions
+        //     {
+        //         Color = Color.Red,
+        //         Position = new Vector2(100, 100),
+        //         Size = new Vector2(900, 600)
+        //     },
+        //     new Grid.GridOptions
+        //     {
+        //         Columns = [2, 1, 1],
+        //         ColumnGap = 0,
+        //         Rows = [1, 1, 1],
+        //         RowGap = 0,
+        //     }, [testbox3, testbox2, container]);
+
+        // UIManager.AddComponent(grid1);
+        // UIManager.AddComponent(container);
+
+        var profile = new Box("profile", new UIComponentOptions
         {
-            Color = Color.Blue,
+            Texture = ContentManager.GetTexture("lychee"),
+            Size = new Vector2(128),
+            // Color = Color.Red,
+            UiAnchor = UIAnchor.CenterY | UIAnchor.Left,
         });
-        var testbox2 = new Box("test-2", new UIComponentOptions
+
+        var crop1 = new Box("crop-1", new UIComponentOptions
         {
-            Color = Color.Green,
-            Size = new Vector2(150, 150),
+            Texture = ContentManager.GetTexture("carrot"),
+            // Color = Color.Red,
+            // Size = new Vector2(128),
+            SizePercent = new Vector2(50, 25),
+            SizeUnit = SizeUnit.Percent,
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
         });
 
-        var grid1 = new Grid("grid-1", new UIComponentOptions
+        var crop2 = new Box("crop-2", new UIComponentOptions
+        {
+            Texture = ContentManager.GetTexture("corn"),
+            Size = new Vector2(128),
+            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
+        });
+
+        var crop3 = new Box("crop-3", new UIComponentOptions
+        {
+            Texture = ContentManager.GetTexture("dragon_fruit"),
+            Size = new Vector2(128),
+            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
+        });
+
+        var menubar = new Grid("mennubar", new UIComponentOptions
             {
-                Color = Color.Red,
-                Position = new Vector2(100, 100),
-                Size = new Vector2(900, 600)
+                Color = Color.White,
+                UiAnchor = UIAnchor.Bottom,
+                Size = new Vector2(1920, 216)
             },
             new Grid.GridOptions
             {
-                Columns = [2, 1, 1],
-                ColumnGap = 0,
-                Rows = [1, 1, 1],
+                Columns = [2, 1, 1, 1],
+                ColumnGap = 10,
+                Rows = [1],
                 RowGap = 0,
-            }, [testbox3, testbox2, container]);
+                Padding = new Vector4(0, 10, 0, 10)
+            }, [profile, crop1, crop2, crop3]);
 
-        UIManager.AddComponent(grid1);
-        // UIManager.AddComponent(container);
+        UIManager.AddComponent(menubar);
+
 
         // TODO: use this.Content to load your game content here
     }
@@ -189,7 +239,7 @@ public sealed class RanchMayhemEngine : Game
     {
         GraphicsDevice.Clear(Color.LightGoldenrodYellow);
 
-        _spriteBatch.Begin();
+        _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
         UIManager.RenderComponents();
 
