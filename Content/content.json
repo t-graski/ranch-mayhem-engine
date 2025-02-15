@@ -1,77 +1,111 @@
 ﻿[
   {
-    "name": "button"
+    "name": "button",
+    "type": "sprite"
   },
   {
-    "name": "button_hover"
+    "name": "button_hover",
+    "type": "sprite"
   },
   {
-    "name": "button_click"
+    "name": "button_click",
+    "type": "sprite"
   },
   {
-    "name": "banana"
+    "name": "banana",
+    "type": "sprite"
   },
   {
-    "name": "bell_pepper"
+    "name": "bell_pepper",
+    "type": "sprite"
   },
   {
-    "name": "blackberry"
+    "name": "blackberry",
+    "type": "sprite"
   },
   {
-    "name": "blueberry"
+    "name": "blueberry",
+    "type": "sprite"
   },
   {
-    "name": "cabbage"
+    "name": "cabbage",
+    "type": "sprite"
   },
   {
-    "name": "carrot"
+    "name": "carrot",
+    "type": "sprite"
   },
   {
-    "name": "coconut"
+    "name": "coconut",
+    "type": "sprite"
   },
   {
-    "name": "corn"
+    "name": "corn",
+    "type": "sprite"
   },
   {
-    "name": "cucumber"
+    "name": "cucumber",
+    "type": "sprite"
   },
   {
-    "name": "dragon_fruit"
+    "name": "dragon_fruit",
+    "type": "sprite"
   },
   {
-    "name": "kiwi"
+    "name": "kiwi",
+    "type": "sprite"
   },
   {
-    "name": "lychee"
+    "name": "lychee",
+    "type": "sprite"
   },
   {
-    "name": "pineapple"
+    "name": "pineapple",
+    "type": "sprite"
   },
   {
-    "name": "potato"
+    "name": "potato",
+    "type": "sprite"
   },
   {
-    "name": "pumpkin"
+    "name": "pumpkin",
+    "type": "sprite"
   },
   {
-    "name": "raspberry"
+    "name": "raspberry",
+    "type": "sprite"
   },
   {
-    "name": "strawberry"
+    "name": "strawberry",
+    "type": "sprite"
   },
   {
-    "name": "tomato"
+    "name": "tomato",
+    "type": "sprite"
   },
   {
-    "name": "watermelon"
+    "name": "watermelon",
+    "type": "sprite"
   },
   {
-    "name": "wheat"
+    "name": "wheat",
+    "type": "sprite"
   },
   {
-    "name": "quick_access"
+    "name": "quick_access",
+    "type": "sprite"
   },
   {
-    "name": "crops"
+    "name": "crops",
+    "type": "sprite"
+  },
+  {
+    "name": "Arial",
+    "type": "font",
+    "sizes": [
+      12,
+      16,
+      32
+    ]
   }
 ]

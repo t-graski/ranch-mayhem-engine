@@ -11,8 +11,8 @@ public class UIManager
     private const int ReferenceWidth = 1920;
     private const int ReferenceHeight = 1080;
 
-    private float _globalScaleX;
-    private float _globalScaleY;
+    private readonly float _globalScaleX;
+    private readonly float _globalScaleY;
 
     public Vector2 GlobalScale;
 

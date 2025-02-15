@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using Microsoft.Xna.Framework.Graphics;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
@@ -9,6 +10,7 @@ namespace ranch_mayhem_engine.Content;
 public class ContentManager
 {
     private readonly Dictionary<string, Texture2D> _contents = [];
+    private readonly Dictionary<string, Dictionary<int, SpriteFont>> _fonts = [];
 
     public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
     {
@@ -16,11 +18,57 @@ public class ContentManager
 
         foreach (var item in itemsToLoad)
         {
-            _contents.Add(item.name, content.Load<Texture2D>(item.name));
+            switch (item.Type)
+            {
+                case "sprite":
+                    LoadSprite(item, content);
+                    break;
+                case "font":
+                    LoadFont(item, content);
+                    break;
+                case "unknown":
+                default:
+                    Logger.Log(
+                        $"{GetType().FullName}::LoadContent Trying to load content with unknown type, name={item.Name}",
+                        Logger.LogLevel.Warning);
+                    break;
+            }
+        }
+
+        Logger.Log($"Loaded {_contents.Count} sprites");
+        Logger.Log($"Loaded {_fonts.Count} fonts");
+    }
+
+    private void LoadSprite(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
+    {
+        _contents.Add(item.Name, content.Load<Texture2D>(item.Name));
+    }
+
+    private void LoadFont(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
+    {
+        if (item.Sizes == null || item.Sizes.Count < 1)
+        {
+            Logger.Log($"{GetType().FullName}::LoadFont No sizes defined for font={item.Name}");
+            return;
+        }
+
+        foreach (var size in item.Sizes)
+        {
+            var font = content.Load<SpriteFont>($"{item.Name}{size}");
+
+            if (!_fonts.TryGetValue(item.Name, out var fontSizes))
+            {
+                fontSizes = new Dictionary<int, SpriteFont>();
+                _fonts[item.Name] = fontSizes;
+            }
+
+            fontSizes[size] = font;
         }
     }
 
     public Texture2D GetTexture(string name) => _contents[name];
+
+    public SpriteFont GetFont(string name, int size) => _fonts[name][size];
 
     private static List<ContentItem> LoadJson()
     {
@@ -32,6 +80,8 @@ public class ContentManager
 
     private class ContentItem
     {
-        public string name;
+        public string Name;
+        public string Type = "unknown";
+        public List<int> Sizes;
     }
 }

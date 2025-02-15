@@ -51,7 +51,7 @@ public sealed class RanchMayhemEngine : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _louis = Content.Load<Texture2D>("louis");
 
-        MainFont = Content.Load<SpriteFont>("MainFont");
+        // MainFont = Content.Load<SpriteFont>("MainFont");
 
         UIManager = new UIManager(_spriteBatch.GraphicsDevice, _spriteBatch);
         UIManager.Initialize();
@@ -61,7 +61,6 @@ public sealed class RanchMayhemEngine : Game
 
         UIManager.AddComponent(new MenuBar().Initialize());
         UIManager.AddComponent(new Crops().Initialize());
-
 
         // TODO: use this.Content to load your game content here
     }

@@ -48,7 +48,7 @@ public class Button : UIComponent
     {
         if (_buttonOptions.State == ButtonState.Disabled) return;
 
-        Console.WriteLine($"{GetType().FullName}::HandleOnHover {Id}");
+        Logger.Log($"{GetType().FullName}::HandleOnHover Id={Id}", Logger.LogLevel.Internal);
         Options.Texture = _buttonOptions.HoverTexture;
     }
 
@@ -56,7 +56,7 @@ public class Button : UIComponent
     {
         if (_buttonOptions.State == ButtonState.Disabled) return;
 
-        Console.WriteLine($"{GetType().FullName}::HandleOnClick {Id}");
+        Logger.Log($"{GetType().FullName}::HandleOnClick Id={Id}", Logger.LogLevel.Internal);
         Options.Texture = _buttonOptions.ClickTexture;
     }
 
@@ -64,7 +64,7 @@ public class Button : UIComponent
     {
         if (_buttonOptions.State == ButtonState.Disabled) return;
 
-        Console.WriteLine($"{GetType().FullName}::HandleOffHover {Id}");
+        Logger.Log($"{GetType().FullName}::HandleOffHover Id={Id}", Logger.LogLevel.Internal);
         Options.Texture = _buttonOptions.Texture;
     }
 
@@ -72,7 +72,7 @@ public class Button : UIComponent
     {
         if (_buttonOptions.State == ButtonState.Disabled) return;
 
-        Console.WriteLine($"{GetType().FullName}::HandleOffClick {Id}");
+        Logger.Log($"{GetType().FullName}::HandleOffClick Id={Id}", Logger.LogLevel.Internal);
         Options.Texture = _buttonOptions.HoverTexture;
     }
 
@@ -95,15 +95,16 @@ public class Button : UIComponent
         if (_buttonOptions.Text != string.Empty)
         {
             var position = GlobalPosition;
+            var font = RanchMayhemEngine.ContentManager.GetFont("Arial", 16);
 
-            var size = RanchMayhemEngine.MainFont.MeasureString(_buttonOptions.Text);
+            var size = font.MeasureString(_buttonOptions.Text);
 
-            position.X += (Options.Size.X - size.X * 2) / 2;
-            position.Y += (Options.Size.Y - size.Y * 2) / 2;
+            position.X += (Options.Size.X - size.X) / 2;
+            position.Y += (Options.Size.Y - size.Y) / 2;
 
-            spriteBatch.DrawString(RanchMayhemEngine.MainFont, _buttonOptions.Text, position, _buttonOptions.TextColor,
+            spriteBatch.DrawString(font, _buttonOptions.Text, position, _buttonOptions.TextColor,
                 0,
-                Vector2.Zero, 2, SpriteEffects.None, 0.5f);
+                Vector2.Zero, 1, SpriteEffects.None, 0.5f);
         }
     }
 
@@ -118,7 +119,7 @@ public class Button : UIComponent
         public Texture2D ClickTexture;
         public ButtonState State = ButtonState.Normal;
         public string Text = "";
-        public TextAlignment TextAlignment = TextAlignment.Center;
+        public Text.TextAlignment TextAlignment = UI.Text.TextAlignment.Center;
         public Color TextColor = Color.White;
     }
 
@@ -126,12 +127,5 @@ public class Button : UIComponent
     {
         Normal,
         Disabled
-    }
-
-    public enum TextAlignment
-    {
-        Left,
-        Center,
-        Right
     }
 }
