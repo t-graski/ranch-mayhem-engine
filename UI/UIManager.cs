@@ -23,7 +23,7 @@ public class UIManager
 
     public UIManager(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
-        Console.WriteLine($"{GetType().FullName}::ctor");
+        Logger.Log($"{GetType().FullName}::ctor", Logger.LogLevel.Internal);
         GraphicsDevice = graphicsDevice;
         SpriteBatch = spriteBatch;
 
@@ -32,7 +32,7 @@ public class UIManager
         _globalScaleX = (float)viewport.Width / ReferenceWidth;
         _globalScaleY = (float)viewport.Height / ReferenceHeight;
         GlobalScale = new Vector2(_globalScaleX, _globalScaleY);
-        Console.WriteLine($"Setting global scale to {GlobalScale}");
+        Logger.Log($"Setting global scale to {GlobalScale}");
     }
 
     public void Initialize()
@@ -42,7 +42,6 @@ public class UIManager
 
     public void AddComponent(Page page)
     {
-        Console.WriteLine($"adding component with id {page.Id}");
         _pages.Add(page);
     }
 

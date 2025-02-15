@@ -217,6 +217,13 @@
 /processorParam:TextureFormat=Color
 /build:lychee.png
 
+#begin MainFont.spritefont
+/importer:FontDescriptionImporter
+/processor:LocalizedFontProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:MainFont.spritefont
+
 #begin pineapple.png
 /importer:TextureImporter
 /processor:TextureProcessor

@@ -17,7 +17,31 @@ public class Button : UIComponent
         OnClick = HandleOnClick;
         OffClick = HandleOffClick;
 
+
+#if DEBUG
+        ParseOptions(buttonOptions);
+#endif
         _buttonOptions = buttonOptions;
+    }
+
+    private void ParseOptions(ButtonOptions buttonOptions)
+    {
+        var prefix = $"{GetType().FullName}::ctor Id={Id}";
+
+        if (buttonOptions.Texture == null)
+        {
+            Logger.Log($"{prefix} Texture is null");
+        }
+
+        if (buttonOptions.HoverTexture == null)
+        {
+            Logger.Log($"{prefix} HoverTexture is null");
+        }
+
+        if (buttonOptions.ClickTexture == null)
+        {
+            Logger.Log($"{prefix} ClickTexture is null");
+        }
     }
 
     private void HandleOnHover()
@@ -64,6 +88,25 @@ public class Button : UIComponent
         }
     }
 
+    public override void Draw(SpriteBatch spriteBatch)
+    {
+        base.Draw(spriteBatch);
+
+        if (_buttonOptions.Text != string.Empty)
+        {
+            var position = GlobalPosition;
+
+            var size = RanchMayhemEngine.MainFont.MeasureString(_buttonOptions.Text);
+
+            position.X += (Options.Size.X - size.X * 2) / 2;
+            position.Y += (Options.Size.Y - size.Y * 2) / 2;
+
+            spriteBatch.DrawString(RanchMayhemEngine.MainFont, _buttonOptions.Text, position, _buttonOptions.TextColor,
+                0,
+                Vector2.Zero, 2, SpriteEffects.None, 0.5f);
+        }
+    }
+
     public override void Update()
     {
     }
@@ -74,11 +117,21 @@ public class Button : UIComponent
         public Texture2D HoverTexture;
         public Texture2D ClickTexture;
         public ButtonState State = ButtonState.Normal;
+        public string Text = "";
+        public TextAlignment TextAlignment = TextAlignment.Center;
+        public Color TextColor = Color.White;
     }
 
     public enum ButtonState
     {
         Normal,
         Disabled
+    }
+
+    public enum TextAlignment
+    {
+        Left,
+        Center,
+        Right
     }
 }

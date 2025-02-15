@@ -12,6 +12,40 @@ public class Grid : UIComponent
     private List<UIComponent> _components;
     private GridOptions _gridOptions;
 
+    public Grid(string id, UIComponentOptions options, GridOptions gridOptions, List<UIComponent> components,
+        UIComponent parent = null) : base(id,
+        options, parent)
+    {
+#if DEBUG
+        ParseOptions(gridOptions, components.Count);
+#endif
+
+        _gridOptions = gridOptions;
+        InitializeGrid(components);
+    }
+
+    private void ParseOptions(GridOptions gridOptions, int childrenAmount)
+    {
+        var prefix = $"{GetType().FullName}::ctor Id={Id}";
+
+        if (gridOptions.ColumnGap < 0)
+        {
+            Logger.Log($"{prefix} ColumnGap is negative ({gridOptions.ColumnGap})", Logger.LogLevel.Warning);
+        }
+
+        if (gridOptions.RowGap < 0)
+        {
+            Logger.Log($"{prefix} RowGap is negative ({gridOptions.RowGap})", Logger.LogLevel.Warning);
+        }
+
+        if (childrenAmount < gridOptions.Columns.Count * gridOptions.Rows.Count)
+        {
+            Logger.Log(
+                $"{prefix} More columns/rows ({gridOptions.Columns.Count}x{gridOptions.Rows.Count}) defined than used ({childrenAmount}).",
+                Logger.LogLevel.Warning);
+        }
+    }
+
     private void InitializeGrid(List<UIComponent> components)
     {
         _components = components ?? [];
@@ -89,14 +123,6 @@ public class Grid : UIComponent
                 position.Y += size.Y + scaledGaps.Y;
             }
         }
-    }
-
-    public Grid(string id, UIComponentOptions options, GridOptions gridOptions, List<UIComponent> components,
-        UIComponent parent = null) : base(id,
-        options, parent)
-    {
-        _gridOptions = gridOptions;
-        InitializeGrid(components);
     }
 
     public override void Draw(SpriteBatch spriteBatch)

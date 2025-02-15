@@ -22,6 +22,7 @@ public sealed class RanchMayhemEngine : Game
     private Texture2D _louis;
     public static UIManager UIManager { get; private set; }
     public static ContentManager ContentManager { get; private set; }
+    public static SpriteFont MainFont { get; private set; }
 
     public static MouseState MouseState { get; private set; }
 
@@ -50,6 +51,8 @@ public sealed class RanchMayhemEngine : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _louis = Content.Load<Texture2D>("louis");
 
+        MainFont = Content.Load<SpriteFont>("MainFont");
+
         UIManager = new UIManager(_spriteBatch.GraphicsDevice, _spriteBatch);
         UIManager.Initialize();
 
@@ -77,14 +80,14 @@ public sealed class RanchMayhemEngine : Game
 
         if (!IsActive && !WasFocused)
         {
-            Console.WriteLine("Lost focus");
+            Logger.Log("Lost focus");
             IsFocused = false;
             WasFocused = true;
         }
 
         if (WasFocused && IsActive)
         {
-            Console.WriteLine("Regained focus");
+            Logger.Log("Regained focus");
             IsFocused = true;
             WasFocused = false;
         }

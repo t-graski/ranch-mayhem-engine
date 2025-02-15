@@ -30,15 +30,31 @@ public class MenuBar : Page
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
         });
 
-        var crops = new Box("menubar-crops", new UIComponentOptions
+        // var crops = new Box("menubar-crops", new UIComponentOptions
+        // {
+        //     Texture = contentManager.GetTexture("crops"),
+        //     SizePercent = new Vector2(0, 75),
+        //     SizeUnit = SizeUnit.Percent,
+        //     UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
+        // });
+
+        var crops = new Button("menubar-crops", new UIComponentOptions
         {
             Texture = contentManager.GetTexture("crops"),
             SizePercent = new Vector2(0, 75),
             SizeUnit = SizeUnit.Percent,
-            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
-        });
-
-        crops.OnClick = ToggleInventory;
+            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
+        }, new Button.ButtonOptions
+        {
+            TextColor = Color.Green,
+            Text = "Crops",
+            Texture = contentManager.GetTexture("crops"),
+            HoverTexture = contentManager.GetTexture("crops"),
+            ClickTexture = contentManager.GetTexture("crops")
+        })
+        {
+            OnClick = ToggleInventory
+        };
 
         var crop3 = new Box("crop-3", new UIComponentOptions
         {
@@ -60,7 +76,7 @@ public class MenuBar : Page
                 Rows = [1],
                 RowGap = 0,
                 Padding = new Vector4(5)
-            }, [profile, quickAccess, crops, crop3]);
+            }, [profile, quickAccess, crops]);
 
         Components.Add(menubar);
         IsVisible = true;

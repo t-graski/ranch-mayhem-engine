@@ -1,21 +1,19 @@
 ﻿using System;
-using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Newtonsoft.Json;
 
 namespace ranch_mayhem_engine.UI;
 
 public abstract class UIComponent
 {
-    protected UIComponent Parent { get; set; }
-    public string Id { get; private set; }
-    public Vector2 LocalPosition;
-    public Vector2 GlobalPosition;
+    protected UIComponent Parent { get; private set; }
+    protected string Id { get; }
+    protected Vector2 LocalPosition;
+    protected Vector2 GlobalPosition;
     private Rectangle _bounds;
 
-    public UIComponentOptions Options { get; protected set; } = new();
+    public UIComponentOptions Options { get; } = new();
 
     public Action OnClick;
     protected Action OnHover;
@@ -49,27 +47,31 @@ public abstract class UIComponent
 
     private void ParseOptions(UIComponentOptions options)
     {
-        var warning = $"\x1b[93mWARNING - {GetType().FullName}::ctor {Id}";
+        var prefix = $"{GetType().FullName}::ctor Id={Id}";
 
         if (options.SizeUnit == SizeUnit.Pixels && options.Size == Vector2.Zero)
         {
-            Console.WriteLine($"{warning} SizeUnit is set to Pixels and Size is {Vector2.Zero}.");
+            Logger.Log($"{prefix} SizeUnit is set to Pixels and Size is {Vector2.Zero}.", Logger.LogLevel.Warning);
         }
 
         if (options.SizeUnit == SizeUnit.Percent && options.SizePercent == Vector2.Zero)
         {
             if (options.Size == Vector2.Zero)
             {
-                Console.WriteLine($"{warning} SizeUnit is set to Percent and SizePercent is {Vector2.Zero}");
+                Logger.Log($"{prefix} SizeUnit is set to Percent and SizePercent is {Vector2.Zero}",
+                    Logger.LogLevel.Warning);
             }
             else
             {
-                Console.WriteLine(
-                    $"{warning} SizeUnit is set to Percent but 'Size' is being used instead of 'SizePercent'");
+                Logger.Log($"{prefix} SizeUnit is set to Percent but 'Size' is being used instead of 'SizePercent'",
+                    Logger.LogLevel.Warning);
             }
         }
 
-        Console.Write("\x1b[39m");
+        if (options.Scale.X < 0 || options.Scale.Y < 0)
+        {
+            Logger.Log($"{prefix} Scale is negative ({options.Scale})", Logger.LogLevel.Warning);
+        }
     }
 
     private void ApplyOptions(UIComponentOptions options)
