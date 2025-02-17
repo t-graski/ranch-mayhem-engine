@@ -10,43 +10,44 @@ public class Crops : Page
     public override Page Initialize()
     {
         Id = "crops";
+        IsVisible = true;
 
-        List<string> cropsNames = ["bell_pepper", "coconut", "lychee", "blueberry", "dragon_fruit"];
-        var contentManager = RanchMayhemEngine.ContentManager;
-
-        List<UIComponent> cropComponents = [];
-
-        foreach (var crop in cropsNames)
-        {
-            var box = new Box($"crops-{crop}", new UIComponentOptions
-            {
-                Texture = contentManager.GetTexture(crop),
-                SizePercent = new Vector2(0, 100),
-                SizeUnit = SizeUnit.Percent,
-                UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
-            });
-
-            cropComponents.Add(box);
-        }
-
-        var testButton = new Button("button-1", new UIComponentOptions
-            {
-                Texture = contentManager.GetTexture("button"),
-                Size = new Vector2(600, 60),
-                Position = new Vector2(100)
-            },
-            new Button.ButtonOptions
-            {
-                Texture = contentManager.GetTexture("button"),
-                ClickTexture = contentManager.GetTexture("button_click"),
-                HoverTexture = contentManager.GetTexture("button_hover"),
-                Text = "hello world",
-                TextColor = Color.Aquamarine
-            });
-
-        cropComponents.Add(testButton);
-
-        Components.Add(testButton);
+        // List<string> cropsNames = ["bell_pepper", "coconut", "lychee", "blueberry", "dragon_fruit"];
+        // var contentManager = RanchMayhemEngine.ContentManager;
+        //
+        // List<UIComponent> cropComponents = [];
+        //
+        // foreach (var crop in cropsNames)
+        // {
+        //     var box = new Box($"crops-{crop}", new UIComponentOptions
+        //     {
+        //         Texture = contentManager.GetTexture(crop),
+        //         SizePercent = new Vector2(0, 100),
+        //         SizeUnit = SizeUnit.Percent,
+        //         UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
+        //     });
+        //
+        //     cropComponents.Add(box);
+        // }
+        //
+        // var testButton = new Button("button-1", new UIComponentOptions
+        //     {
+        //         Texture = contentManager.GetTexture("button"),
+        //         Size = new Vector2(600, 60),
+        //         Position = new Vector2(100)
+        //     },
+        //     new Button.ButtonOptions
+        //     {
+        //         Texture = contentManager.GetTexture("button"),
+        //         ClickTexture = contentManager.GetTexture("button_click"),
+        //         HoverTexture = contentManager.GetTexture("button_hover"),
+        //         Text = "hello world",
+        //         TextColor = Color.Aquamarine
+        //     });
+        //
+        // cropComponents.Add(testButton);
+        //
+        // Components.Add(testButton);
 
         // var cropInventory = new Grid("crop-inventory", new UIComponentOptions
         //     {
@@ -64,6 +65,7 @@ public class Crops : Page
         //     }, cropComponents);
         //
         // Components.Add(cropInventory);
+
         return this;
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
@@ -9,8 +10,8 @@ namespace ranch_mayhem_engine.Content;
 
 public class ContentManager
 {
-    private readonly Dictionary<string, Texture2D> _contents = [];
-    private readonly Dictionary<string, Dictionary<int, SpriteFont>> _fonts = [];
+    private readonly Dictionary<string, Texture2D> _contents =  [];
+    private readonly Dictionary<string, Dictionary<int, SpriteFont>> _fonts =  [];
 
     public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
     {
@@ -67,6 +68,39 @@ public class ContentManager
     }
 
     public Texture2D GetTexture(string name) => _contents[name];
+
+    public int GetClosestSize(string name, int size)
+    {
+        // available: 12, 16, 32
+        // want: 20
+        // should: 16
+
+        var diff = 0;
+        var closestSize = _fonts[name].First().Key;
+
+        foreach (var (key, value) in _fonts[name])
+        {
+            if (key == size) return key;
+
+            if (diff == 0)
+            {
+                diff = Math.Abs(size - key);
+            }
+
+            if (Math.Abs(size - key) < diff)
+            {
+                diff = Math.Abs(size - key);
+                closestSize = key;
+            }
+        }
+
+        return closestSize;
+    }
+
+    private bool HasSize(string name, int size)
+    {
+        return _fonts[name].ContainsKey(size);
+    }
 
     public SpriteFont GetFont(string name, int size) => _fonts[name][size];
 

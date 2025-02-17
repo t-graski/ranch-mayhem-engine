@@ -8,7 +8,7 @@ namespace ranch_mayhem_engine.UI;
 public abstract class UIComponent
 {
     protected UIComponent Parent { get; private set; }
-    protected string Id { get; }
+    public string Id { get; }
     protected Vector2 LocalPosition;
     protected Vector2 GlobalPosition;
     private Rectangle _bounds;
@@ -49,7 +49,7 @@ public abstract class UIComponent
     {
         var prefix = $"{GetType().FullName}::ctor Id={Id}";
 
-        if (options.SizeUnit == SizeUnit.Pixels && options.Size == Vector2.Zero)
+        if (options.SizeUnit == SizeUnit.Pixels && options.Size == Vector2.Zero && this is not Text)
         {
             Logger.Log($"{prefix} SizeUnit is set to Pixels and Size is {Vector2.Zero}.", Logger.LogLevel.Warning);
         }
@@ -114,7 +114,7 @@ public abstract class UIComponent
         }
     }
 
-    public void RecalculateSize(Vector2 size, Vector2? virtualParent)
+    public void RecalculateSize(Vector2 size, Vector2? virtualParentSize)
     {
         if (Options.SizeUnit == SizeUnit.Pixels)
         {
@@ -123,8 +123,8 @@ public abstract class UIComponent
         else if (Options.SizeUnit == SizeUnit.Percent)
         {
             var viewport = RanchMayhemEngine.UIManager.GraphicsDevice.Viewport;
-            var width = virtualParent?.X ?? viewport.Width;
-            var height = virtualParent?.Y ?? viewport.Height;
+            var width = virtualParentSize?.X ?? viewport.Width;
+            var height = virtualParentSize?.Y ?? viewport.Height;
             var newSize = Vector2.Zero;
 
             if (Options.SizePercent.X != 0 && Options.SizePercent.Y != 0)
@@ -285,7 +285,7 @@ public abstract class UIComponent
         }
         else
         {
-            GlobalPosition = CalculateGlobalPosition();
+            Logger.Log($"setting global pos for {Id} to {GlobalPosition}");
 
             _bounds = new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
                 (int)Options.Size.Y);

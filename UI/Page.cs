@@ -7,10 +7,22 @@ namespace ranch_mayhem_engine.UI;
 public abstract class Page
 {
     public string Id { get; set; }
-    public List<UIComponent> Components { get; set; } = [];
+    public List<UIComponent> Components { get; set; } =  [];
     public bool IsVisible { get; set; } = false;
 
     public abstract Page Initialize();
+
+    protected void AddComponent(UIComponent component)
+    {
+        if (Components.Find(c => c.Id.Equals(component.Id)) != null)
+        {
+            Logger.Log(
+                $"{GetType().FullName}::AddComponent Id={component.Id} Adding component with already existing Id. This might cause unexpected issues.",
+                Logger.LogLevel.Warning);
+        }
+
+        Components.Add(component);
+    }
 
     public virtual void Draw(SpriteBatch spriteBatch)
     {

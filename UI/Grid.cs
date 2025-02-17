@@ -48,7 +48,8 @@ public class Grid : UIComponent
 
     private void InitializeGrid(List<UIComponent> components)
     {
-        _components = components ?? [];
+        _components = components ?? []
+        ;
 
         foreach (var component in _components)
         {

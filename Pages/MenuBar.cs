@@ -38,6 +38,16 @@ public class MenuBar : Page
         //     UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
         // });
 
+        var cropText = new Text("menubar-crops-text", new UIComponentOptions
+        {
+            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
+        }, new Text.TextOptions
+        {
+            Color = Color.Lavender,
+            Size = 12,
+            Content = "CROPS"
+        });
+
         var crops = new Button("menubar-crops", new UIComponentOptions
         {
             Texture = contentManager.GetTexture("crops"),
@@ -46,12 +56,10 @@ public class MenuBar : Page
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
         }, new Button.ButtonOptions
         {
-            TextColor = Color.Green,
-            Text = "Crops",
             Texture = contentManager.GetTexture("crops"),
             HoverTexture = contentManager.GetTexture("crops"),
             ClickTexture = contentManager.GetTexture("crops")
-        })
+        }, cropText)
         {
             OnClick = ToggleInventory
         };
@@ -71,9 +79,9 @@ public class MenuBar : Page
             },
             new Grid.GridOptions
             {
-                Columns = [2, 1, 1, 1],
+                Columns =  [2, 1, 1, 1],
                 ColumnGap = 10,
-                Rows = [1],
+                Rows =  [1],
                 RowGap = 0,
                 Padding = new Vector4(5)
             }, [profile, quickAccess, crops]);

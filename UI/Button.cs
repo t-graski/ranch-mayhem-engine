@@ -7,8 +7,10 @@ namespace ranch_mayhem_engine.UI;
 public class Button : UIComponent
 {
     private readonly ButtonOptions _buttonOptions;
+    private Text _text;
 
-    public Button(string id, UIComponentOptions options, ButtonOptions buttonOptions, UIComponent parent = null) : base(
+    public Button(string id, UIComponentOptions options, ButtonOptions buttonOptions, Text text = null,
+        UIComponent parent = null) : base(
         id, options, parent)
     {
         OnHover = HandleOnHover;
@@ -22,6 +24,12 @@ public class Button : UIComponent
         ParseOptions(buttonOptions);
 #endif
         _buttonOptions = buttonOptions;
+        _text = text;
+    }
+
+    public void UpdateParent()
+    {
+        _text?.SetParent(this);
     }
 
     private void ParseOptions(ButtonOptions buttonOptions)
@@ -91,21 +99,7 @@ public class Button : UIComponent
     public override void Draw(SpriteBatch spriteBatch)
     {
         base.Draw(spriteBatch);
-
-        if (_buttonOptions.Text != string.Empty)
-        {
-            var position = GlobalPosition;
-            var font = RanchMayhemEngine.ContentManager.GetFont("Arial", 16);
-
-            var size = font.MeasureString(_buttonOptions.Text);
-
-            position.X += (Options.Size.X - size.X) / 2;
-            position.Y += (Options.Size.Y - size.Y) / 2;
-
-            spriteBatch.DrawString(font, _buttonOptions.Text, position, _buttonOptions.TextColor,
-                0,
-                Vector2.Zero, 1, SpriteEffects.None, 0.5f);
-        }
+        _text?.Draw(spriteBatch);
     }
 
     public override void Update()
@@ -118,9 +112,6 @@ public class Button : UIComponent
         public Texture2D HoverTexture;
         public Texture2D ClickTexture;
         public ButtonState State = ButtonState.Normal;
-        public string Text = "";
-        public Text.TextAlignment TextAlignment = UI.Text.TextAlignment.Center;
-        public Color TextColor = Color.White;
     }
 
     public enum ButtonState
