@@ -7,9 +7,8 @@ namespace ranch_mayhem_engine.UI;
 public class Button : UIComponent
 {
     private readonly ButtonOptions _buttonOptions;
-    private Text _text;
 
-    public Button(string id, UIComponentOptions options, ButtonOptions buttonOptions, Text text = null,
+    public Button(string id, UIComponentOptions options, ButtonOptions buttonOptions = null,
         UIComponent parent = null) : base(
         id, options, parent)
     {
@@ -24,12 +23,6 @@ public class Button : UIComponent
         ParseOptions(buttonOptions);
 #endif
         _buttonOptions = buttonOptions;
-        _text = text;
-    }
-
-    public void UpdateParent()
-    {
-        _text?.SetParent(this);
     }
 
     private void ParseOptions(ButtonOptions buttonOptions)
@@ -99,7 +92,6 @@ public class Button : UIComponent
     public override void Draw(SpriteBatch spriteBatch)
     {
         base.Draw(spriteBatch);
-        _text?.Draw(spriteBatch);
     }
 
     public override void Update()
