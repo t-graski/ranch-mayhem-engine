@@ -32,7 +32,6 @@ public class UIManager
         _globalScaleX = (float)viewport.Width / ReferenceWidth;
         _globalScaleY = (float)viewport.Height / ReferenceHeight;
         GlobalScale = new Vector2(_globalScaleX, _globalScaleY);
-        Logger.Log($"Setting global scale to {GlobalScale}");
     }
 
     public void Initialize()

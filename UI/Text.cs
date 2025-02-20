@@ -33,11 +33,12 @@ public class Text : UIComponent
             Logger.LogLevel.Internal);
 
         Options.Scale = new Vector2(scale);
+        Options.Size = _font.MeasureString(_textOptions.Content);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        // Logger.Log($"drawing button {Id} pos:{GlobalPosition} scale:{Options.Scale}");
+        // Logger.Log($"drawing button {Id} pos:{GlobalPosition} scale:{Options.Scale} size:{Options.Size}");
         spriteBatch.DrawString(_font, _textOptions.Content, GlobalPosition, Color.Red, 0f, Vector2.Zero,
             Options.Scale,
             SpriteEffects.None, 0.5f);

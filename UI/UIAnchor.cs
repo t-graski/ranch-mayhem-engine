@@ -52,13 +52,11 @@ public static partial class UIAnchorExtension
         if (uiAnchor.HasFlag(UIAnchor.CenterX))
         {
             x = (parentWidth - size.X) / 2;
-            // Console.WriteLine($"x = {x}");
         }
 
         if (uiAnchor.HasFlag(UIAnchor.CenterY))
         {
             y = (parentHeight - size.Y) / 2;
-            // Console.WriteLine($"y = {y}");
         }
 
         return new Vector2(x, y);

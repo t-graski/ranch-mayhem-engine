@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Drawing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Color = Microsoft.Xna.Framework.Color;
+using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace ranch_mayhem_engine.UI;
 
@@ -269,6 +272,7 @@ public abstract class UIComponent
             if (Options.UiAnchor != UIAnchor.None)
             {
                 LocalPosition = Options.UiAnchor.CalculatePosition(Options.Size, new Vector2(-1), Parent);
+                GlobalPosition = CalculateGlobalPosition();
             }
 
             UpdateBounds(Parent);
@@ -285,8 +289,6 @@ public abstract class UIComponent
         }
         else
         {
-            Logger.Log($"setting global pos for {Id} to {GlobalPosition}");
-
             _bounds = new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
                 (int)Options.Size.Y);
         }

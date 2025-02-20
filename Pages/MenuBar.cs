@@ -1,5 +1,4 @@
-﻿using System.Buffers.Text;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using ranch_mayhem_engine.UI;
 
 namespace ranch_mayhem_engine.Pages;
@@ -79,14 +78,16 @@ public class MenuBar : Page
             },
             new Grid.GridOptions
             {
-                Columns =  [2, 1, 1, 1],
+                Columns = [2, 1, 1, 1],
                 ColumnGap = 10,
-                Rows =  [1],
+                Rows = [1],
                 RowGap = 0,
                 Padding = new Vector4(5)
             }, [profile, quickAccess, crops]);
 
         Components.Add(menubar);
+        Components.Add(cropText);
+        cropText.SetParent(crops);
         IsVisible = true;
 
         return this;
