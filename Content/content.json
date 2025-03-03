@@ -107,5 +107,12 @@
       16,
       32
     ]
+  },
+  {
+    "name": "Joystix",
+    "type": "font",
+    "sizes": [
+      16
+    ]
   }
 ]

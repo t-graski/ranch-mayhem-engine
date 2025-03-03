@@ -19,8 +19,8 @@ public class Text : UIComponent
 
     private void InitializeFont()
     {
-        var size = RanchMayhemEngine.ContentManager.GetClosestSize("Arial", _textOptions.Size);
-        _font = RanchMayhemEngine.ContentManager.GetFont("Arial", size);
+        var size = RanchMayhemEngine.ContentManager.GetClosestSize("Joystix", _textOptions.Size);
+        _font = RanchMayhemEngine.ContentManager.GetFont("Joystix", size);
         var scale = 1.0f;
 
         if (size != _textOptions.Size)

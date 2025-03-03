@@ -30,6 +30,18 @@ public class Crops : Page
             cropComponents.Add(box);
         }
 
+        var cropText = new Text("menubar-crops-text", new UIComponentOptions
+        {
+            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
+        }, new Text.TextOptions
+        {
+            Color = Color.Lavender,
+            Size = 16,
+            Content = "TESTABC123!\u2190"
+        });
+
+        cropComponents.Add(cropText);
+
         var cropInventory = new Grid("crop-inventory", new UIComponentOptions
             {
                 Color = Color.MediumAquamarine,
