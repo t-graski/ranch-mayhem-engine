@@ -14,7 +14,7 @@ public abstract class UIComponent
     public string Id { get; }
     protected Vector2 LocalPosition;
     protected Vector2 GlobalPosition;
-    private Rectangle _bounds;
+    protected Rectangle _bounds;
 
     public UIComponentOptions Options { get; } = new();
 
@@ -23,8 +23,8 @@ public abstract class UIComponent
     protected Action OffClick;
     protected Action OffHover;
 
-    private bool _isHovered;
-    private bool _isClicked;
+    protected bool IsHovered;
+    protected bool IsClicked;
 
     protected UIComponent(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true)
     {
@@ -205,35 +205,35 @@ public abstract class UIComponent
         if (mouseState.LeftButton == ButtonState.Pressed &&
             _bounds.Contains(mouseState.Position))
         {
-            if (!_isClicked)
+            if (!IsClicked)
             {
                 OnClick?.Invoke();
-                _isClicked = !_isClicked;
+                IsClicked = !IsClicked;
             }
         }
 
-        if (_isClicked && mouseState.LeftButton == ButtonState.Released)
+        if (IsClicked && mouseState.LeftButton == ButtonState.Released)
         {
             OffClick?.Invoke();
-            _isClicked = !_isClicked;
+            IsClicked = !IsClicked;
         }
 
         if (mouseState is { LeftButton: ButtonState.Released, RightButton: ButtonState.Released } &&
             _bounds.Contains(mouseState.Position))
         {
-            if (!_isHovered)
+            if (!IsHovered)
             {
                 OnHover?.Invoke();
-                _isHovered = !_isHovered;
+                IsHovered = !IsHovered;
             }
         }
 
-        if (_isHovered)
+        if (IsHovered)
         {
             if (_bounds.Contains(mouseState.Position)) return;
 
             OffHover?.Invoke();
-            _isHovered = !_isHovered;
+            IsHovered = !IsHovered;
         }
     }
 

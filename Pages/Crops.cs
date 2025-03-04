@@ -10,9 +10,9 @@ public class Crops : Page
     public override Page Initialize()
     {
         Id = "crops";
-        IsVisible = true;
+        IsVisible = false;
 
-        List<string> cropsNames = ["bell_pepper", "coconut", "lychee", "blueberry", "dragon_fruit"];
+        List<string> cropsNames = [];
         var contentManager = RanchMayhemEngine.ContentManager;
 
         List<UIComponent> cropComponents = [];
@@ -37,7 +37,7 @@ public class Crops : Page
         {
             Color = Color.Lavender,
             Size = 16,
-            Content = "TESTABC123!\u2190"
+            Content = "TESTABC123!"
         });
 
         cropComponents.Add(cropText);

@@ -19,7 +19,6 @@ public sealed class RanchMayhemEngine : Game
     private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
-    private Texture2D _louis;
     public static UIManager UIManager { get; private set; }
     public static ContentManager ContentManager { get; private set; }
     public static SpriteFont MainFont { get; private set; }
@@ -49,7 +48,6 @@ public sealed class RanchMayhemEngine : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _louis = Content.Load<Texture2D>("louis");
 
         // MainFont = Content.Load<SpriteFont>("MainFont");
 
@@ -61,7 +59,7 @@ public sealed class RanchMayhemEngine : Game
 
         UIManager.AddComponent(new MenuBar().Initialize());
         UIManager.AddComponent(new Crops().Initialize());
-        
+
         // TODO: use this.Content to load your game content here
     }
 
@@ -87,6 +85,7 @@ public sealed class RanchMayhemEngine : Game
         if (WasFocused && IsActive)
         {
             Logger.Log("Regained focus");
+            KeyboardInput.Update();
             IsFocused = true;
             WasFocused = false;
         }

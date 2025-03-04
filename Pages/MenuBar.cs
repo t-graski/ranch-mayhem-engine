@@ -13,7 +13,7 @@ public class MenuBar : Page
 
         var profile = new Box("profile", new UIComponentOptions
         {
-            Texture = contentManager.GetTexture("lychee"),
+            Texture = contentManager.GetTexture("quick_access"),
             Size = new Vector2(128),
             // Color = Color.Red,
             UiAnchor = UIAnchor.CenterY | UIAnchor.Left,
@@ -65,10 +65,17 @@ public class MenuBar : Page
 
         var crop3 = new Box("crop-3", new UIComponentOptions
         {
-            Texture = contentManager.GetTexture("dragon_fruit"),
+            Texture = contentManager.GetTexture("crops"),
             Size = new Vector2(128),
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
         });
+
+        var input = new TextBox("input", new UIComponentOptions
+        {
+            Texture = contentManager.GetTexture("button"),
+            Size = new Vector2(100),
+            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
+        }, s => { Logger.Log("pressed enter"); });
 
         var menubar = new Grid("menubar", new UIComponentOptions
             {
@@ -83,10 +90,11 @@ public class MenuBar : Page
                 Rows = [1],
                 RowGap = 0,
                 Padding = new Vector4(5)
-            }, [profile, quickAccess, crops]);
+            }, [profile, quickAccess, crops, input]);
 
         Components.Add(menubar);
         Components.Add(cropText);
+        Components.Add(input);
         cropText.SetParent(crops);
         IsVisible = true;
 

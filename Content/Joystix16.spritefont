@@ -52,8 +52,8 @@ with.
         -->
         <CharacterRegions>
             <CharacterRegion>
-                <Start>&#xE000;</Start>
-                <End>&#xE8B6;</End>
+                <Start>&#32;</Start>
+                <End>&#126;</End>
             </CharacterRegion>
         </CharacterRegions>
     </Asset>

@@ -53,6 +53,7 @@ public class UIManager
     {
         foreach (var page in _pages)
         {
+            // Logger.Log($"{GetType().FullName}::UpdateComponents");
             page.Update(mouseState);
         }
     }
