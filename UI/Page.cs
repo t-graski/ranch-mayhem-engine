@@ -6,9 +6,9 @@ namespace ranch_mayhem_engine.UI;
 
 public abstract class Page
 {
-    public string Id { get; set; }
-    public List<UIComponent> Components { get; set; } =  [];
-    public bool IsVisible { get; set; } = false;
+    public string Id { get; protected set; }
+    protected List<UIComponent> Components { get; set; } = [];
+    protected bool IsVisible { get; set; } = false;
 
     public abstract Page Initialize();
 

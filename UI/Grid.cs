@@ -12,15 +12,15 @@ public class Grid : UIComponent
     private List<UIComponent> _components;
     private GridOptions _gridOptions;
 
-    public Grid(string id, UIComponentOptions options, GridOptions gridOptions, List<UIComponent> components,
+    public Grid(string id, GridOptions options, List<UIComponent> components,
         UIComponent parent = null) : base(id,
         options, parent)
     {
 #if DEBUG
-        ParseOptions(gridOptions, components.Count);
+        ParseOptions(options, components.Count);
 #endif
 
-        _gridOptions = gridOptions;
+        _gridOptions = options;
         InitializeGrid(components);
     }
 
@@ -49,7 +49,7 @@ public class Grid : UIComponent
     private void InitializeGrid(List<UIComponent> components)
     {
         _components = components ?? []
-        ;
+            ;
 
         foreach (var component in _components)
         {
@@ -154,7 +154,7 @@ public class Grid : UIComponent
     {
     }
 
-    public class GridOptions
+    public class GridOptions : UIComponentOptions
     {
         public List<int> Columns;
         public List<int> Rows;

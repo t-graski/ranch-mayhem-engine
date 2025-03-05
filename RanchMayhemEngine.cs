@@ -85,12 +85,12 @@ public sealed class RanchMayhemEngine : Game
         if (WasFocused && IsActive)
         {
             Logger.Log("Regained focus");
-            KeyboardInput.Update();
             IsFocused = true;
             WasFocused = false;
         }
 
 
+        KeyboardInput.Update();
         base.Update(gameTime);
     }
 

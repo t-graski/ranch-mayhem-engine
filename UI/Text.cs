@@ -9,23 +9,23 @@ public class Text : UIComponent
     private TextOptions _textOptions;
     private SpriteFont _font;
 
-    public Text(string id, UIComponentOptions options, TextOptions textOptions, UIComponent parent = null,
+    public Text(string id, TextOptions options, UIComponent parent = null,
         bool scale = true) : base(id, options,
         parent, scale)
     {
-        _textOptions = textOptions;
+        _textOptions = options;
         InitializeFont();
     }
 
     private void InitializeFont()
     {
-        var size = RanchMayhemEngine.ContentManager.GetClosestSize("Joystix", _textOptions.Size);
+        var size = RanchMayhemEngine.ContentManager.GetClosestSize("Joystix", _textOptions.FontSize);
         _font = RanchMayhemEngine.ContentManager.GetFont("Joystix", size);
         var scale = 1.0f;
 
-        if (size != _textOptions.Size)
+        if (size != _textOptions.FontSize)
         {
-            scale = CalculateScale(size, _textOptions.Size);
+            scale = CalculateScale(size, _textOptions.FontSize);
         }
 
         Logger.Log(
@@ -58,12 +58,12 @@ public class Text : UIComponent
         return _font.MeasureString(_textOptions.Content);
     }
 
-    public class TextOptions()
+    public class TextOptions : UIComponentOptions
     {
         public string Content = "";
-        public int Size = 12;
+        public int FontSize = 12;
 
-        public Color Color;
+        public Color FontColor;
         // public TextAlignment Alignment = TextAlignment.Center;`
     }
 

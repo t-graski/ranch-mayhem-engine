@@ -1,6 +1,12 @@
-﻿namespace ranch_mayhem_engine.Pages;
+﻿using ranch_mayhem_engine.UI;
 
-public class Console
+namespace ranch_mayhem_engine.Pages;
+
+public class Console : Page
 {
-    
+    public override Page Initialize()
+    {
+
+        return this;
+    }
 }

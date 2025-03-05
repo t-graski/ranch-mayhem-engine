@@ -8,11 +8,11 @@ namespace ranch_mayhem_engine.UI;
 
 public class TextBox : UIComponent
 {
-    private StringBuilder _text;
+    private readonly StringBuilder _text;
     private bool _isActive;
-    private SpriteFont _font;
+    private readonly SpriteFont _font;
     private Texture2D _background;
-    private Action<string> _onSubmit;
+    private readonly Action<string> _onSubmit;
 
 
     public TextBox(string id, UIComponentOptions options, Action<string> onSubmit, UIComponent parent = null,
@@ -39,6 +39,7 @@ public class TextBox : UIComponent
 
             foreach (var key in keys)
             {
+                Logger.Log($"new key = {KeyboardInput.IsNewKeyPress(key)}");
                 if (KeyboardInput.IsNewKeyPress(key))
                 {
                     HandleKeyPress(key);
@@ -49,21 +50,27 @@ public class TextBox : UIComponent
 
     private void HandleKeyPress(Keys key)
     {
-        if (key == Keys.Back && _text.Length > 0)
+        switch (key)
         {
-            _text.Remove(_text.Length - 1, 1);
-        }
-        else if (key == Keys.Enter)
-        {
-            _onSubmit.Invoke(_text.ToString());
-            _text.Clear();
-        }
-        else
-        {
-            var character = KeyboardInput.GetCharFromKey(key);
-            if (character.HasValue)
+            case Keys.Back when _text.Length > 0:
+                _text.Remove(_text.Length - 1, 1);
+                break;
+            case Keys.Enter:
+                _onSubmit.Invoke(_text.ToString());
+                _text.Clear();
+                break;
+            case Keys.Space:
+                _text.Append(' ');
+                break;
+            default:
             {
-                _text.Append(character.Value);
+                var character = KeyboardInput.GetCharFromKey(key);
+                if (character.HasValue)
+                {
+                    _text.Append(character.Value);
+                }
+
+                break;
             }
         }
     }
@@ -71,6 +78,6 @@ public class TextBox : UIComponent
     public override void Draw(SpriteBatch spriteBatch)
     {
         base.Draw(spriteBatch);
-        spriteBatch.DrawString(_font, _text.ToString(), new Vector2(_bounds.X + 5, _bounds.Y + 5), Color.Red);
+        spriteBatch.DrawString(_font, _text.ToString(), new Vector2(Bounds.X + 5, Bounds.Y + 5), Color.Red);
     }
 }

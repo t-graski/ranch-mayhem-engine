@@ -5,7 +5,7 @@ namespace ranch_mayhem_engine.UI;
 
 public class Box : UIComponent
 {
-    public Box(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true) : base(id, options,
+    public Box(string id, BoxOptions options, UIComponent parent = null, bool scale = true) : base(id, options,
         parent, scale)
     {
     }
@@ -30,6 +30,10 @@ public class Box : UIComponent
                         (int)Options.Size.Y), Options.Color);
             }
         }
+    }
+
+    public class BoxOptions : UIComponentOptions
+    {
     }
 
 

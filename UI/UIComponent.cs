@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -14,16 +13,16 @@ public abstract class UIComponent
     public string Id { get; }
     protected Vector2 LocalPosition;
     protected Vector2 GlobalPosition;
-    protected Rectangle _bounds;
+    protected Rectangle Bounds;
 
-    public UIComponentOptions Options { get; } = new();
+    public UIComponentOptions Options { get; set; } = new();
 
     public Action OnClick;
     protected Action OnHover;
     protected Action OffClick;
     protected Action OffHover;
 
-    protected bool IsHovered;
+    private bool _isHovered;
     protected bool IsClicked;
 
     protected UIComponent(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true)
@@ -203,7 +202,7 @@ public abstract class UIComponent
         if (!RanchMayhemEngine.IsFocused) return;
 
         if (mouseState.LeftButton == ButtonState.Pressed &&
-            _bounds.Contains(mouseState.Position))
+            Bounds.Contains(mouseState.Position))
         {
             if (!IsClicked)
             {
@@ -219,21 +218,21 @@ public abstract class UIComponent
         }
 
         if (mouseState is { LeftButton: ButtonState.Released, RightButton: ButtonState.Released } &&
-            _bounds.Contains(mouseState.Position))
+            Bounds.Contains(mouseState.Position))
         {
-            if (!IsHovered)
+            if (!_isHovered)
             {
                 OnHover?.Invoke();
-                IsHovered = !IsHovered;
+                _isHovered = !_isHovered;
             }
         }
 
-        if (IsHovered)
+        if (_isHovered)
         {
-            if (_bounds.Contains(mouseState.Position)) return;
+            if (Bounds.Contains(mouseState.Position)) return;
 
             OffHover?.Invoke();
-            IsHovered = !IsHovered;
+            _isHovered = !_isHovered;
         }
     }
 
@@ -283,13 +282,13 @@ public abstract class UIComponent
     {
         if (parent == null)
         {
-            _bounds = new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X,
+            Bounds = new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X,
                 (int)Options.Size.Y);
             GlobalPosition = LocalPosition;
         }
         else
         {
-            _bounds = new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
+            Bounds = new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
                 (int)Options.Size.Y);
         }
     }

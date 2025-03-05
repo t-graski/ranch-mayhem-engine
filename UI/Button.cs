@@ -8,7 +8,7 @@ public class Button : UIComponent
 {
     private readonly ButtonOptions _buttonOptions;
 
-    public Button(string id, UIComponentOptions options, ButtonOptions buttonOptions = null,
+    public Button(string id, ButtonOptions options,
         UIComponent parent = null) : base(
         id, options, parent)
     {
@@ -20,9 +20,9 @@ public class Button : UIComponent
 
 
 #if DEBUG
-        ParseOptions(buttonOptions);
+        ParseOptions(options);
 #endif
-        _buttonOptions = buttonOptions;
+        _buttonOptions = options;
     }
 
     private void ParseOptions(ButtonOptions buttonOptions)
@@ -98,9 +98,8 @@ public class Button : UIComponent
     {
     }
 
-    public class ButtonOptions
+    public class ButtonOptions : UIComponentOptions
     {
-        public Texture2D Texture;
         public Texture2D HoverTexture;
         public Texture2D ClickTexture;
         public ButtonState State = ButtonState.Normal;

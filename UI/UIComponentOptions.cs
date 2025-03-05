@@ -13,6 +13,12 @@ public class UIComponentOptions
     public Vector2 SizePercent;
     public SizeUnit SizeUnit = SizeUnit.Pixels;
     public Vector2 Scale;
+
+    public override string ToString()
+    {
+        return
+            $"Color={Color}, Texture={Texture}, Position={Position}, UiAnchor={UiAnchor}, Size={Size}, SizePercent={SizePercent}, SizeUnit={SizeUnit}, Scale={Scale}";
+    }
 }
 
 public enum SizeUnit

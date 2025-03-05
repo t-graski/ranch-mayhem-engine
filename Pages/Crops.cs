@@ -19,7 +19,7 @@ public class Crops : Page
 
         foreach (var crop in cropsNames)
         {
-            var box = new Box($"crops-{crop}", new UIComponentOptions
+            var box = new Box($"crops-{crop}", new Box.BoxOptions
             {
                 Texture = contentManager.GetTexture(crop),
                 SizePercent = new Vector2(0, 100),
@@ -30,32 +30,27 @@ public class Crops : Page
             cropComponents.Add(box);
         }
 
-        var cropText = new Text("menubar-crops-text", new UIComponentOptions
+        var cropText = new Text("menubar-crops-text", new Text.TextOptions
         {
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
-        }, new Text.TextOptions
-        {
             Color = Color.Lavender,
-            Size = 16,
+            FontSize = 16,
             Content = "TESTABC123!"
         });
 
         cropComponents.Add(cropText);
 
-        var cropInventory = new Grid("crop-inventory", new UIComponentOptions
-            {
-                Color = Color.MediumAquamarine,
-                Position = new Vector2(100),
-                Size = new Vector2(1720, 664)
-            },
-            new Grid.GridOptions
-            {
-                Columns = [1, 1, 1],
-                ColumnGap = 0,
-                Rows = [1, 1],
-                RowGap = 0,
-                Padding = new Vector4(5)
-            }, cropComponents);
+        var cropInventory = new Grid("crop-inventory", new Grid.GridOptions
+        {
+            Color = Color.MediumAquamarine,
+            Position = new Vector2(100),
+            Size = new Vector2(1720, 664),
+            Columns = [1, 1, 1],
+            ColumnGap = 0,
+            Rows = [1, 1],
+            RowGap = 0,
+            Padding = new Vector4(5)
+        }, cropComponents);
 
         Components.Add(cropInventory);
 

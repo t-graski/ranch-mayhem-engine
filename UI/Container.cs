@@ -8,6 +8,12 @@ public class Container : UIComponent
 {
     private List<UIComponent> _components;
 
+    public Container(string id, UIComponentOptions options, List<UIComponent> components, UIComponent parent = null) :
+        base(id, options, parent)
+    {
+        InitializeContainer(components);
+    }
+
     private void InitializeContainer(List<UIComponent> components)
     {
         _components = components ?? [];
@@ -22,11 +28,6 @@ public class Container : UIComponent
         }
     }
 
-    public Container(string id, UIComponentOptions options, List<UIComponent> components, UIComponent parent = null) :
-        base(id, options, parent)
-    {
-        InitializeContainer(components);
-    }
 
     public override void Draw(SpriteBatch spriteBatch)
     {

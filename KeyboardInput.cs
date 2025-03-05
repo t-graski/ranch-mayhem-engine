@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using Microsoft.Xna.Framework.Input;
 
@@ -7,24 +8,29 @@ namespace ranch_mayhem_engine;
 public static class KeyboardInput
 {
     private static KeyboardState _previousState;
-    private static HashSet<Keys> _pressedKeys = [];
+    private static KeyboardState _currentState;
+
 
     public static void Update()
     {
-        var currentState = Keyboard.GetState();
-        _pressedKeys.Clear();
+        _previousState = _currentState;
+        _currentState = Keyboard.GetState();
 
-        foreach (var key in currentState.GetPressedKeys())
+        var keys = "";
+        foreach (var key in _currentState.GetPressedKeys())
         {
-            _pressedKeys.Add(key);
+            keys += $"{GetCharFromKey(key)} ";
         }
 
-        _previousState = currentState;
+        if (IsNewKeyPress(Keys.A))
+        {
+            Logger.Log($"{DateTimeOffset.Now.ToUnixTimeMilliseconds()} current {keys}");
+        }
     }
 
     public static bool IsNewKeyPress(Keys key)
     {
-        return Keyboard.GetState().IsKeyDown(key) && !_previousState.IsKeyDown(key);
+        return _currentState.IsKeyDown(key) && !_previousState.IsKeyDown(key);
     }
 
     public static char? GetCharFromKey(Keys key)
