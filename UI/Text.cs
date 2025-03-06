@@ -28,17 +28,17 @@ public class Text : UIComponent
             scale = CalculateScale(size, _textOptions.FontSize);
         }
 
-        Logger.Log(
-            $"{GetType().FullName}::InitializeFont Id={Id} Given size: {_textOptions.Size}, Found size: {size}, Using scale: {scale}",
-            Logger.LogLevel.Internal);
-
         Options.Scale = new Vector2(scale);
         Options.Size = _font.MeasureString(_textOptions.Content);
+
+        Logger.Log(
+            $"{GetType().FullName}::InitializeFont Id={Id} Given size: {_textOptions.FontSize}, Found size: {size}, Using scale: {scale}",
+            Logger.LogLevel.Internal);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        // Logger.Log($"drawing button {Id} pos:{GlobalPosition} scale:{Options.Scale} size:{Options.Size}");
+        // Logger.Log($"drawing text {Id} pos:{GlobalPosition} scale:{Options.Scale} size:{Options.Size}");
         spriteBatch.DrawString(_font, _textOptions.Content, GlobalPosition, Color.Red, 0f, Vector2.Zero,
             Options.Scale,
             SpriteEffects.None, 0.5f);
@@ -52,6 +52,8 @@ public class Text : UIComponent
     public override void Update()
     {
     }
+
+    public void SetContent(string content) => _textOptions.Content = content;
 
     public Vector2 GetSize()
     {

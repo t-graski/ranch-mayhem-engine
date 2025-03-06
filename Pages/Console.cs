@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Threading.Tasks.Dataflow;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ranch_mayhem_engine.UI;
@@ -7,30 +8,40 @@ namespace ranch_mayhem_engine.Pages;
 
 public class Console : Page
 {
-    private Animator windowAnimator;
+    private Animator _windowAnimator;
 
     public override Page Initialize()
     {
-        IsVisible = true;
+        IsVisible = false;
 
-        var consoleWindow = new Box("console-window", new Box.BoxOptions
+        var consoleWindow = new TextBox("console-window", new Box.BoxOptions
         {
             Color = Color.MediumSpringGreen,
             Size = new Vector2(1920, 100),
-            UiAnchor = UIAnchor.CenterY
-        });
+            UiAnchor = UIAnchor.Bottom,
+        }, s => { Logger.Log("Submit"); });
 
         Components.Add(consoleWindow);
 
-        windowAnimator = new Animator(consoleWindow, 0.2f);
-        windowAnimator.StartAnimation();
+        _windowAnimator = new Animator(consoleWindow, 0.33f);
 
         return this;
     }
 
     public override void Update(MouseState mouseState)
     {
-        windowAnimator.Update();
+        _windowAnimator.Update();
         base.Update(mouseState);
+    }
+
+    public override void ToggleVisibility()
+    {
+        if (!IsVisible)
+        {
+            _windowAnimator.Reset();
+            _windowAnimator.StartAnimation();
+        }
+
+        base.ToggleVisibility();
     }
 }

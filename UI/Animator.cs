@@ -7,7 +7,7 @@ namespace ranch_mayhem_engine.UI;
 
 public class Animator
 {
-    public UIComponent Component;
+    private readonly UIComponent _component;
     private readonly float _animationSpeed;
 
     private float _startY;
@@ -19,7 +19,7 @@ public class Animator
 
     public Animator(UIComponent component, float animationSpeed = 0.1f)
     {
-        Component = component;
+        _component = component;
         _animationSpeed = animationSpeed;
 
         _startY = -component.Options.Size.Y;
@@ -31,7 +31,20 @@ public class Animator
 
     public void StartAnimation()
     {
+        _isAnimationDone = false;
         _isAnimating = true;
+    }
+
+    public void Reset()
+    {
+        if (!_isAnimationDone) return;
+
+        _startY = -_component.Options.Size.Y;
+        _currentY = _startY;
+        _endY = _component.GlobalPosition.Y;
+
+
+        _component.GlobalPosition = new Vector2(_component.GlobalPosition.X, _startY);
     }
 
     public void Update()
@@ -48,7 +61,7 @@ public class Animator
                 _isAnimationDone = true;
             }
 
-            Component.GlobalPosition = new Vector2(Component.GlobalPosition.X, _currentY);
+            _component.GlobalPosition = new Vector2(_component.GlobalPosition.X, _currentY);
         }
     }
 }

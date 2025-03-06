@@ -8,29 +8,17 @@ namespace ranch_mayhem_engine;
 public static class KeyboardInput
 {
     private static KeyboardState _previousState;
-    private static KeyboardState _currentState;
-
+    public static KeyboardState CurrentState;
 
     public static void Update()
     {
-        _previousState = _currentState;
-        _currentState = Keyboard.GetState();
-
-        var keys = "";
-        foreach (var key in _currentState.GetPressedKeys())
-        {
-            keys += $"{GetCharFromKey(key)} ";
-        }
-
-        if (IsNewKeyPress(Keys.A))
-        {
-            Logger.Log($"{DateTimeOffset.Now.ToUnixTimeMilliseconds()} current {keys}");
-        }
+        _previousState = CurrentState;
+        CurrentState = Keyboard.GetState();
     }
 
     public static bool IsNewKeyPress(Keys key)
     {
-        return _currentState.IsKeyDown(key) && !_previousState.IsKeyDown(key);
+        return CurrentState.IsKeyDown(key) && !_previousState.IsKeyDown(key);
     }
 
     public static char? GetCharFromKey(Keys key)

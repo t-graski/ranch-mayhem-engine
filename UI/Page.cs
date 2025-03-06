@@ -43,5 +43,5 @@ public abstract class Page
         }
     }
 
-    public void ToggleVisibility() => IsVisible = !IsVisible;
+    public virtual void ToggleVisibility() => IsVisible = !IsVisible;
 }

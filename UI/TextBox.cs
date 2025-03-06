@@ -31,6 +31,7 @@ public class TextBox : UIComponent
         if (IsClicked)
         {
             _isActive = true;
+            RanchMayhemEngine.KeyboardManager.IsInTextBox = true;
         }
 
         if (_isActive)
@@ -39,7 +40,6 @@ public class TextBox : UIComponent
 
             foreach (var key in keys)
             {
-                Logger.Log($"new key = {KeyboardInput.IsNewKeyPress(key)}");
                 if (KeyboardInput.IsNewKeyPress(key))
                 {
                     HandleKeyPress(key);

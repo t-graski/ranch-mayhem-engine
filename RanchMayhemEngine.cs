@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ranch_mayhem_engine.Content;
-using ranch_mayhem_engine.Pages;
+using ranch_mayhem_engine.Debug;
 using ranch_mayhem_engine.UI;
 
 namespace ranch_mayhem_engine;
@@ -15,24 +14,26 @@ public sealed class RanchMayhemEngine : Game
     private const int Width = 1280;
     private const int Height = 720;
 
-
     private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
     public static UIManager UIManager { get; private set; }
     public static ContentManager ContentManager { get; private set; }
-    public static SpriteFont MainFont { get; private set; }
-
+    public static KeyboardManager KeyboardManager { get; private set; }
     public static MouseState MouseState { get; private set; }
-
     public static bool IsFocused { get; private set; } = true;
     private static bool WasFocused { get; set; } = false;
+
+    public static double Framerate { get; private set; }
 
     public RanchMayhemEngine()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
+
+        IsFixedTimeStep = true;
+        TargetElapsedTime = TimeSpan.FromSeconds(1d / 30d);
     }
 
     protected override void Initialize()
@@ -49,23 +50,29 @@ public sealed class RanchMayhemEngine : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-        // MainFont = Content.Load<SpriteFont>("MainFont");
-
         UIManager = new UIManager(_spriteBatch.GraphicsDevice, _spriteBatch);
         UIManager.Initialize();
 
         ContentManager = new ContentManager();
         ContentManager.LoadContent(Content);
 
+        KeyboardManager = new KeyboardManager();
+
         // UIManager.AddComponent(new MenuBar().Initialize());
         // UIManager.AddComponent(new Crops().Initialize());
-        UIManager.AddComponent(new Pages.Console().Initialize());
+        var console = new Pages.Console().Initialize();
+        UIManager.AddComponent(console);
+        KeyboardManager.RegisterBinding(Keys.OemQuestion, console);
 
-        // TODO: use this.Content to load your game content here
+        var stats = new Stats().Initialize();
+        UIManager.AddComponent(stats);
+        KeyboardManager.RegisterBinding(Keys.S, stats);
     }
 
     protected override void Update(GameTime gameTime)
     {
+        Framerate = (1 / gameTime.ElapsedGameTime.TotalSeconds);
+
         MouseState = Mouse.GetState();
 
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed ||
@@ -73,8 +80,6 @@ public sealed class RanchMayhemEngine : Game
             Exit();
 
         UIManager.UpdateComponents(MouseState);
-
-        // TODO: Add your update logic here
 
         if (!IsActive && !WasFocused)
         {
@@ -92,6 +97,7 @@ public sealed class RanchMayhemEngine : Game
 
 
         KeyboardInput.Update();
+        KeyboardManager.Update();
         base.Update(gameTime);
     }
 
@@ -104,8 +110,6 @@ public sealed class RanchMayhemEngine : Game
         UIManager.RenderComponents();
 
         _spriteBatch.End();
-
-        // TODO: Add your drawing code here
 
         base.Draw(gameTime);
     }
