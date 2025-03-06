@@ -12,7 +12,7 @@ public abstract class UIComponent
     protected UIComponent Parent { get; private set; }
     public string Id { get; }
     protected Vector2 LocalPosition;
-    protected Vector2 GlobalPosition;
+    public Vector2 GlobalPosition { get; set; }
     protected Rectangle Bounds;
 
     public UIComponentOptions Options { get; set; } = new();
@@ -193,8 +193,29 @@ public abstract class UIComponent
 
     public virtual void Draw(SpriteBatch spriteBatch)
     {
-        spriteBatch.Draw(Options.Texture, GlobalPosition, null, Color.White, 0f, Vector2.Zero,
-            Options.Scale, SpriteEffects.None, 0f);
+        if (Options.Texture != null)
+        {
+            spriteBatch.Draw(Options.Texture, GlobalPosition, null, Color.White, 0f, Vector2.Zero,
+                Options.Scale, SpriteEffects.None, 0f);
+        }
+        else
+        {
+            // Logger.Log($"{GetType().FullName}::Draw Id={Id} Drawing at {GlobalPosition}");
+            var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
+            texture.SetData([Options.Color]);
+            if (Parent is null)
+            {
+                spriteBatch.Draw(texture,
+                    new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
+                        (int)Options.Size.Y), Options.Color);
+            }
+            else
+            {
+                spriteBatch.Draw(texture,
+                    new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
+                        (int)Options.Size.Y), Options.Color);
+            }
+        }
     }
 
     public void HandleMouse(MouseState mouseState)

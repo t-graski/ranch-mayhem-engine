@@ -57,8 +57,9 @@ public sealed class RanchMayhemEngine : Game
         ContentManager = new ContentManager();
         ContentManager.LoadContent(Content);
 
-        UIManager.AddComponent(new MenuBar().Initialize());
-        UIManager.AddComponent(new Crops().Initialize());
+        // UIManager.AddComponent(new MenuBar().Initialize());
+        // UIManager.AddComponent(new Crops().Initialize());
+        UIManager.AddComponent(new Pages.Console().Initialize());
 
         // TODO: use this.Content to load your game content here
     }
