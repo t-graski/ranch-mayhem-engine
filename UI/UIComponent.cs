@@ -24,6 +24,7 @@ public abstract class UIComponent
 
     private bool _isHovered;
     protected bool IsClicked;
+    protected bool IsActive;
 
     protected UIComponent(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true)
     {
@@ -229,6 +230,7 @@ public abstract class UIComponent
             {
                 OnClick?.Invoke();
                 IsClicked = !IsClicked;
+                IsActive = true;
             }
         }
 
@@ -248,6 +250,13 @@ public abstract class UIComponent
             }
         }
 
+        if (IsActive && mouseState is { LeftButton: ButtonState.Pressed, RightButton: ButtonState.Released } &&
+            !Bounds.Contains(mouseState.Position))
+        {
+            IsActive = false;
+            OffActive();
+        }
+
         if (_isHovered)
         {
             if (Bounds.Contains(mouseState.Position)) return;
@@ -255,6 +264,10 @@ public abstract class UIComponent
             OffHover?.Invoke();
             _isHovered = !_isHovered;
         }
+    }
+
+    public virtual void OffActive()
+    {
     }
 
     protected static Vector2 ScaleToGlobal(Vector2 position)

@@ -12,10 +12,10 @@ public class Crops : Page
         Id = "crops";
         IsVisible = false;
 
-        List<string> cropsNames = [];
+        List<string> cropsNames = new();
         var contentManager = RanchMayhemEngine.ContentManager;
 
-        List<UIComponent> cropComponents = [];
+        List<UIComponent> cropComponents = new();
 
         foreach (var crop in cropsNames)
         {
@@ -40,19 +40,40 @@ public class Crops : Page
 
         cropComponents.Add(cropText);
 
+        var container = new Box("box", new Box.BoxOptions
+        {
+            Color = Color.MediumAquamarine,
+            Position = new Vector2(100),
+            Size = new Vector2(1720, 664)
+        });
+
+        Components.Add(container);
+
+        var input = new TextBox("crops-input", new TextBox.TextBoxOptions
+        {
+            Size = new Vector2(720, 100),
+            // Texture = contentManager.GetTexture("button"),
+            Color = Color.Blue,
+            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
+        }, s => { });
+
+        // cropComponents.Add(input);
+        input.SetParent(container);
+        Components.Add(input);
+
         var cropInventory = new Grid("crop-inventory", new Grid.GridOptions
         {
             Color = Color.MediumAquamarine,
             Position = new Vector2(100),
             Size = new Vector2(1720, 664),
-            Columns = [1, 1, 1],
+            Columns =  [1, 1, 1],
             ColumnGap = 0,
-            Rows = [1, 1],
+            Rows =  [1, 1],
             RowGap = 0,
             Padding = new Vector4(5)
         }, cropComponents);
 
-        Components.Add(cropInventory);
+        // Components.Add(cropInventory);
 
         return this;
     }

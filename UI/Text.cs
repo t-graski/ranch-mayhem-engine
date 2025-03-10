@@ -19,20 +19,21 @@ public class Text : UIComponent
 
     private void InitializeFont()
     {
-        var size = RanchMayhemEngine.ContentManager.GetClosestSize("Joystix", _textOptions.FontSize);
-        _font = RanchMayhemEngine.ContentManager.GetFont("Joystix", size);
+        var fontWithSize = RanchMayhemEngine.ContentManager.GetFontWithSize("Arial", _textOptions.FontSize);
+        _font = fontWithSize.font;
+
         var scale = 1.0f;
 
-        if (size != _textOptions.FontSize)
+        if (fontWithSize.size != _textOptions.FontSize)
         {
-            scale = CalculateScale(size, _textOptions.FontSize);
+            scale = CalculateScale(fontWithSize.size, _textOptions.FontSize);
         }
 
         Options.Scale = new Vector2(scale);
         Options.Size = _font.MeasureString(_textOptions.Content);
 
         Logger.Log(
-            $"{GetType().FullName}::InitializeFont Id={Id} Given size: {_textOptions.FontSize}, Found size: {size}, Using scale: {scale}",
+            $"{GetType().FullName}::InitializeFont Id={Id} Given size: {_textOptions.FontSize}, Found size: {fontWithSize.size}, Using scale: {scale}",
             Logger.LogLevel.Internal);
     }
 

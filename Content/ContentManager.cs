@@ -101,7 +101,26 @@ public class ContentManager
         return _fonts[name].ContainsKey(size);
     }
 
-    public SpriteFont GetFont(string name, int size) => _fonts[name][size];
+    public SpriteFont GetFont(string name, int size)
+    {
+        if (!HasSize(name, size))
+        {
+            return _fonts[name][GetClosestSize(name, size)];
+        }
+
+        return _fonts[name][size];
+    }
+
+    public (SpriteFont font, int size) GetFontWithSize(string name, int size)
+    {
+        if (!HasSize(name, size))
+        {
+            var closest = GetClosestSize(name, size);
+            return (_fonts[name][closest], closest);
+        }
+
+        return (_fonts[name][size], size);
+    }
 
     private static List<ContentItem> LoadJson()
     {

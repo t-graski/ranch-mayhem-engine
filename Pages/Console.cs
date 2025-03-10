@@ -14,11 +14,13 @@ public class Console : Page
     {
         IsVisible = false;
 
-        var consoleWindow = new TextBox("console-window", new Box.BoxOptions
+        var consoleWindow = new TextBox("console-window", new TextBox.TextBoxOptions
         {
             Color = Color.MediumSpringGreen,
             Size = new Vector2(1920, 100),
             UiAnchor = UIAnchor.Bottom,
+            FontColor = Color.DarkRed,
+            FontSize = 52
         }, s => { Logger.Log("Submit"); });
 
         Components.Add(consoleWindow);
