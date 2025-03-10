@@ -46,7 +46,7 @@ public class ContentManager
 
     private void LoadFont(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
     {
-        if (item.Sizes == null || item.Sizes.Count < 1)
+        if (item.Sizes == null || item.Sizes.Count == 0)
         {
             Logger.Log($"{GetType().FullName}::LoadFont No sizes defined for font={item.Name}");
             return;

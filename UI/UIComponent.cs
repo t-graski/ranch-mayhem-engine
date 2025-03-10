@@ -26,6 +26,8 @@ public abstract class UIComponent
     protected bool IsClicked;
     protected bool IsActive;
 
+    private bool HasBorder;
+
     protected UIComponent(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true)
     {
         Id = id;
@@ -75,6 +77,8 @@ public abstract class UIComponent
         {
             Logger.Log($"{prefix} Scale is negative ({options.Scale})", Logger.LogLevel.Warning);
         }
+
+        // TODO: check for border options to be either all null or none null.
     }
 
     private void ApplyOptions(UIComponentOptions options)
@@ -83,6 +87,14 @@ public abstract class UIComponent
         Options.SizeUnit = options.SizeUnit;
         Options.SizePercent = options.SizePercent;
         Options.UiAnchor = options.UiAnchor;
+
+        if (options.BorderSize != 0)
+        {
+            Options.BorderColor = options.BorderColor;
+            Options.BorderSize = options.BorderSize;
+            Options.BorderOrientation = options.BorderOrientation;
+            HasBorder = true;
+        }
 
         if (options.Position == Vector2.Zero && options.Size != Vector2.Zero)
         {
@@ -217,6 +229,35 @@ public abstract class UIComponent
                         (int)Options.Size.Y), Options.Color);
             }
         }
+
+        if (HasBorder)
+        {
+            if (Options.BorderOrientation == BorderOrientation.Inside)
+            {
+                var top = GlobalPosition;
+                var topSize = new Vector2(Options.Size.X, Options.BorderSize);
+                DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
+
+                var left = new Vector2(top.X, top.Y + Options.BorderSize);
+                var leftSize = new Vector2(Options.BorderSize, Options.Size.Y - 2 * Options.BorderSize);
+                DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
+
+                var right = new Vector2(left.X + Options.Size.X - Options.BorderSize, left.Y);
+                DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
+
+                var bottom = new Vector2(top.X, top.Y + Options.Size.Y - Options.BorderSize - 1);
+                DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+            }
+        }
+    }
+
+    private void DrawRectangle(SpriteBatch spriteBatch, Vector2 position, Vector2 size, Color color)
+    {
+        var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
+        texture.SetData([color]);
+
+        spriteBatch.Draw(texture, new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y),
+            color);
     }
 
     public void HandleMouse(MouseState mouseState)

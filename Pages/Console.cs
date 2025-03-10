@@ -18,9 +18,13 @@ public class Console : Page
         {
             Color = Color.MediumSpringGreen,
             Size = new Vector2(1920, 100),
-            UiAnchor = UIAnchor.Bottom,
+            UiAnchor = UIAnchor.CenterY,
             FontColor = Color.DarkRed,
-            FontSize = 52
+            FontSize = 52,
+
+            BorderSize = 10,
+            BorderOrientation = BorderOrientation.Inside,
+            BorderColor = Color.Red
         }, s => { Logger.Log("Submit"); });
 
         Components.Add(consoleWindow);

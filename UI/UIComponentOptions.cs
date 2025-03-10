@@ -14,6 +14,14 @@ public class UIComponentOptions
     public SizeUnit SizeUnit = SizeUnit.Pixels;
     public Vector2 Scale;
 
+    public Color BorderColor;
+    public int BorderSize;
+    public BorderOrientation BorderOrientation = BorderOrientation.Outside;
+
+// - BorderTexture (to be implemented)
+// - BorderSize (to be implemented)
+// - BorderOrientation (inside, outside) (to be implemented)
+
     public override string ToString()
     {
         return
@@ -25,4 +33,10 @@ public enum SizeUnit
 {
     Pixels,
     Percent
+}
+
+public enum BorderOrientation
+{
+    Inside,
+    Outside
 }

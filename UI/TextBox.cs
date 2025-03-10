@@ -11,10 +11,9 @@ public class TextBox : UIComponent
     private readonly StringBuilder _text;
     private readonly SpriteFont _font;
     private Texture2D _background;
+
     private readonly Action<string> _onSubmit;
-
-    private TextBoxOptions _textBoxOptions;
-
+    private readonly TextBoxOptions _textBoxOptions;
 
     public TextBox(string id, TextBoxOptions options, Action<string> onSubmit, UIComponent parent = null,
         bool scale = true) : base(id,

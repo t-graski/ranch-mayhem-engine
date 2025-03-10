@@ -40,7 +40,7 @@ public class Text : UIComponent
     public override void Draw(SpriteBatch spriteBatch)
     {
         // Logger.Log($"drawing text {Id} pos:{GlobalPosition} scale:{Options.Scale} size:{Options.Size}");
-        spriteBatch.DrawString(_font, _textOptions.Content, GlobalPosition, Color.Red, 0f, Vector2.Zero,
+        spriteBatch.DrawString(_font, _textOptions.Content, GlobalPosition, _textOptions.FontColor, 0f, Vector2.Zero,
             Options.Scale,
             SpriteEffects.None, 0.5f);
     }
@@ -65,7 +65,6 @@ public class Text : UIComponent
     {
         public string Content = "";
         public int FontSize = 12;
-
         public Color FontColor;
         // public TextAlignment Alignment = TextAlignment.Center;`
     }
