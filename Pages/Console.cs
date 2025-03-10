@@ -15,14 +15,15 @@ public class Console : Page
         var consoleWindow = new TextBox("console-window", new TextBox.TextBoxOptions
         {
             Color = Color.MediumSpringGreen,
-            Size = new Vector2(1920, 100),
-            UiAnchor = UIAnchor.Bottom,
+            Size = new Vector2(900, 100),
+            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
             FontColor = Color.DarkRed,
             FontSize = 52,
 
-            BorderSize = 1,
+            BorderSize = 8,
             BorderOrientation = BorderOrientation.Inside,
-            BorderColor = Color.DarkGray
+            BorderTexture = RanchMayhemEngine.ContentManager.GetTexture("planks_oak"),
+            BorderCornerTexture = RanchMayhemEngine.ContentManager.GetTexture("log_oak_top")
         }, s => { Logger.Log("Submit"); });
 
         Components.Add(consoleWindow);

@@ -20,6 +20,14 @@
     "type": "sprite"
   },
   {
+    "name": "planks_oak",
+    "type": "sprite"
+  },
+  {
+    "name": "log_oak_top",
+    "type": "sprite"
+  },
+  {
     "name": "Arial",
     "type": "font",
     "sizes": [

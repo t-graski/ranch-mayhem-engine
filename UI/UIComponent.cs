@@ -93,6 +93,8 @@ public abstract class UIComponent
             Options.BorderColor = options.BorderColor;
             Options.BorderSize = options.BorderSize;
             Options.BorderOrientation = options.BorderOrientation;
+            Options.BorderTexture = options.BorderTexture;
+            Options.BorderCornerTexture = options.BorderCornerTexture;
             HasBorder = true;
         }
 
@@ -232,38 +234,69 @@ public abstract class UIComponent
 
         if (HasBorder)
         {
-            if (Options.BorderOrientation == BorderOrientation.Inside)
+            if (Options.BorderTexture == null)
             {
-                var top = GlobalPosition;
-                var topSize = new Vector2(Options.Size.X, Options.BorderSize);
-                DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
+                if (Options.BorderOrientation == BorderOrientation.Inside)
+                {
+                    var top = GlobalPosition;
+                    var topSize = new Vector2(Options.Size.X, Options.BorderSize);
+                    DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
 
-                var left = new Vector2(top.X, top.Y + Options.BorderSize);
-                var leftSize = new Vector2(Options.BorderSize, Options.Size.Y - 2 * Options.BorderSize);
-                DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
+                    var left = new Vector2(top.X, top.Y + Options.BorderSize);
+                    var leftSize = new Vector2(Options.BorderSize, Options.Size.Y - 2 * Options.BorderSize);
+                    DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
 
-                var right = new Vector2(left.X + Options.Size.X - Options.BorderSize, left.Y);
-                DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
+                    var right = new Vector2(left.X + Options.Size.X - Options.BorderSize, left.Y);
+                    DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
 
-                var bottom = new Vector2(top.X, top.Y + Options.Size.Y - Options.BorderSize - 1);
-                DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+                    var bottom = new Vector2(top.X, top.Y + Options.Size.Y - Options.BorderSize - 1);
+                    DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+                }
+
+                if (Options.BorderOrientation == BorderOrientation.Outside)
+                {
+                    var top = new Vector2(GlobalPosition.X - Options.BorderSize, GlobalPosition.Y - Options.BorderSize);
+                    var topSize = new Vector2(Options.Size.X + Options.BorderSize * 2, Options.BorderSize);
+                    DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
+
+                    var left = new Vector2(top.X, top.Y + Options.BorderSize);
+                    var leftSize = new Vector2(Options.BorderSize, Options.Size.Y);
+                    DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
+
+                    var right = new Vector2(left.X + Options.Size.X + Options.BorderSize, left.Y);
+                    DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
+
+                    var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
+                    DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+                }
             }
-
-            if (Options.BorderOrientation == BorderOrientation.Outside)
+            else
             {
-                var top = new Vector2(GlobalPosition.X - Options.BorderSize, GlobalPosition.Y - Options.BorderSize);
-                var topSize = new Vector2(Options.Size.X + Options.BorderSize * 2, Options.BorderSize);
-                DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
+                var topLeftCorner = new Vector2(GlobalPosition.X - Options.BorderSize,
+                    GlobalPosition.Y - Options.BorderSize);
+                var bottomLeftCorner = new Vector2(topLeftCorner.X,
+                    topLeftCorner.Y + Options.Size.Y + Options.BorderSize - 1);
+                var topRightCorner =
+                    new Vector2(topLeftCorner.X + Options.Size.X + Options.BorderSize, topLeftCorner.Y);
+                var bottomRightCorner = new Vector2(topRightCorner.X,
+                    topRightCorner.Y + Options.Size.Y + Options.BorderSize - 1);
 
-                var left = new Vector2(top.X, top.Y + Options.BorderSize);
+                var top = new Vector2(GlobalPosition.X, GlobalPosition.Y - Options.BorderSize);
+                var topSize = new Vector2(Options.Size.X, Options.BorderSize);
+
+                var left = new Vector2(topLeftCorner.X, topLeftCorner.Y + Options.BorderSize);
                 var leftSize = new Vector2(Options.BorderSize, Options.Size.Y);
-                DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
 
-                var right = new Vector2(left.X + Options.Size.X + Options.BorderSize, left.Y);
-                DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
-
-                var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
-                DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topLeftCorner,
+                    new Vector2(Options.BorderSize));
+                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topRightCorner,
+                    new Vector2(Options.BorderSize));
+                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomLeftCorner,
+                    new Vector2(Options.BorderSize));
+                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomRightCorner,
+                    new Vector2(Options.BorderSize));
+                DrawTiledTexture(spriteBatch, Options.BorderTexture, top, topSize);
+                DrawTiledTexture(spriteBatch, Options.BorderTexture, left, leftSize);
             }
         }
     }
@@ -275,6 +308,28 @@ public abstract class UIComponent
 
         spriteBatch.Draw(texture, new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y),
             color);
+    }
+
+    private void DrawTiledTexture(SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Vector2 size)
+    {
+        var rect = new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y);
+        var tileSize = texture.Width;
+
+        for (var x = rect.Left; x < rect.Right; x += tileSize)
+        {
+            var width = Math.Min(tileSize, rect.Right - x);
+            spriteBatch.Draw(texture, new Rectangle(x, rect.Top, width, Options.BorderSize),
+                new Rectangle(0, 0, width, Options.BorderSize),
+                Color.White);
+        }
+
+        for (var y = rect.Top; y < rect.Bottom; y += tileSize)
+        {
+            var height = Math.Min(tileSize, rect.Bottom - y);
+
+            spriteBatch.Draw(texture, new Rectangle(rect.Left, y, Options.BorderSize, height),
+                new Rectangle(0, 0, Options.BorderSize, height), Color.White);
+        }
     }
 
     public void HandleMouse(MouseState mouseState)

@@ -15,6 +15,8 @@ public class UIComponentOptions
     public Vector2 Scale;
 
     public Color BorderColor;
+    public Texture2D BorderTexture;
+    public Texture2D BorderCornerTexture;
     public int BorderSize;
     public BorderOrientation BorderOrientation = BorderOrientation.Outside;
 

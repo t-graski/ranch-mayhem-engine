@@ -65,7 +65,7 @@ public class MenuBar : Page
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
         });
 
-        var input = new TextBox("input", new Box.BoxOptions
+        var input = new TextBox("input", new TextBox.TextBoxOptions
         {
             Texture = contentManager.GetTexture("button"),
             Size = new Vector2(100),
