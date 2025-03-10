@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ranch_mayhem_engine.Content;
-using ranch_mayhem_engine.Debug;
 using ranch_mayhem_engine.UI;
 
 namespace ranch_mayhem_engine;
@@ -23,7 +22,6 @@ public sealed class RanchMayhemEngine : Game
     public static MouseState MouseState { get; private set; }
     public static bool IsFocused { get; private set; } = true;
     private static bool WasFocused { get; set; } = false;
-
     public static double Framerate { get; private set; }
 
     public RanchMayhemEngine()
@@ -63,10 +61,6 @@ public sealed class RanchMayhemEngine : Game
         var console = new Pages.Console().Initialize();
         UIManager.AddComponent(console);
         KeyboardManager.RegisterBinding(Keys.OemQuestion, console);
-
-        var stats = new Stats().Initialize();
-        UIManager.AddComponent(stats);
-        KeyboardManager.RegisterBinding(Keys.S, stats);
     }
 
     protected override void Update(GameTime gameTime)

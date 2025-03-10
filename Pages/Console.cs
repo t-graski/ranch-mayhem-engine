@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks.Dataflow;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using ranch_mayhem_engine.UI;
 
@@ -18,13 +16,13 @@ public class Console : Page
         {
             Color = Color.MediumSpringGreen,
             Size = new Vector2(1920, 100),
-            UiAnchor = UIAnchor.CenterY,
+            UiAnchor = UIAnchor.Bottom,
             FontColor = Color.DarkRed,
             FontSize = 52,
 
-            BorderSize = 10,
+            BorderSize = 1,
             BorderOrientation = BorderOrientation.Inside,
-            BorderColor = Color.Red
+            BorderColor = Color.DarkGray
         }, s => { Logger.Log("Submit"); });
 
         Components.Add(consoleWindow);

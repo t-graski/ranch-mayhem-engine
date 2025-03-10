@@ -248,6 +248,23 @@ public abstract class UIComponent
                 var bottom = new Vector2(top.X, top.Y + Options.Size.Y - Options.BorderSize - 1);
                 DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
             }
+
+            if (Options.BorderOrientation == BorderOrientation.Outside)
+            {
+                var top = new Vector2(GlobalPosition.X - Options.BorderSize, GlobalPosition.Y - Options.BorderSize);
+                var topSize = new Vector2(Options.Size.X + Options.BorderSize * 2, Options.BorderSize);
+                DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
+
+                var left = new Vector2(top.X, top.Y + Options.BorderSize);
+                var leftSize = new Vector2(Options.BorderSize, Options.Size.Y);
+                DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
+
+                var right = new Vector2(left.X + Options.Size.X + Options.BorderSize, left.Y);
+                DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
+
+                var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
+                DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+            }
         }
     }
 
