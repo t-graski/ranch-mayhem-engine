@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ranch_mayhem_engine.UI;
@@ -24,28 +23,15 @@ public class Container : UIComponent
     {
         foreach (var component in _components)
         {
+            // Logger.Log(
+                // $"{GetType().FullName}::UpdateParentLocation Id:{Id} updating id:{component.Id} parent global: {GlobalPosition} parent local: {LocalPosition}");
             component.SetParent(this);
         }
     }
 
-
     public override void Draw(SpriteBatch spriteBatch)
     {
-        var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
-        texture.SetData([Options.Color]);
-        if (Parent is null)
-        {
-            RanchMayhemEngine.UIManager.SpriteBatch.Draw(texture,
-                new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X, (int)Options.Size.Y),
-                Options.Color);
-        }
-        else
-        {
-            RanchMayhemEngine.UIManager.SpriteBatch.Draw(texture,
-                new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
-                    (int)Options.Size.Y), Options.Color);
-        }
-
+        base.Draw(spriteBatch);
         foreach (var component in _components)
         {
             component.Draw(spriteBatch);

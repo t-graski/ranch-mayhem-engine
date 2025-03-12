@@ -3,6 +3,8 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ranch_mayhem_engine.Content;
+using ranch_mayhem_engine.Debug;
+using ranch_mayhem_engine.Pages;
 using ranch_mayhem_engine.UI;
 
 namespace ranch_mayhem_engine;
@@ -56,11 +58,15 @@ public sealed class RanchMayhemEngine : Game
 
         KeyboardManager = new KeyboardManager();
 
-        // UIManager.AddComponent(new MenuBar().Initialize());
-        // UIManager.AddComponent(new Crops().Initialize());
+        UIManager.AddComponent(new MenuBar().Initialize());
+        UIManager.AddComponent(new Crops().Initialize());
         var console = new Pages.Console().Initialize();
         UIManager.AddComponent(console);
+        var stats = new Stats().Initialize();
+        UIManager.AddComponent(stats);
+
         KeyboardManager.RegisterBinding(Keys.OemQuestion, console);
+        KeyboardManager.RegisterBinding(Keys.S, stats);
     }
 
     protected override void Update(GameTime gameTime)

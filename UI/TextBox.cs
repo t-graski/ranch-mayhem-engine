@@ -85,6 +85,9 @@ public class TextBox : UIComponent
     public override void Draw(SpriteBatch spriteBatch)
     {
         base.Draw(spriteBatch);
+
+        // TODO: Hide overflow 
+
         spriteBatch.DrawString(_font, _text.ToString(), new Vector2(Bounds.X + 5, Bounds.Y + 5),
             _textBoxOptions.FontColor);
     }

@@ -11,19 +11,21 @@ public class Console : Page
     public override Page Initialize()
     {
         IsVisible = false;
+        Id = "console";
 
         var consoleWindow = new TextBox("console-window", new TextBox.TextBoxOptions
         {
             Color = Color.MediumSpringGreen,
-            Size = new Vector2(900, 100),
+            Size = new Vector2(1536, 360),
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
             FontColor = Color.DarkRed,
             FontSize = 52,
 
             BorderSize = 8,
-            BorderOrientation = BorderOrientation.Inside,
+            BorderOrientation = BorderOrientation.Outside,
             BorderTexture = RanchMayhemEngine.ContentManager.GetTexture("planks_oak"),
-            BorderCornerTexture = RanchMayhemEngine.ContentManager.GetTexture("log_oak_top")
+            // BorderCornerTexture = RanchMayhemEngine.ContentManager.GetTexture("log_oak_top")
+            // BorderColor = Color.Green
         }, s => { Logger.Log("Submit"); });
 
         Components.Add(consoleWindow);

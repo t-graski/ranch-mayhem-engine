@@ -10,13 +10,17 @@ public class MenuBar : Page
         Id = "menu-bar";
         var contentManager = RanchMayhemEngine.ContentManager;
 
-
-        var profile = new Box("profile", new Box.BoxOptions
+        var profile = new Box("menubar-profile", new Box.BoxOptions
         {
-            Texture = contentManager.GetTexture("quick_access"),
-            Size = new Vector2(128),
-            // Color = Color.Red,
+            // Texture = contentManager.GetTexture("quick_access"),
+            SizePercent = new Vector2(0, 75),
+            SizeUnit = SizeUnit.Percent,
+            Color = Color.WhiteSmoke,
             UiAnchor = UIAnchor.CenterY | UIAnchor.Left,
+
+            BorderColor = Color.Goldenrod,
+            BorderSize = 4,
+            BorderOrientation = BorderOrientation.Inside
         });
 
         var quickAccess = new Box("menubar-quick-access", new Box.BoxOptions
@@ -26,23 +30,11 @@ public class MenuBar : Page
             // Size = new Vector2(128),
             SizePercent = new Vector2(0, 75),
             SizeUnit = SizeUnit.Percent,
-            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
-        });
-
-        // var crops = new Box("menubar-crops", new UIComponentOptions
-        // {
-        //     Texture = contentManager.GetTexture("crops"),
-        //     SizePercent = new Vector2(0, 75),
-        //     SizeUnit = SizeUnit.Percent,
-        //     UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
-        // });
-
-        var cropText = new Text("menubar-crops-text", new Text.TextOptions
-        {
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
-            Color = Color.Lavender,
-            FontSize = 12,
-            Content = "CROPS"
+
+            BorderColor = Color.Goldenrod,
+            BorderSize = 4,
+            BorderOrientation = BorderOrientation.Inside
         });
 
         var crops = new Button("menubar-crops", new Button.ButtonOptions
@@ -52,25 +44,15 @@ public class MenuBar : Page
             SizeUnit = SizeUnit.Percent,
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
             HoverTexture = contentManager.GetTexture("crops"),
-            ClickTexture = contentManager.GetTexture("crops")
-        }, cropText)
+            ClickTexture = contentManager.GetTexture("crops"),
+
+            BorderColor = Color.Goldenrod,
+            BorderSize = 4,
+            BorderOrientation = BorderOrientation.Inside
+        })
         {
             OnClick = ToggleInventory
         };
-
-        var crop3 = new Box("crop-3", new Box.BoxOptions
-        {
-            Texture = contentManager.GetTexture("crops"),
-            Size = new Vector2(128),
-            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
-        });
-
-        var input = new TextBox("input", new TextBox.TextBoxOptions
-        {
-            Texture = contentManager.GetTexture("button"),
-            Size = new Vector2(100),
-            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
-        }, s => { Logger.Log("pressed enter"); });
 
         var menubar = new Grid("menubar", new Grid.GridOptions()
         {
@@ -81,13 +63,14 @@ public class MenuBar : Page
             ColumnGap = 10,
             Rows = [1],
             RowGap = 0,
-            Padding = new Vector4(5)
-        }, [profile, quickAccess, crops, input]);
+            Padding = new Vector4(5),
+            
+            BorderColor = Color.DarkGray,
+            BorderOrientation = BorderOrientation.Inside,
+            BorderSize = 2
+        }, [profile, quickAccess, crops]);
 
         Components.Add(menubar);
-        Components.Add(cropText);
-        Components.Add(input);
-        cropText.SetParent(crops);
         IsVisible = true;
 
         return this;

@@ -48,8 +48,7 @@ public class Grid : UIComponent
 
     private void InitializeGrid(List<UIComponent> components)
     {
-        _components = components ?? []
-            ;
+        _components = components ?? [];
 
         foreach (var component in _components)
         {
@@ -109,6 +108,7 @@ public class Grid : UIComponent
 
                 if (current is Container container)
                 {
+                    // Logger.Log($"{GetType().FullName}::CalculatePositions Id={Id} updating parent location for {current.Id}");
                     container.UpdateParentLocation();
                 }
             }
@@ -128,21 +128,7 @@ public class Grid : UIComponent
 
     public override void Draw(SpriteBatch spriteBatch)
     {
-        var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
-        texture.SetData([Options.Color]);
-        if (Parent is null)
-        {
-            RanchMayhemEngine.UIManager.SpriteBatch.Draw(texture,
-                new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X, (int)Options.Size.Y),
-                Options.Color);
-        }
-        else
-        {
-            RanchMayhemEngine.UIManager.SpriteBatch.Draw(texture,
-                new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
-                    (int)Options.Size.Y), Options.Color);
-        }
-
+        base.Draw(spriteBatch);
         foreach (var component in _components)
         {
             component.Draw(spriteBatch);

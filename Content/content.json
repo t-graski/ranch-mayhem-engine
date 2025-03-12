@@ -28,6 +28,10 @@
     "type": "sprite"
   },
   {
+    "name": "louis",
+    "type": "sprite"
+  },
+  {
     "name": "Arial",
     "type": "font",
     "sizes": [

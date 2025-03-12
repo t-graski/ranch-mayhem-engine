@@ -12,68 +12,60 @@ public class Crops : Page
         Id = "crops";
         IsVisible = false;
 
-        List<string> cropsNames = new();
+        List<string> cropsNames = ["louis"];
         var contentManager = RanchMayhemEngine.ContentManager;
 
-        List<UIComponent> cropComponents = new();
+        List<UIComponent> cropComponents = [];
 
-        foreach (var crop in cropsNames)
+        for (var i = 0; i < 2; i++)
         {
-            var box = new Box($"crops-{crop}", new Box.BoxOptions
+            // TODO: centering doesn't work here, probably has something to do with UIComponent::SetParent and recalculating the position
+
+            var crop = new Box($"crops-{i}", new Box.BoxOptions
             {
-                Texture = contentManager.GetTexture(crop),
-                SizePercent = new Vector2(0, 100),
+                Texture = contentManager.GetTexture("louis"),
+                SizePercent = new Vector2(0, 80),
+                UiAnchor = UIAnchor.Top,
                 SizeUnit = SizeUnit.Percent,
-                UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
             });
 
-            cropComponents.Add(box);
+            var cropText = new Text($"crops-{i}-text", new Text.TextOptions
+            {
+                Content = "Amount: 0",
+                FontSize = 12,
+                FontColor = Color.Orange,
+                UiAnchor = UIAnchor.Bottom
+            });
+
+            var container = new Container($"crops-container-{i}", new UIComponentOptions
+            {
+                SizePercent = new Vector2(0, 100),
+                SizeUnit = SizeUnit.Percent,
+                BorderColor = Color.Red,
+                BorderSize = 2,
+                BorderOrientation = BorderOrientation.Outside
+            }, [crop, cropText]);
+
+            cropComponents.Add(container);
         }
-
-        var cropText = new Text("menubar-crops-text", new Text.TextOptions
-        {
-            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
-            Color = Color.Lavender,
-            FontSize = 16,
-            Content = "TESTABC123!"
-        });
-
-        cropComponents.Add(cropText);
-
-        var container = new Box("box", new Box.BoxOptions
-        {
-            Color = Color.MediumAquamarine,
-            Position = new Vector2(100),
-            Size = new Vector2(1720, 664)
-        });
-
-        Components.Add(container);
-
-        var input = new TextBox("crops-input", new TextBox.TextBoxOptions
-        {
-            Size = new Vector2(720, 100),
-            // Texture = contentManager.GetTexture("button"),
-            Color = Color.Blue,
-            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
-        }, s => { });
-
-        // cropComponents.Add(input);
-        input.SetParent(container);
-        Components.Add(input);
 
         var cropInventory = new Grid("crop-inventory", new Grid.GridOptions
         {
             Color = Color.MediumAquamarine,
-            Position = new Vector2(100),
-            Size = new Vector2(1720, 664),
-            Columns =  [1, 1, 1],
+            Position = new Vector2(360, 100),
+            Size = new Vector2(1200, 664),
+            Columns = [1, 1, 1, 1, 1],
             ColumnGap = 0,
-            Rows =  [1, 1],
-            RowGap = 0,
-            Padding = new Vector4(5)
+            Rows = [1, 1, 1],
+            RowGap = 20,
+            Padding = new Vector4(5),
+
+            BorderColor = Color.DarkGoldenrod,
+            BorderSize = 4,
+            BorderOrientation = BorderOrientation.Outside
         }, cropComponents);
 
-        // Components.Add(cropInventory);
+        Components.Add(cropInventory);
 
         return this;
     }

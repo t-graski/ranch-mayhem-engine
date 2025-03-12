@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Security.Cryptography;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -11,7 +12,7 @@ public abstract class UIComponent
 {
     protected UIComponent Parent { get; private set; }
     public string Id { get; }
-    protected Vector2 LocalPosition;
+    public Vector2 LocalPosition;
     public Vector2 GlobalPosition { get; set; }
     protected Rectangle Bounds;
 
@@ -94,7 +95,8 @@ public abstract class UIComponent
             Options.BorderSize = options.BorderSize;
             Options.BorderOrientation = options.BorderOrientation;
             Options.BorderTexture = options.BorderTexture;
-            Options.BorderCornerTexture = options.BorderCornerTexture;
+            Options.BorderCornerTexture = options.BorderCornerTexture ?? Options.BorderTexture;
+
             HasBorder = true;
         }
 
@@ -158,6 +160,15 @@ public abstract class UIComponent
             }
 
             Options.Size = newSize;
+
+            if (Options.Texture != null)
+            {
+                var scaleX = Options.Size.X / Options.Texture?.Width;
+                var scaleY = Options.Size.Y / Options.Texture?.Height;
+                var scale = new Vector2(scaleX ?? 1, scaleY ?? 1);
+
+                Options.Scale = scale;
+            }
         }
     }
 
@@ -242,14 +253,15 @@ public abstract class UIComponent
                     var topSize = new Vector2(Options.Size.X, Options.BorderSize);
                     DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
 
-                    var left = new Vector2(top.X, top.Y + Options.BorderSize);
+                    var left = new Vector2(GlobalPosition.X, GlobalPosition.Y + Options.BorderSize);
                     var leftSize = new Vector2(Options.BorderSize, Options.Size.Y - 2 * Options.BorderSize);
                     DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
 
-                    var right = new Vector2(left.X + Options.Size.X - Options.BorderSize, left.Y);
+                    var right = new Vector2(GlobalPosition.X + Options.Size.X - Options.BorderSize, left.Y);
                     DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
 
-                    var bottom = new Vector2(top.X, top.Y + Options.Size.Y - Options.BorderSize - 1);
+                    var bottom = new Vector2(GlobalPosition.X,
+                        GlobalPosition.Y + leftSize.Y + Options.BorderSize);
                     DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
                 }
 
@@ -287,6 +299,9 @@ public abstract class UIComponent
                 var left = new Vector2(topLeftCorner.X, topLeftCorner.Y + Options.BorderSize);
                 var leftSize = new Vector2(Options.BorderSize, Options.Size.Y);
 
+                var right = new Vector2(left.X + Options.Size.X + Options.BorderSize, left.Y);
+                var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
+
                 DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topLeftCorner,
                     new Vector2(Options.BorderSize));
                 DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topRightCorner,
@@ -296,7 +311,9 @@ public abstract class UIComponent
                 DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomRightCorner,
                     new Vector2(Options.BorderSize));
                 DrawTiledTexture(spriteBatch, Options.BorderTexture, top, topSize);
-                DrawTiledTexture(spriteBatch, Options.BorderTexture, left, leftSize);
+                DrawTiledTexture(spriteBatch, Options.BorderTexture, left, leftSize, false);
+                DrawTiledTexture(spriteBatch, Options.BorderTexture, right, leftSize, false);
+                DrawTiledTexture(spriteBatch, Options.BorderTexture, bottom, topSize);
             }
         }
     }
@@ -306,29 +323,37 @@ public abstract class UIComponent
         var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
         texture.SetData([color]);
 
-        spriteBatch.Draw(texture, new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y),
+        spriteBatch.Draw(texture,
+            new Rectangle((int)Math.Floor(position.X), (int)Math.Floor(position.Y), (int)Math.Floor(size.X),
+                (int)Math.Floor(size.Y)),
             color);
     }
 
-    private void DrawTiledTexture(SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Vector2 size)
+    private void DrawTiledTexture(SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Vector2 size,
+        bool horizontal = true)
     {
         var rect = new Rectangle((int)position.X, (int)position.Y, (int)size.X, (int)size.Y);
         var tileSize = texture.Width;
 
-        for (var x = rect.Left; x < rect.Right; x += tileSize)
+        if (horizontal)
         {
-            var width = Math.Min(tileSize, rect.Right - x);
-            spriteBatch.Draw(texture, new Rectangle(x, rect.Top, width, Options.BorderSize),
-                new Rectangle(0, 0, width, Options.BorderSize),
-                Color.White);
+            for (var x = rect.Left; x < rect.Right; x += tileSize)
+            {
+                var width = Math.Min(tileSize, rect.Right - x);
+                spriteBatch.Draw(texture, new Rectangle(x, rect.Top, width, Options.BorderSize),
+                    new Rectangle(0, 0, width, Options.BorderSize),
+                    Color.White);
+            }
         }
-
-        for (var y = rect.Top; y < rect.Bottom; y += tileSize)
+        else
         {
-            var height = Math.Min(tileSize, rect.Bottom - y);
+            for (var y = rect.Top; y < rect.Bottom; y += tileSize)
+            {
+                var height = Math.Min(tileSize, rect.Bottom - y);
 
-            spriteBatch.Draw(texture, new Rectangle(rect.Left, y, Options.BorderSize, height),
-                new Rectangle(0, 0, Options.BorderSize, height), Color.White);
+                spriteBatch.Draw(texture, new Rectangle(rect.Left, y, Options.BorderSize, height),
+                    new Rectangle(0, 0, Options.BorderSize, height), Color.White);
+            }
         }
     }
 
@@ -397,13 +422,19 @@ public abstract class UIComponent
 
     public void SetParent(UIComponent parent)
     {
+        // Logger.Log(
+        //     $"{GetType().FullName}::SetParent Id:{Id} parent:{parent.Id} parent global pos: {parent.GlobalPosition}");
         Parent = parent;
         UpdateGlobalPosition();
+        RecalculateSize(Options.Size, Parent.Options.Size);
+        // Logger.Log($"{GetType().FullName}::SetParent Id:{Id} global pos:{GlobalPosition}");
     }
 
     private Vector2 CalculateGlobalPosition()
     {
         if (Parent == null) return LocalPosition;
+        // Logger.Log(
+        //     $"{GetType().FullName}::CalculateGlobalPosition Id:{Id} global pos: {GlobalPosition} local pos: {LocalPosition} parent global: {Parent.GlobalPosition}");
         return Parent.CalculateGlobalPosition() + LocalPosition;
     }
 
@@ -418,6 +449,7 @@ public abstract class UIComponent
             if (Options.UiAnchor != UIAnchor.None)
             {
                 LocalPosition = Options.UiAnchor.CalculatePosition(Options.Size, new Vector2(-1), Parent);
+                // Logger.Log($"{GetType().FullName}::UpdateGlobalPosition Id:{Id} local pos: {LocalPosition} parent: {Parent.Id}");
                 GlobalPosition = CalculateGlobalPosition();
             }
 
