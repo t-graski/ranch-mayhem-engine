@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Security.Cryptography;
+using System.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -10,9 +10,9 @@ namespace ranch_mayhem_engine.UI;
 
 public abstract class UIComponent
 {
-    protected UIComponent Parent { get; private set; }
+    private UIComponent Parent { get; set; }
     public string Id { get; }
-    public Vector2 LocalPosition;
+    private Vector2 LocalPosition;
     public Vector2 GlobalPosition { get; set; }
     protected Rectangle Bounds;
 
@@ -22,6 +22,8 @@ public abstract class UIComponent
     protected Action OnHover;
     protected Action OffClick;
     protected Action OffHover;
+
+    protected UIComponent HoverItem { get; set; }
 
     private bool _isHovered;
     protected bool IsClicked;
@@ -245,76 +247,86 @@ public abstract class UIComponent
 
         if (HasBorder)
         {
-            if (Options.BorderTexture == null)
+            DrawBorder(spriteBatch);
+        }
+
+        if (HoverItem != null && _isHovered)
+        {
+            DrawHoverItem(spriteBatch, RanchMayhemEngine.MouseState);
+        }
+    }
+
+    protected void DrawBorder(SpriteBatch spriteBatch)
+    {
+        if (Options.BorderTexture == null)
+        {
+            if (Options.BorderOrientation == BorderOrientation.Inside)
             {
-                if (Options.BorderOrientation == BorderOrientation.Inside)
-                {
-                    var top = GlobalPosition;
-                    var topSize = new Vector2(Options.Size.X, Options.BorderSize);
-                    DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
-
-                    var left = new Vector2(GlobalPosition.X, GlobalPosition.Y + Options.BorderSize);
-                    var leftSize = new Vector2(Options.BorderSize, Options.Size.Y - 2 * Options.BorderSize);
-                    DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
-
-                    var right = new Vector2(GlobalPosition.X + Options.Size.X - Options.BorderSize, left.Y);
-                    DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
-
-                    var bottom = new Vector2(GlobalPosition.X,
-                        GlobalPosition.Y + leftSize.Y + Options.BorderSize);
-                    DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
-                }
-
-                if (Options.BorderOrientation == BorderOrientation.Outside)
-                {
-                    var top = new Vector2(GlobalPosition.X - Options.BorderSize, GlobalPosition.Y - Options.BorderSize);
-                    var topSize = new Vector2(Options.Size.X + Options.BorderSize * 2, Options.BorderSize);
-                    DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
-
-                    var left = new Vector2(top.X, top.Y + Options.BorderSize);
-                    var leftSize = new Vector2(Options.BorderSize, Options.Size.Y);
-                    DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
-
-                    var right = new Vector2(left.X + Options.Size.X + Options.BorderSize, left.Y);
-                    DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
-
-                    var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
-                    DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
-                }
-            }
-            else
-            {
-                var topLeftCorner = new Vector2(GlobalPosition.X - Options.BorderSize,
-                    GlobalPosition.Y - Options.BorderSize);
-                var bottomLeftCorner = new Vector2(topLeftCorner.X,
-                    topLeftCorner.Y + Options.Size.Y + Options.BorderSize - 1);
-                var topRightCorner =
-                    new Vector2(topLeftCorner.X + Options.Size.X + Options.BorderSize, topLeftCorner.Y);
-                var bottomRightCorner = new Vector2(topRightCorner.X,
-                    topRightCorner.Y + Options.Size.Y + Options.BorderSize - 1);
-
-                var top = new Vector2(GlobalPosition.X, GlobalPosition.Y - Options.BorderSize);
+                var top = GlobalPosition;
                 var topSize = new Vector2(Options.Size.X, Options.BorderSize);
+                DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
 
-                var left = new Vector2(topLeftCorner.X, topLeftCorner.Y + Options.BorderSize);
+                var left = new Vector2(GlobalPosition.X, GlobalPosition.Y + Options.BorderSize);
+                var leftSize = new Vector2(Options.BorderSize, Options.Size.Y - 2 * Options.BorderSize);
+                DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
+
+                var right = new Vector2(GlobalPosition.X + Options.Size.X - Options.BorderSize, left.Y);
+                DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
+
+                var bottom = new Vector2(GlobalPosition.X,
+                    GlobalPosition.Y + leftSize.Y + Options.BorderSize);
+                DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+            }
+
+            if (Options.BorderOrientation == BorderOrientation.Outside)
+            {
+                var top = new Vector2(GlobalPosition.X - Options.BorderSize, GlobalPosition.Y - Options.BorderSize);
+                var topSize = new Vector2(Options.Size.X + Options.BorderSize * 2, Options.BorderSize);
+                DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
+
+                var left = new Vector2(top.X, top.Y + Options.BorderSize);
                 var leftSize = new Vector2(Options.BorderSize, Options.Size.Y);
+                DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
 
                 var right = new Vector2(left.X + Options.Size.X + Options.BorderSize, left.Y);
-                var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
+                DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
 
-                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topLeftCorner,
-                    new Vector2(Options.BorderSize));
-                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topRightCorner,
-                    new Vector2(Options.BorderSize));
-                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomLeftCorner,
-                    new Vector2(Options.BorderSize));
-                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomRightCorner,
-                    new Vector2(Options.BorderSize));
-                DrawTiledTexture(spriteBatch, Options.BorderTexture, top, topSize);
-                DrawTiledTexture(spriteBatch, Options.BorderTexture, left, leftSize, false);
-                DrawTiledTexture(spriteBatch, Options.BorderTexture, right, leftSize, false);
-                DrawTiledTexture(spriteBatch, Options.BorderTexture, bottom, topSize);
+                var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
+                DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
             }
+        }
+        else
+        {
+            var topLeftCorner = new Vector2(GlobalPosition.X - Options.BorderSize,
+                GlobalPosition.Y - Options.BorderSize);
+            var bottomLeftCorner = new Vector2(topLeftCorner.X,
+                topLeftCorner.Y + Options.Size.Y + Options.BorderSize - 1);
+            var topRightCorner =
+                new Vector2(topLeftCorner.X + Options.Size.X + Options.BorderSize, topLeftCorner.Y);
+            var bottomRightCorner = new Vector2(topRightCorner.X,
+                topRightCorner.Y + Options.Size.Y + Options.BorderSize - 1);
+
+            var top = new Vector2(GlobalPosition.X, GlobalPosition.Y - Options.BorderSize);
+            var topSize = new Vector2(Options.Size.X, Options.BorderSize);
+
+            var left = new Vector2(topLeftCorner.X, topLeftCorner.Y + Options.BorderSize);
+            var leftSize = new Vector2(Options.BorderSize, Options.Size.Y);
+
+            var right = new Vector2(left.X + Options.Size.X + Options.BorderSize, left.Y);
+            var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
+
+            DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topLeftCorner,
+                new Vector2(Options.BorderSize));
+            DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topRightCorner,
+                new Vector2(Options.BorderSize));
+            DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomLeftCorner,
+                new Vector2(Options.BorderSize));
+            DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomRightCorner,
+                new Vector2(Options.BorderSize));
+            DrawTiledTexture(spriteBatch, Options.BorderTexture, top, topSize);
+            DrawTiledTexture(spriteBatch, Options.BorderTexture, left, leftSize, false);
+            DrawTiledTexture(spriteBatch, Options.BorderTexture, right, leftSize, false);
+            DrawTiledTexture(spriteBatch, Options.BorderTexture, bottom, topSize);
         }
     }
 
@@ -327,6 +339,22 @@ public abstract class UIComponent
             new Rectangle((int)Math.Floor(position.X), (int)Math.Floor(position.Y), (int)Math.Floor(size.X),
                 (int)Math.Floor(size.Y)),
             color);
+    }
+
+    private const int MousePadding = 5;
+
+    private void DrawHoverItem(SpriteBatch spriteBatch, MouseState mouseState)
+    {
+        var position = new Vector2(mouseState.Position.X - HoverItem.Options.Size.X / 2,
+            mouseState.Position.Y + MousePadding);
+
+        if (mouseState.Position.Y + MousePadding + HoverItem.Options.Size.Y >= RanchMayhemEngine.Height)
+        {
+            position.Y = mouseState.Position.Y - MousePadding - HoverItem.Options.Size.Y;
+        }
+
+        HoverItem.SetPosition(position);
+        HoverItem.Draw(spriteBatch);
     }
 
     private void DrawTiledTexture(SpriteBatch spriteBatch, Texture2D texture, Vector2 position, Vector2 size,
@@ -428,6 +456,17 @@ public abstract class UIComponent
         RecalculateSize(Options.Size, Parent.Options.Size);
         UpdateGlobalPosition();
         // Logger.Log($"{GetType().FullName}::SetParent Id:{Id} global pos:{GlobalPosition}");
+    }
+
+    private void SetPosition(Vector2 position)
+    {
+        LocalPosition = position;
+        GlobalPosition = position;
+    }
+
+    public void SetHoverItem(UIComponent item)
+    {
+        HoverItem = item;
     }
 
     private Vector2 CalculateGlobalPosition()

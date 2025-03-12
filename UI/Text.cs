@@ -44,6 +44,8 @@ public class Text : UIComponent
         spriteBatch.DrawString(_font, _textOptions.Content, GlobalPosition, _textOptions.FontColor, 0f, Vector2.Zero,
             Options.Scale,
             SpriteEffects.None, 0.5f);
+
+        DrawBorder(spriteBatch);
     }
 
     private static float CalculateScale(int from, int to)

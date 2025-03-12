@@ -54,6 +54,19 @@ public class MenuBar : Page
             OnClick = ToggleInventory
         };
 
+        var hoverTest = new Text("hover", new Text.TextOptions
+        {
+            FontColor = Color.MediumSpringGreen,
+            FontSize = 16,
+            Content = "Test hovering\nfoo\nbar",
+
+            BorderColor = Color.Red,
+            BorderOrientation = BorderOrientation.Outside,
+            BorderSize = 2
+        });
+
+        // crops.SetHoverItem(hoverTest);
+
         var menubar = new Grid("menubar", new Grid.GridOptions()
         {
             Color = Color.White,
@@ -64,7 +77,7 @@ public class MenuBar : Page
             Rows = [1],
             RowGap = 0,
             Padding = new Vector4(5),
-            
+
             BorderColor = Color.DarkGray,
             BorderOrientation = BorderOrientation.Inside,
             BorderSize = 2

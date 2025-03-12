@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Input;
 using ranch_mayhem_engine.UI;
 
 namespace ranch_mayhem_engine.Pages;
@@ -12,21 +12,22 @@ public class Crops : Page
         Id = "crops";
         IsVisible = false;
 
-        List<string> cropsNames = ["louis"];
+        List<string> cropsNames = ["wheat", "potato", "carrot", "cucumber", "tomato"];
         var contentManager = RanchMayhemEngine.ContentManager;
 
         List<UIComponent> cropComponents = [];
 
-        for (var i = 0; i < 1; i++)
+        for (var i = 0; i < cropsNames.Count; i++)
         {
             var crop = new Box($"crops-{i}", new Box.BoxOptions
             {
-                Texture = contentManager.GetTexture("louis"),
+                Texture = contentManager.GetSprite(cropsNames[i]),
                 SizePercent = new Vector2(0, 80),
                 UiAnchor = UIAnchor.CenterX,
                 SizeUnit = SizeUnit.Percent,
             });
 
+            // TODO: Text CenterX doesn't work properly
             var cropText = new Text($"crops-{i}-text", new Text.TextOptions
             {
                 Content = "Amount: 0",
@@ -37,9 +38,7 @@ public class Crops : Page
 
             var container = new Container($"crops-container-{i}", new UIComponentOptions
             {
-                SizePercent = new Vector2(0, 100),
-                SizeUnit = SizeUnit.Percent,
-                BorderColor = Color.Red,
+                BorderColor = Color.Goldenrod,
                 BorderSize = 2,
                 BorderOrientation = BorderOrientation.Outside
             }, [crop, cropText]);
@@ -53,15 +52,16 @@ public class Crops : Page
             Position = new Vector2(360, 100),
             Size = new Vector2(1200, 664),
             Columns = [1, 1, 1, 1, 1],
-            ColumnGap = 0,
+            ColumnGap = 25,
             Rows = [1, 1, 1],
             RowGap = 20,
-            Padding = new Vector4(5),
+            Padding = new Vector4(15),
 
-            BorderColor = Color.DarkGoldenrod,
-            BorderSize = 4,
-            BorderOrientation = BorderOrientation.Outside
+            // BorderTexture = RanchMayhemEngine.ContentManager.GetTexture("planks_oak"),
+            // BorderSize = 6,
+            // BorderOrientation = BorderOrientation.Outside
         }, cropComponents);
+
 
         Components.Add(cropInventory);
 

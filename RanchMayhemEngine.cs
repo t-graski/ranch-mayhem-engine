@@ -12,8 +12,8 @@ namespace ranch_mayhem_engine;
 public sealed class RanchMayhemEngine : Game
 {
     private const bool IsFullScreen = false;
-    private const int Width = 1280;
-    private const int Height = 720;
+    public const int Width = 1280;
+    public const int Height = 720;
 
     private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -55,6 +55,7 @@ public sealed class RanchMayhemEngine : Game
 
         ContentManager = new ContentManager();
         ContentManager.LoadContent(Content);
+        ContentManager.LoadFromTextureAtlas(Content);
 
         KeyboardManager = new KeyboardManager();
 
