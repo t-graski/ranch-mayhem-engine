@@ -39,7 +39,7 @@ public class MenuBar : Page
 
         var crops = new Button("menubar-crops", new Button.ButtonOptions
         {
-            Texture = contentManager.GetTexture("crops"),
+            Texture = contentManager.GetTexture("quick_access"),
             SizePercent = new Vector2(0, 75),
             SizeUnit = SizeUnit.Percent,
             UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,

@@ -425,8 +425,8 @@ public abstract class UIComponent
         // Logger.Log(
         //     $"{GetType().FullName}::SetParent Id:{Id} parent:{parent.Id} parent global pos: {parent.GlobalPosition}");
         Parent = parent;
-        UpdateGlobalPosition();
         RecalculateSize(Options.Size, Parent.Options.Size);
+        UpdateGlobalPosition();
         // Logger.Log($"{GetType().FullName}::SetParent Id:{Id} global pos:{GlobalPosition}");
     }
 

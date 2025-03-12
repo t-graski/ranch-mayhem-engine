@@ -17,15 +17,13 @@ public class Crops : Page
 
         List<UIComponent> cropComponents = [];
 
-        for (var i = 0; i < 2; i++)
+        for (var i = 0; i < 1; i++)
         {
-            // TODO: centering doesn't work here, probably has something to do with UIComponent::SetParent and recalculating the position
-
             var crop = new Box($"crops-{i}", new Box.BoxOptions
             {
                 Texture = contentManager.GetTexture("louis"),
                 SizePercent = new Vector2(0, 80),
-                UiAnchor = UIAnchor.Top,
+                UiAnchor = UIAnchor.CenterX,
                 SizeUnit = SizeUnit.Percent,
             });
 
