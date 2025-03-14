@@ -10,9 +10,9 @@ namespace ranch_mayhem_engine.UI;
 
 public abstract class UIComponent
 {
-    private UIComponent Parent { get; set; }
+    protected UIComponent Parent { get; set; }
     public string Id { get; }
-    private Vector2 LocalPosition;
+    public Vector2 LocalPosition { get; set; }
     public Vector2 GlobalPosition { get; set; }
     protected Rectangle Bounds;
 
@@ -20,16 +20,17 @@ public abstract class UIComponent
 
     public Action OnClick;
     protected Action OnHover;
-    protected Action OffClick;
+    public Action OffClick;
     protected Action OffHover;
 
     protected UIComponent HoverItem { get; set; }
 
     private bool _isHovered;
     protected bool IsClicked;
-    protected bool IsActive;
+    public bool IsActive;
 
     private bool HasBorder;
+    public bool IsAnimating;
 
     protected UIComponent(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true)
     {
@@ -57,9 +58,9 @@ public abstract class UIComponent
     {
         var prefix = $"{GetType().FullName}::ctor Id={Id}";
 
-        if (options.SizeUnit == SizeUnit.Pixels && options.Size == Vector2.Zero && this is not Text)
+        if (options.SizeUnit == SizeUnit.Pixels && options.Size == Vector2.Zero && this is not Text or Container)
         {
-            Logger.Log($"{prefix} SizeUnit is set to Pixels and Size is {Vector2.Zero}.", Logger.LogLevel.Warning);
+            // Logger.Log($"{prefix} SizeUnit is set to Pixels and Size is {Vector2.Zero}.", Logger.LogLevel.Warning);
         }
 
         if (options.SizeUnit == SizeUnit.Percent && options.SizePercent == Vector2.Zero)
@@ -448,7 +449,7 @@ public abstract class UIComponent
             position.W * globalScale.X);
     }
 
-    public void SetParent(UIComponent parent)
+    public virtual void SetParent(UIComponent parent)
     {
         // Logger.Log(
         //     $"{GetType().FullName}::SetParent Id:{Id} parent:{parent.Id} parent global pos: {parent.GlobalPosition}");
@@ -471,14 +472,16 @@ public abstract class UIComponent
 
     private Vector2 CalculateGlobalPosition()
     {
-        if (Parent == null) return LocalPosition;
+        if (Parent == null) return GlobalPosition;
         // Logger.Log(
-        //     $"{GetType().FullName}::CalculateGlobalPosition Id:{Id} global pos: {GlobalPosition} local pos: {LocalPosition} parent global: {Parent.GlobalPosition}");
+        //     $"{GetType().FullName}::CalculateGlobalPosition Id:{Id} global pos: {GlobalPosition} local pos: {LocalPosition} parent global: {Parent.CalculateGlobalPosition()}");
         return Parent.CalculateGlobalPosition() + LocalPosition;
     }
 
-    private void UpdateGlobalPosition()
+    protected void UpdateGlobalPosition()
     {
+        if (IsAnimating) return;
+
         if (Parent == null)
         {
             GlobalPosition = LocalPosition;
@@ -489,6 +492,11 @@ public abstract class UIComponent
             {
                 LocalPosition = Options.UiAnchor.CalculatePosition(Options.Size, new Vector2(-1), Parent);
                 // Logger.Log($"{GetType().FullName}::UpdateGlobalPosition Id:{Id} local pos: {LocalPosition} parent: {Parent.Id}");
+
+                GlobalPosition = CalculateGlobalPosition();
+            }
+            else
+            {
                 GlobalPosition = CalculateGlobalPosition();
             }
 

@@ -34,9 +34,22 @@ public class Text : UIComponent
         Options.Scale = new Vector2(scale);
         Options.Size = _font.MeasureString(_textOptions.Content);
 
-        Logger.Log(
-            $"{GetType().FullName}::InitializeFont Id={Id} Given size: {_textOptions.FontSize}, Found size: {fontWithSize.size}, Using scale: {scale}",
-            Logger.LogLevel.Internal);
+
+        // Logger.Log(
+        //     $"{GetType().FullName}::InitializeFont Id={Id} Given size: {_textOptions.FontSize}, Found size: {fontWithSize.size}, Using scale: {scale}",
+        //     Logger.LogLevel.Internal);
+    }
+
+    public override void SetParent(UIComponent parent)
+    {
+        Parent = parent;
+        RecalculateSize();
+        UpdateGlobalPosition();
+    }
+
+    private void RecalculateSize()
+    {
+        Options.Size = _font.MeasureString(_textOptions.Content);
     }
 
     public override void Draw(SpriteBatch spriteBatch)
@@ -57,7 +70,15 @@ public class Text : UIComponent
     {
     }
 
-    public void SetContent(string content) => _textOptions.Content = content;
+    public void SetContent(string content)
+    {
+        if (_textOptions.Content.Equals(content)) return;
+
+        _textOptions.Content = content;
+
+        RecalculateSize();
+        UpdateGlobalPosition();
+    }
 
     public Vector2 GetSize()
     {

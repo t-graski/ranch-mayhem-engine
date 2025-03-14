@@ -30,7 +30,7 @@ public class Console : Page
 
         Components.Add(consoleWindow);
 
-        _windowAnimator = new Animator(consoleWindow, 0.33f);
+        _windowAnimator = new Animator(consoleWindow, Animator.AnimationDirection.Top, 0.33f);
 
         return this;
     }

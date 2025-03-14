@@ -7,8 +7,8 @@ namespace ranch_mayhem_engine.UI;
 public abstract class Page
 {
     public string Id { get; protected set; }
-    protected List<UIComponent> Components { get; set; } = [];
     protected bool IsVisible { get; set; } = false;
+    protected List<UIComponent> Components { get; set; } = [];
 
     public abstract Page Initialize();
 

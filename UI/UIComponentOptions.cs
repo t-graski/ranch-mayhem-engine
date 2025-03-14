@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ranch_mayhem_engine.UI;
@@ -19,6 +20,8 @@ public class UIComponentOptions
     public Texture2D BorderCornerTexture;
     public int BorderSize;
     public BorderOrientation BorderOrientation = BorderOrientation.Outside;
+
+    public object Metadata;
 
 // - BorderTexture (to be implemented)
 // - BorderSize (to be implemented)

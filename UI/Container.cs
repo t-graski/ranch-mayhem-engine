@@ -24,7 +24,7 @@ public class Container : UIComponent
         foreach (var component in _components)
         {
             // Logger.Log(
-                // $"{GetType().FullName}::UpdateParentLocation Id:{Id} updating id:{component.Id} parent global: {GlobalPosition} parent local: {LocalPosition}");
+            // $"{GetType().FullName}::UpdateParentLocation Id:{Id} updating id:{component.Id} parent global: {GlobalPosition} parent local: {LocalPosition}");
             component.SetParent(this);
         }
     }
@@ -38,6 +38,8 @@ public class Container : UIComponent
             component.HandleMouse(RanchMayhemEngine.MouseState);
         }
     }
+
+    public List<UIComponent> GetChildren() => _components;
 
     public override void Update()
     {
