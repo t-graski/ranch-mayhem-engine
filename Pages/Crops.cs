@@ -25,8 +25,17 @@ public class Crops : Page
         Id = "crops";
         IsVisible = false;
 
-        List<string> cropsNames = ["wheat", "potato", "carrot", "cucumber", "tomato"];
-        List<string> amounts = ["100", "47.4k", "462k", "1M", "237"];
+        List<string> cropsNames =
+        [
+            "wheat", "potato", "carrot", "cucumber", "tomato", "cabbage", "watermelon", "bell_pepper", "corn",
+            "strawberry", "raspberry", "blueberry", "blackberry",
+            "banana", "coconut"
+        ];
+        List<string> amounts =
+        [
+            "100", "47.4k", "462k", "1M", "237", "1.2k", "34", "4535M", "34.3k", "437", "12121", "43784k", "437843",
+            "34278k", "4374m"
+        ];
         var contentManager = RanchMayhemEngine.ContentManager;
 
         List<UIComponent> cropComponents = [];
@@ -93,7 +102,7 @@ public class Crops : Page
             Content = "",
             FontSize = 10,
             FontColor = Color.Gray,
-            Position = new Vector2(8, 60)
+            Position = new Vector2(12, 60)
         });
 
         _cropDetails = new Container("crop-details", new UIComponentOptions

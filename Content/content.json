@@ -32,6 +32,10 @@
     "type": "sprite"
   },
   {
+    "name": "spring_background",
+    "type": "sprite"
+  },
+  {
     "name": "Arial",
     "type": "font",
     "sizes": [

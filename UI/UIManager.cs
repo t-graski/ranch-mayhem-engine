@@ -21,6 +21,8 @@ public class UIManager
 
     private List<Page> _pages;
 
+    private Texture2D _background { get; set; }
+
     public UIManager(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
         Logger.Log($"{GetType().FullName}::ctor", Logger.LogLevel.Internal);
@@ -44,6 +46,11 @@ public class UIManager
         _pages.Add(page);
     }
 
+    public void SetBackground(Texture2D texture)
+    {
+        _background = texture;
+    }
+
     public Page GetPage(string id)
     {
         return _pages.Find(component => component.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
@@ -55,6 +62,15 @@ public class UIManager
         {
             // Logger.Log($"{GetType().FullName}::UpdateComponents");
             page.Update(mouseState);
+        }
+    }
+
+    public void RenderBackground()
+    {
+        if (_background != null)
+        {
+            SpriteBatch.Draw(_background, new Rectangle(0, 0, RanchMayhemEngine.Width, RanchMayhemEngine.Height),
+                Color.White);
         }
     }
 

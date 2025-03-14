@@ -61,6 +61,7 @@ public sealed class RanchMayhemEngine : Game
 
         UIManager.AddComponent(new MenuBar().Initialize());
         UIManager.AddComponent(new Crops().Initialize());
+        UIManager.AddComponent(new QuickAccess().Initialize());
         var console = new Pages.Console().Initialize();
         UIManager.AddComponent(console);
         var stats = new Stats().Initialize();
@@ -68,6 +69,8 @@ public sealed class RanchMayhemEngine : Game
 
         KeyboardManager.RegisterBinding(Keys.OemQuestion, console);
         KeyboardManager.RegisterBinding(Keys.S, stats);
+
+        UIManager.SetBackground(ContentManager.GetTexture("spring_background"));
     }
 
     protected override void Update(GameTime gameTime)
@@ -108,6 +111,7 @@ public sealed class RanchMayhemEngine : Game
 
         _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
 
+        UIManager.RenderBackground();
         UIManager.RenderComponents();
 
         _spriteBatch.End();

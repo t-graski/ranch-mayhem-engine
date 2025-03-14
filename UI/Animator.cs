@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
 using Microsoft.Xna.Framework;
 
 namespace ranch_mayhem_engine.UI;
@@ -23,7 +21,7 @@ public class Animator
     private float _currentX;
     private float _endX;
 
-    private bool _isAnimationDone = false;
+    private bool _isAnimationDone = true;
     private bool _isAnimating = false;
 
     public Animator(UIComponent component, AnimationDirection direction, float animationSpeed = 0.1f)
@@ -82,7 +80,7 @@ public class Animator
 
     public void Reset()
     {
-        // if (!_isAnimationDone) return;
+        if (!_isAnimationDone) return;
 
         switch (_direction)
         {
