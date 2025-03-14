@@ -50,8 +50,6 @@ public class Crops : Page
                 UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
                 SizeUnit = SizeUnit.Percent,
             });
-            
-            crop.SetTextureOverlay(contentManager.GetAttackSprite("potato_attack"));
 
             var i1 = i;
             var container = new Container($"crops-container-{i}", new UIComponentOptions
@@ -144,9 +142,6 @@ public class Crops : Page
             _selectedCrop = name;
             _shouldAnimate = true;
             _cropDetailsVisible = true;
-
-            Logger.Log(
-                $"global pos container: {_cropDetails.GlobalPosition}, title global pos: {_titleText.GlobalPosition}");
         }
         else if (_cropDetailsVisible && !_selectedCrop.Equals(name))
         {
