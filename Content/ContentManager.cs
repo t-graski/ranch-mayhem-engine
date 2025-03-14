@@ -15,6 +15,7 @@ public class ContentManager
 
     private readonly Dictionary<string, AtlasItem> _sprites = [];
     private Texture2D _textureAtlas;
+    private Texture2D _textureAtlasAttack;
 
     public void LoadContent(Microsoft.Xna.Framework.Content.ContentManager content)
     {
@@ -43,15 +44,28 @@ public class ContentManager
         Logger.Log($"Loaded {_fonts.Count} fonts");
     }
 
-    public void LoadFromTextureAtlas(Microsoft.Xna.Framework.Content.ContentManager content)
+    public void LoadDefaultTextureAtlas(Microsoft.Xna.Framework.Content.ContentManager content)
     {
         var items = LoadJson<AtlasItem>("./content/texture_atlas_definition.json");
 
         foreach (var atlasItem in items)
         {
             _sprites.Add(atlasItem.Name, atlasItem);
-            _textureAtlas = content.Load<Texture2D>("texture_atlas");
         }
+
+        _textureAtlas = content.Load<Texture2D>("texture_atlas");
+    }
+
+    public void LoadAttackAtlas(Microsoft.Xna.Framework.Content.ContentManager content)
+    {
+        var items = LoadJson<AtlasItem>("./content/texture_atlas_attack_definition.json");
+
+        foreach (var atlasItem in items)
+        {
+            _sprites.Add(atlasItem.Name, atlasItem);
+        }
+
+        _textureAtlasAttack = content.Load<Texture2D>("texture_atlas_attack");
     }
 
     public Texture2D GetSprite(string name)
@@ -62,6 +76,25 @@ public class ContentManager
 
             var data = new Color[item.Width * item.Height];
             _textureAtlas.GetData(0, new Rectangle((int)item.Position.X, (int)item.Position.Y, item.Width, item.Height),
+                data, 0, data.Length);
+
+            extracted.SetData(data);
+
+            return extracted;
+        }
+
+        return null;
+    }
+
+    public Texture2D GetAttackSprite(string name)
+    {
+        if (_sprites.TryGetValue(name, out var item))
+        {
+            var extracted = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, item.Width, item.Height);
+
+            var data = new Color[item.Width * item.Height];
+            _textureAtlasAttack.GetData(0,
+                new Rectangle((int)item.Position.X, (int)item.Position.Y, item.Width, item.Height),
                 data, 0, data.Length);
 
             extracted.SetData(data);

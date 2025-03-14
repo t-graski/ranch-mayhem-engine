@@ -55,7 +55,8 @@ public sealed class RanchMayhemEngine : Game
 
         ContentManager = new ContentManager();
         ContentManager.LoadContent(Content);
-        ContentManager.LoadFromTextureAtlas(Content);
+        ContentManager.LoadDefaultTextureAtlas(Content);
+        ContentManager.LoadAttackAtlas(Content);
 
         KeyboardManager = new KeyboardManager();
 

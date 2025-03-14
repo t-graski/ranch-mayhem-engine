@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using ranch_mayhem_engine.UI;
+using ranch_mayhem_engine.UI.Helper;
 
 namespace ranch_mayhem_engine.Pages;
 
@@ -10,13 +11,20 @@ public class QuickAccess : Page
         Id = "quick-access";
         IsVisible = false;
 
-        var automationText = new Text("quick-access-automation-text", new Text.TextOptions
-        {
-            FontColor = Color.White,
-            FontSize = 16,
-            Content = "Automation",
-            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
-        });
+        // var automationText = new Text("quick-access-automation-text", new Text.TextOptions
+        // {
+        //     FontColor = Color.White,
+        //     FontSize = 16,
+        //     Content = "Automation",
+        //     UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
+        // });
+
+        var automationText = new TextBuilder($"{Id}-automation-text")
+            .SetContent("Automation")
+            .SetFontSize(16)
+            .SetFontColor(Color.White)
+            .CenterXY()
+            .Build();
 
         var automationContainer = new Container("quick-access-automation-container", new UIComponentOptions
         {

@@ -8,8 +8,10 @@ public class UIComponentOptions
 {
     public Color Color;
     public Texture2D Texture;
+    public Texture2D TextureOverlay;
     public Vector2 Position;
     public UIAnchor UiAnchor;
+    public Vector2 UiAnchorOffset;
     public Vector2 Size;
     public Vector2 SizePercent;
     public SizeUnit SizeUnit = SizeUnit.Pixels;
@@ -20,12 +22,6 @@ public class UIComponentOptions
     public Texture2D BorderCornerTexture;
     public int BorderSize;
     public BorderOrientation BorderOrientation = BorderOrientation.Outside;
-
-    public object Metadata;
-
-// - BorderTexture (to be implemented)
-// - BorderSize (to be implemented)
-// - BorderOrientation (inside, outside) (to be implemented)
 
     public override string ToString()
     {

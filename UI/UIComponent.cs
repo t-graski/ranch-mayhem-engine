@@ -91,6 +91,7 @@ public abstract class UIComponent
         Options.SizeUnit = options.SizeUnit;
         Options.SizePercent = options.SizePercent;
         Options.UiAnchor = options.UiAnchor;
+        Options.UiAnchorOffset = options.UiAnchorOffset;
 
         if (options.BorderSize != 0)
         {
@@ -107,6 +108,12 @@ public abstract class UIComponent
         {
             Options.UiAnchor = options.UiAnchor;
             LocalPosition = options.UiAnchor.CalculatePosition(Options.Size, new Vector2(-1), Parent);
+
+            if (options.UiAnchorOffset != Vector2.Zero)
+            {
+                LocalPosition += options.UiAnchorOffset;
+            }
+
             UpdateBounds(Parent);
         }
 
@@ -129,6 +136,7 @@ public abstract class UIComponent
             var scale = new Vector2(scaleX, scaleY);
             Options.Scale = ScaleToGlobal(scale);
             Options.Texture = options.Texture;
+            Options.TextureOverlay = options.TextureOverlay;
         }
         else
         {
@@ -220,12 +228,23 @@ public abstract class UIComponent
         UpdateBounds(parent);
     }
 
+    public void SetTextureOverlay(Texture2D texture)
+    {
+        Options.TextureOverlay = texture;
+    }
+
     public virtual void Draw(SpriteBatch spriteBatch)
     {
         if (Options.Texture != null)
         {
             spriteBatch.Draw(Options.Texture, GlobalPosition, null, Color.White, 0f, Vector2.Zero,
                 Options.Scale, SpriteEffects.None, 0f);
+
+            if (Options.TextureOverlay != null)
+            {
+                spriteBatch.Draw(Options.TextureOverlay, GlobalPosition, null, Color.White, 0f, Vector2.Zero,
+                    Options.Scale, SpriteEffects.None, 0f);
+            }
         }
         else
         {
@@ -492,6 +511,11 @@ public abstract class UIComponent
             {
                 LocalPosition = Options.UiAnchor.CalculatePosition(Options.Size, new Vector2(-1), Parent);
                 // Logger.Log($"{GetType().FullName}::UpdateGlobalPosition Id:{Id} local pos: {LocalPosition} parent: {Parent.Id}");
+
+                if (Options.UiAnchorOffset != Vector2.Zero)
+                {
+                    LocalPosition += Options.UiAnchorOffset;
+                }
 
                 GlobalPosition = CalculateGlobalPosition();
             }

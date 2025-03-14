@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ranch_mayhem_engine.UI;
+using ranch_mayhem_engine.UI.Helper;
 
 namespace ranch_mayhem_engine.Pages;
 
@@ -49,15 +50,8 @@ public class Crops : Page
                 UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY,
                 SizeUnit = SizeUnit.Percent,
             });
-
-            // TODO: Text CenterX doesn't work properly
-            var cropText = new Text($"crops-{i}-text", new Text.TextOptions
-            {
-                Content = "Amount: 0",
-                FontSize = 12,
-                FontColor = Color.Orange,
-                UiAnchor = UIAnchor.Bottom | UIAnchor.CenterX
-            });
+            
+            crop.SetTextureOverlay(contentManager.GetAttackSprite("potato_attack"));
 
             var i1 = i;
             var container = new Container($"crops-container-{i}", new UIComponentOptions
@@ -89,21 +83,16 @@ public class Crops : Page
             BorderOrientation = BorderOrientation.Outside
         }, cropComponents);
 
-        _titleText = new Text("crop-title", new Text.TextOptions
-        {
-            Content = "",
-            FontSize = 16,
-            FontColor = Color.Orange,
-            UiAnchor = UIAnchor.CenterX
-        });
+        _titleText = new TextBuilder("crop-title")
+            .SetFontSize(16)
+            .SetFontColor(Color.Orange)
+            .SetUiAnchor(UIAnchor.CenterX)
+            .Build();
 
-        _infoText = new Text("crop-info", new Text.TextOptions
-        {
-            Content = "",
-            FontSize = 10,
-            FontColor = Color.Gray,
-            Position = new Vector2(12, 60)
-        });
+        _infoText = new TextBuilder("crop-info")
+            .SetFontColor(Color.Gray)
+            .SetPosition(12, 60)
+            .Build();
 
         _cropDetails = new Container("crop-details", new UIComponentOptions
         {

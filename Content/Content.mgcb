@@ -137,6 +137,18 @@
 /processorParam:TextureFormat=Color
 /build:spring_background.png
 
+#begin texture_atlas_attack.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:texture_atlas_attack.png
+
 #begin texture_atlas.png
 /importer:TextureImporter
 /processor:TextureProcessor
