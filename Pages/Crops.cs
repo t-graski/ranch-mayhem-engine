@@ -32,6 +32,7 @@ public class Crops : Page
             "strawberry", "raspberry", "blueberry", "blackberry",
             "banana", "coconut"
         ];
+
         List<string> amounts =
         [
             "100", "47.4k", "462k", "1M", "237", "1.2k", "34", "4535M", "34.3k", "437", "12121", "43784k", "437843",
@@ -92,16 +93,17 @@ public class Crops : Page
             .SetPosition(12, 60)
             .Build();
 
-        _cropDetails = new Container("crop-details", new UIComponentOptions
-        {
-            Color = Color.Green,
-            Position = new Vector2(1600, 100),
-            Size = new Vector2(282, 664),
+        _cropDetails = new ContainerBuilder("crop-details")
+            .SetColor(Color.Green)
+            .SetPosition(1600, 100)
+            .SetSize(282, 664)
+            .SetBorderTexture("planks_oak")
+            .SetBorderSize(6)
+            .SetBorderOrientation(BorderOrientation.Outside)
+            .SetChildren([_titleText, _infoText])
+            .Build();
 
-            BorderTexture = RanchMayhemEngine.ContentManager.GetTexture("planks_oak"),
-            BorderSize = 6,
-            BorderOrientation = BorderOrientation.Outside
-        }, [_titleText, _infoText]);
+        _cropDetails.OnClick = () => { Logger.Log("test"); };
 
         _detailAnimator = new Animator(_cropDetails, Animator.AnimationDirection.Right, 0.33f);
 
