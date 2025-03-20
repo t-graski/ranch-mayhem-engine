@@ -1,12 +1,12 @@
 mode: ManualDeployment
+next-version: 0.1.0
+commit-message-incrementing: Enabled
 branches:
   main:
     increment: Minor
     track-merge-target: false
-    
   develop:
     increment: Patch
     track-merge-target: false
-    
   feature:
     increment: None
