@@ -29,9 +29,9 @@ jobs:
       - name: Update version.txt
         run: echo "${{ steps.gitversion.outputs.fullSemVer }}" > version.txt
 
-      - name: Update csproj version
+      - name: Update Version in .csproj
         run: |
-          sed -i 's|<Version>.*</Version>|<Version>${{ steps.gitversion.outputs.fullSemVer }}</Version>|g' **/*.csproj
+          find . -name "*.csproj" -exec sed -i 's|<Version>.*</Version>|<Version>0.1.0-alpha.34</Version>|g' {} +
 
       - name: Commit and Push Changes
         run: |
