@@ -1,0 +1,8 @@
+mode: ManualDeployment
+branches:
+  master:
+    increment: Minor
+  develop:
+    increment: Patch
+ignore:
+  sha: [ ]
