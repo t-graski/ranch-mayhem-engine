@@ -1,8 +1,12 @@
 mode: ManualDeployment
 branches:
-  master:
+  main:
     increment: Minor
+    track-merge-target: false
+    
   develop:
     increment: Patch
-ignore:
-  sha: [ ]
+    track-merge-target: false
+    
+  feature:
+    increment: None
