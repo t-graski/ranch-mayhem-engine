@@ -7,7 +7,7 @@
         <TieredCompilation>false</TieredCompilation>
     </PropertyGroup>
     <PropertyGroup>
-        <Version Condition=" '$(Version)' == ''">0.0.1</Version>
+        <Version>0.1.0</Version>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <ApplicationIcon>Icon.ico</ApplicationIcon>
     </PropertyGroup>
