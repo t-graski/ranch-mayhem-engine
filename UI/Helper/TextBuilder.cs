@@ -2,18 +2,10 @@
 
 namespace ranch_mayhem_engine.UI.Helper;
 
-public class TextBuilder
+public class TextBuilder(string id)
 {
-    private Text _text;
-    private Text.TextOptions _textOptions;
-    private string _id;
+    private readonly Text.TextOptions _textOptions = new();
     private UIComponent _parent;
-
-    public TextBuilder(string id)
-    {
-        _id = id;
-        _textOptions = new Text.TextOptions();
-    }
 
     public TextBuilder SetParent(UIComponent parent)
     {
@@ -69,6 +61,6 @@ public class TextBuilder
 
     public Text Build()
     {
-        return new Text(_id, _textOptions, _parent);
+        return new Text(id, _textOptions, _parent);
     }
 }

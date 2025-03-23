@@ -31,9 +31,8 @@ public class Text : UIComponent
             scale = CalculateScale(fontWithSize.size, _textOptions.FontSize);
         }
 
-        Options.Scale = new Vector2(scale);
-        Options.Size = _font.MeasureString(_textOptions.Content);
-
+        Options.Scale = new Vector2(scale) * RanchMayhemEngine.UIManager.GlobalScale;
+        Options.Size = _font.MeasureString(_textOptions.Content) * Options.Scale;
 
         // Logger.Log(
         //     $"{GetType().FullName}::InitializeFont Id={Id} Given size: {_textOptions.FontSize}, Found size: {fontWithSize.size}, Using scale: {scale}",
@@ -49,7 +48,7 @@ public class Text : UIComponent
 
     private void RecalculateSize()
     {
-        Options.Size = _font.MeasureString(_textOptions.Content);
+        Options.Size = _font.MeasureString(_textOptions.Content) * Options.Scale;
     }
 
     public override void Draw(SpriteBatch spriteBatch)
