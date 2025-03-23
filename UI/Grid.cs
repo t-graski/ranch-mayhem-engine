@@ -95,21 +95,24 @@ public class Grid : UIComponent
                 position.X += scaledPadding.W;
             }
 
-            if (current.Options.UiAnchor != UIAnchor.None)
+            if (current != null)
             {
-                current.RecalculateSize(current.Options.Size, size);
-                var itemPosition = current.Options.UiAnchor.CalculatePosition(current.Options.Size, size);
-
-                current.UpdatePosition(position + itemPosition, current.Options.Size, this, size);
-            }
-            else
-            {
-                current.UpdatePosition(position, size, this, size);
-
-                if (current is Container container)
+                if (current.Options.UiAnchor != UIAnchor.None)
                 {
-                    // Logger.Log($"{GetType().FullName}::CalculatePositions Id={Id} updating parent location for {current.Id}");
-                    container.UpdateParentLocation();
+                    current.RecalculateSize(current.Options.Size, size);
+                    var itemPosition = current.Options.UiAnchor.CalculatePosition(current.Options.Size, size);
+
+                    current.UpdatePosition(position + itemPosition, current.Options.Size, this, size);
+                }
+                else
+                {
+                    current.UpdatePosition(position, size, this, size);
+
+                    if (current is Container container)
+                    {
+                        // Logger.Log($"{GetType().FullName}::CalculatePositions Id={Id} updating parent location for {current.Id}");
+                        container.UpdateParentLocation();
+                    }
                 }
             }
 

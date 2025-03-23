@@ -21,6 +21,7 @@ public abstract class Page
                 Logger.LogLevel.Warning);
         }
 
+        component.IsVisible = IsVisible;
         Components.Add(component);
     }
 
@@ -43,5 +44,9 @@ public abstract class Page
         }
     }
 
-    public virtual void ToggleVisibility() => IsVisible = !IsVisible;
+    public virtual void ToggleVisibility()
+    {
+        IsVisible = !IsVisible;
+        Components.ForEach(c => c.IsVisible = IsVisible);
+    }
 }
