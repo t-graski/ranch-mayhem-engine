@@ -11,6 +11,7 @@ namespace ranch_mayhem_engine.UI;
 public abstract class UIComponent
 {
     protected UIComponent Parent { get; set; }
+    public bool IsVisible { get; set; } = true;
     public string Id { get; }
     public Vector2 LocalPosition { get; set; }
     public Vector2 GlobalPosition { get; set; }
@@ -407,14 +408,13 @@ public abstract class UIComponent
 
     public void HandleMouse(MouseState mouseState)
     {
-        if (!RanchMayhemEngine.IsFocused) return;
+        if (!RanchMayhemEngine.IsFocused || !IsVisible) return;
 
         if (mouseState.LeftButton == ButtonState.Pressed &&
             Bounds.Contains(mouseState.Position))
         {
             if (!IsClicked)
             {
-                OnClick?.Invoke();
                 IsClicked = !IsClicked;
                 IsActive = true;
             }
@@ -422,6 +422,7 @@ public abstract class UIComponent
 
         if (IsClicked && mouseState.LeftButton == ButtonState.Released)
         {
+            OnClick?.Invoke();
             OffClick?.Invoke();
             IsClicked = !IsClicked;
         }
