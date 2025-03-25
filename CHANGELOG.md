@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.1.0"></a>
+## [1.1.0](https://www.github.com/t-graski/ranch-mayhem-engine/releases/tag/v1.1.0) (2025-03-25)
+
+### Features
+
+* add functions to retrieve container children ([9dac5b6](https://www.github.com/t-graski/ranch-mayhem-engine/commit/9dac5b6eba3dd47f8c7584f57be2ce2c5e10bad1))
+* add text to box ([7638602](https://www.github.com/t-graski/ranch-mayhem-engine/commit/76386029c0b2b0933c9e50f1af0750383767bdb1))
+
 <a name="1.0.0"></a>
 ## [1.0.0](https://www.github.com/t-graski/ranch-mayhem-engine/releases/tag/v1.0.0) (2025-03-25)
 
