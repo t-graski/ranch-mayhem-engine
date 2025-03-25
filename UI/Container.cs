@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ranch_mayhem_engine.UI;
@@ -40,6 +41,10 @@ public class Container : UIComponent
     }
 
     public List<UIComponent> GetChildren() => _components;
+
+    public T? GetChildById<T>(string id) where T : UIComponent => (T)_components.FirstOrDefault(c => c.Id.Equals(id));
+
+    public T? GetFirstChild<T>() where T : UIComponent => (T)_components.FirstOrDefault();
 
     public override void Update()
     {
