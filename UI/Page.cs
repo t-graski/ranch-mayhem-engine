@@ -25,15 +25,17 @@ public abstract class Page
         Components.Add(component);
     }
 
-    public virtual void Draw(SpriteBatch spriteBatch)
-    {
-        if (!IsVisible) return;
+    // public virtual void Draw(SpriteBatch spriteBatch)
+    // {
+    //     if (!IsVisible) return;
+    //
+    //     foreach (var component in Components)
+    //     {
+    //         component.Draw(spriteBatch);
+    //     }
+    // }
 
-        foreach (var component in Components)
-        {
-            component.Draw(spriteBatch);
-        }
-    }
+    public abstract void Draw(SpriteBatch spriteBatch);
 
     public virtual void Update(MouseState mouseState)
     {

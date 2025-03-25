@@ -15,23 +15,21 @@ public abstract class UIComponent
     public string Id { get; }
     public Vector2 LocalPosition { get; set; }
     public Vector2 GlobalPosition { get; set; }
-    protected Rectangle Bounds;
-
+    private Rectangle _bounds;
     public UIComponentOptions Options { get; set; } = new();
+    private UIComponent HoverItem { get; set; }
+    private bool _hasBorder;
+    public bool IsAnimating;
 
     public Action OnClick;
     protected Action OnHover;
-    public Action OffClick;
     protected Action OffHover;
-
-    protected UIComponent HoverItem { get; set; }
 
     private bool _isHovered;
     protected bool IsClicked;
-    public bool IsActive;
+    protected bool IsActive;
 
-    private bool HasBorder;
-    public bool IsAnimating;
+    public bool CanTriggerClick;
 
     protected UIComponent(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true)
     {
@@ -102,7 +100,7 @@ public abstract class UIComponent
             Options.BorderTexture = options.BorderTexture;
             Options.BorderCornerTexture = options.BorderCornerTexture ?? Options.BorderTexture;
 
-            HasBorder = true;
+            _hasBorder = true;
         }
 
         if (options.Position == Vector2.Zero && options.Size != Vector2.Zero)
@@ -173,14 +171,7 @@ public abstract class UIComponent
 
             Options.Size = newSize;
 
-            if (Options.Texture != null)
-            {
-                var scaleX = Options.Size.X / Options.Texture?.Width;
-                var scaleY = Options.Size.Y / Options.Texture?.Height;
-                var scale = new Vector2(scaleX ?? 1, scaleY ?? 1);
-
-                Options.Scale = scale;
-            }
+            CalculateScale();
         }
     }
 
@@ -216,6 +207,12 @@ public abstract class UIComponent
             Options.Size = newSize;
         }
 
+        CalculateScale();
+        UpdateBounds(parent);
+    }
+
+    private void CalculateScale()
+    {
         if (Options.Texture != null)
         {
             var scaleX = Options.Size.X / Options.Texture?.Width;
@@ -224,9 +221,6 @@ public abstract class UIComponent
 
             Options.Scale = scale;
         }
-
-
-        UpdateBounds(parent);
     }
 
     public void SetTextureOverlay(Texture2D texture)
@@ -266,7 +260,7 @@ public abstract class UIComponent
             }
         }
 
-        if (HasBorder)
+        if (_hasBorder)
         {
             DrawBorder(spriteBatch);
         }
@@ -411,7 +405,7 @@ public abstract class UIComponent
         if (!RanchMayhemEngine.IsFocused || !IsVisible) return;
 
         if (mouseState.LeftButton == ButtonState.Pressed &&
-            Bounds.Contains(mouseState.Position))
+            _bounds.Contains(mouseState.Position))
         {
             if (!IsClicked)
             {
@@ -423,12 +417,12 @@ public abstract class UIComponent
         if (IsClicked && mouseState.LeftButton == ButtonState.Released)
         {
             OnClick?.Invoke();
-            OffClick?.Invoke();
             IsClicked = !IsClicked;
+            CanTriggerClick = true;
         }
 
         if (mouseState is { LeftButton: ButtonState.Released, RightButton: ButtonState.Released } &&
-            Bounds.Contains(mouseState.Position))
+            _bounds.Contains(mouseState.Position))
         {
             if (!_isHovered)
             {
@@ -438,7 +432,7 @@ public abstract class UIComponent
         }
 
         if (IsActive && mouseState is { LeftButton: ButtonState.Pressed, RightButton: ButtonState.Released } &&
-            !Bounds.Contains(mouseState.Position))
+            !_bounds.Contains(mouseState.Position))
         {
             IsActive = false;
             OffActive();
@@ -446,7 +440,7 @@ public abstract class UIComponent
 
         if (_isHovered)
         {
-            if (Bounds.Contains(mouseState.Position)) return;
+            if (_bounds.Contains(mouseState.Position)) return;
 
             OffHover?.Invoke();
             _isHovered = !_isHovered;
@@ -533,15 +527,34 @@ public abstract class UIComponent
     {
         if (parent == null)
         {
-            Bounds = new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X,
+            _bounds = new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X,
                 (int)Options.Size.Y);
             GlobalPosition = LocalPosition;
         }
         else
         {
-            Bounds = new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
+            _bounds = new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X,
                 (int)Options.Size.Y);
         }
+    }
+
+    public void SetTexture(Texture2D texture)
+    {
+        if (Options.Texture != texture)
+        {
+            Options.Texture = texture;
+            CalculateScale();
+        }
+    }
+
+    public void SetColor(Color color)
+    {
+        Options.Color = color;
+    }
+
+    public void SetOnClick(Action clickAction)
+    {
+        OnClick = clickAction;
     }
 
     public abstract void Update();

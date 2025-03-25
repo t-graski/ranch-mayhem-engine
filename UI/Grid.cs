@@ -9,7 +9,7 @@ namespace ranch_mayhem_engine.UI;
 
 public class Grid : UIComponent
 {
-    private List<UIComponent> _components;
+    public List<UIComponent> Components;
     private GridOptions _gridOptions;
 
     public Grid(string id, GridOptions options, List<UIComponent> components,
@@ -48,9 +48,9 @@ public class Grid : UIComponent
 
     private void InitializeGrid(List<UIComponent> components)
     {
-        _components = components ?? [];
+        Components = components ?? [];
 
-        foreach (var component in _components)
+        foreach (var component in Components)
         {
             component?.SetParent(this);
         }
@@ -63,9 +63,9 @@ public class Grid : UIComponent
         var position = Vector2.Zero;
         var size = Vector2.Zero;
 
-        for (var i = 0; i < _components.Count; i++)
+        for (var i = 0; i < Components.Count; i++)
         {
-            var current = _components[i];
+            var current = Components[i];
 
             var isFirstColumn = i % _gridOptions.Columns.Count == 0;
             var isLastColumn = (i + 1) % _gridOptions.Columns.Count == 0;
@@ -129,15 +129,15 @@ public class Grid : UIComponent
         }
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        base.Draw(spriteBatch);
-        foreach (var component in _components)
-        {
-            component.Draw(spriteBatch);
-            component.HandleMouse(RanchMayhemEngine.MouseState);
-        }
-    }
+    // public override void Draw(SpriteBatch spriteBatch)
+    // {
+    //     base.Draw(spriteBatch);
+    //     foreach (var component in _components)
+    //     {
+    //         component.Draw(spriteBatch);
+    //         component.HandleMouse(RanchMayhemEngine.MouseState);
+    //     }
+    // }
 
     public override void Update()
     {

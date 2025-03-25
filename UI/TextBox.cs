@@ -82,15 +82,15 @@ public class TextBox : UIComponent
         RanchMayhemEngine.KeyboardManager.IsInTextBox = false;
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        base.Draw(spriteBatch);
-
-        // TODO: Hide overflow 
-
-        spriteBatch.DrawString(_font, _text.ToString(), new Vector2(Bounds.X + 5, Bounds.Y + 5),
-            _textBoxOptions.FontColor);
-    }
+    // public override void Draw(SpriteBatch spriteBatch)
+    // {
+    //     base.Draw(spriteBatch);
+    //
+    //     // TODO: Hide overflow 
+    //
+    //     spriteBatch.DrawString(_font, _text.ToString(), new Vector2(Bounds.X + 5, Bounds.Y + 5),
+    //         _textBoxOptions.FontColor);
+    // }
 
     public class TextBoxOptions : UIComponentOptions
     {

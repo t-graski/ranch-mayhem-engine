@@ -29,20 +29,20 @@ public class ProgressBar : UIComponent
         _progressText.SetParent(this);
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
-        texture.SetData([_currentColor]);
-
-        spriteBatch.Draw(texture,
-            new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y,
-                (int)(Options.Size.X * MathHelper.Clamp(_progressBarOptions.Fraction, 0, 1)), (int)Options.Size.Y),
-            _currentColor);
-
-        _progressText.Draw(spriteBatch);
-
-        DrawBorder(spriteBatch);
-    }
+    // public override void Draw(SpriteBatch spriteBatch)
+    // {
+    //     var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
+    //     texture.SetData([_currentColor]);
+    //
+    //     spriteBatch.Draw(texture,
+    //         new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y,
+    //             (int)(Options.Size.X * MathHelper.Clamp(_progressBarOptions.Fraction, 0, 1)), (int)Options.Size.Y),
+    //         _currentColor);
+    //
+    //     _progressText.Draw(spriteBatch);
+    //
+    //     DrawBorder(spriteBatch);
+    // }
 
     public override void SetParent(UIComponent parent)
     {

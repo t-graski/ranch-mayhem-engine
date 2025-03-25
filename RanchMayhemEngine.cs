@@ -11,9 +11,9 @@ namespace ranch_mayhem_engine;
 
 public sealed class RanchMayhemEngine : Game
 {
-    private const bool IsFullScreen = true;
-    public const int Width = 1920;
-    public const int Height = 1080;
+    private const bool IsFullScreen = false;
+    public const int Width = 1280;
+    public const int Height = 720;
 
     private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;

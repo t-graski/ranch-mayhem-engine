@@ -16,7 +16,6 @@ public class Button : UIComponent
         OffHover = HandleOffHover;
 
         OnClick = HandleOnClick;
-        OffClick = HandleOffClick;
 
 
 #if DEBUG
@@ -69,14 +68,6 @@ public class Button : UIComponent
         Options.Texture = _buttonOptions.Texture;
     }
 
-    private void HandleOffClick()
-    {
-        if (_buttonOptions.State == ButtonState.Disabled) return;
-
-        Logger.Log($"{GetType().FullName}::HandleOffClick Id={Id}", Logger.LogLevel.Internal);
-        Options.Texture = _buttonOptions.HoverTexture;
-    }
-
     public void ToggleDisabled()
     {
         if (_buttonOptions.State == ButtonState.Disabled)
@@ -87,11 +78,6 @@ public class Button : UIComponent
         {
             _buttonOptions.State = ButtonState.Disabled;
         }
-    }
-
-    public override void Draw(SpriteBatch spriteBatch)
-    {
-        base.Draw(spriteBatch);
     }
 
     public override void Update()
