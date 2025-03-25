@@ -13,7 +13,7 @@ public abstract class UIComponent
     protected UIComponent Parent { get; set; }
     public bool IsVisible { get; set; } = true;
     public string Id { get; }
-    public Vector2 LocalPosition { get; set; }
+    public Vector2 LocalPosition { get; private set; }
     public Vector2 GlobalPosition { get; set; }
     private Rectangle _bounds;
     public UIComponentOptions Options { get; set; } = new();
@@ -67,18 +67,18 @@ public abstract class UIComponent
             if (options.Size == Vector2.Zero)
             {
                 Logger.Log($"{prefix} SizeUnit is set to Percent and SizePercent is {Vector2.Zero}",
-                    Logger.LogLevel.Warning);
+                    LogLevel.Warning);
             }
             else
             {
                 Logger.Log($"{prefix} SizeUnit is set to Percent but 'Size' is being used instead of 'SizePercent'",
-                    Logger.LogLevel.Warning);
+                    LogLevel.Warning);
             }
         }
 
         if (options.Scale.X < 0 || options.Scale.Y < 0)
         {
-            Logger.Log($"{prefix} Scale is negative ({options.Scale})", Logger.LogLevel.Warning);
+            Logger.Log($"{prefix} Scale is negative ({options.Scale})", LogLevel.Warning);
         }
 
         // TODO: check for border options to be either all null or none null.
@@ -404,7 +404,7 @@ public abstract class UIComponent
     {
         if (!RanchMayhemEngine.IsFocused || !IsVisible) return;
 
-        if (mouseState.LeftButton == ButtonState.Pressed &&
+        if (mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed &&
             _bounds.Contains(mouseState.Position))
         {
             if (!IsClicked)
@@ -414,14 +414,18 @@ public abstract class UIComponent
             }
         }
 
-        if (IsClicked && mouseState.LeftButton == ButtonState.Released)
+        if (IsClicked && mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
         {
             OnClick?.Invoke();
             IsClicked = !IsClicked;
             CanTriggerClick = true;
         }
 
-        if (mouseState is { LeftButton: ButtonState.Released, RightButton: ButtonState.Released } &&
+        if (mouseState is
+            {
+                LeftButton: Microsoft.Xna.Framework.Input.ButtonState.Released,
+                RightButton: Microsoft.Xna.Framework.Input.ButtonState.Released
+            } &&
             _bounds.Contains(mouseState.Position))
         {
             if (!_isHovered)
@@ -431,7 +435,11 @@ public abstract class UIComponent
             }
         }
 
-        if (IsActive && mouseState is { LeftButton: ButtonState.Pressed, RightButton: ButtonState.Released } &&
+        if (IsActive && mouseState is
+            {
+                LeftButton: Microsoft.Xna.Framework.Input.ButtonState.Pressed,
+                RightButton: Microsoft.Xna.Framework.Input.ButtonState.Released
+            } &&
             !_bounds.Contains(mouseState.Position))
         {
             IsActive = false;

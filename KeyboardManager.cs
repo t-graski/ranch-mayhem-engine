@@ -15,7 +15,7 @@ public class KeyboardManager
         {
             Logger.Log(
                 $"{GetType().FullName}::RegisterBinding key={KeyboardInput.GetCharFromKey(key)} already exists and will be ignored.",
-                Logger.LogLevel.Warning);
+                LogLevel.Warning);
         }
     }
 

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace ranch_mayhem_engine.UI;
 
@@ -30,19 +27,19 @@ public class Grid : UIComponent
 
         if (gridOptions.ColumnGap < 0)
         {
-            Logger.Log($"{prefix} ColumnGap is negative ({gridOptions.ColumnGap})", Logger.LogLevel.Warning);
+            Logger.Log($"{prefix} ColumnGap is negative ({gridOptions.ColumnGap})", LogLevel.Warning);
         }
 
         if (gridOptions.RowGap < 0)
         {
-            Logger.Log($"{prefix} RowGap is negative ({gridOptions.RowGap})", Logger.LogLevel.Warning);
+            Logger.Log($"{prefix} RowGap is negative ({gridOptions.RowGap})", LogLevel.Warning);
         }
 
         if (childrenAmount < gridOptions.Columns.Count * gridOptions.Rows.Count)
         {
             Logger.Log(
                 $"{prefix} More columns/rows ({gridOptions.Columns.Count}x{gridOptions.Rows.Count}) defined than used ({childrenAmount}).",
-                Logger.LogLevel.Warning);
+                LogLevel.Warning);
         }
     }
 

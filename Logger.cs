@@ -1,17 +1,10 @@
 ﻿using System;
+using ranch_mayhem_engine.UI;
 
 namespace ranch_mayhem_engine;
 
 public static class Logger
 {
-    public enum LogLevel
-    {
-        Info,
-        Warning,
-        Error,
-        Internal
-    }
-
     public static void Log(string message, LogLevel level = LogLevel.Info)
     {
         var prefix = level switch

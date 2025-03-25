@@ -25,7 +25,7 @@ public class UIManager
 
     public UIManager(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
-        Logger.Log($"{GetType().FullName}::ctor", Logger.LogLevel.Internal);
+        Logger.Log($"{GetType().FullName}::ctor", LogLevel.Internal);
         GraphicsDevice = graphicsDevice;
         SpriteBatch = spriteBatch;
 

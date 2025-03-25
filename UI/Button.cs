@@ -48,7 +48,7 @@ public class Button : UIComponent
     {
         if (_buttonOptions.State == ButtonState.Disabled) return;
 
-        Logger.Log($"{GetType().FullName}::HandleOnHover Id={Id}", Logger.LogLevel.Internal);
+        Logger.Log($"{GetType().FullName}::HandleOnHover Id={Id}", LogLevel.Internal);
         Options.Texture = _buttonOptions.HoverTexture;
     }
 
@@ -56,7 +56,7 @@ public class Button : UIComponent
     {
         if (_buttonOptions.State == ButtonState.Disabled) return;
 
-        Logger.Log($"{GetType().FullName}::HandleOnClick Id={Id}", Logger.LogLevel.Internal);
+        Logger.Log($"{GetType().FullName}::HandleOnClick Id={Id}", LogLevel.Internal);
         Options.Texture = _buttonOptions.ClickTexture;
     }
 
@@ -64,7 +64,7 @@ public class Button : UIComponent
     {
         if (_buttonOptions.State == ButtonState.Disabled) return;
 
-        Logger.Log($"{GetType().FullName}::HandleOffHover Id={Id}", Logger.LogLevel.Internal);
+        Logger.Log($"{GetType().FullName}::HandleOffHover Id={Id}", LogLevel.Internal);
         Options.Texture = _buttonOptions.Texture;
     }
 
@@ -89,11 +89,5 @@ public class Button : UIComponent
         public Texture2D HoverTexture;
         public Texture2D ClickTexture;
         public ButtonState State = ButtonState.Normal;
-    }
-
-    public enum ButtonState
-    {
-        Normal,
-        Disabled
     }
 }

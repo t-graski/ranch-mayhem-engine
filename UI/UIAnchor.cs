@@ -4,17 +4,6 @@ using Microsoft.Xna.Framework;
 
 namespace ranch_mayhem_engine.UI;
 
-[Flags]
-public enum UIAnchor
-{
-    None = 0,
-    Top = 1 << 0,
-    Bottom = 1 << 1,
-    Left = 1 << 2,
-    Right = 1 << 3,
-    CenterX = 1 << 4,
-    CenterY = 1 << 5
-}
 
 public static partial class UIAnchorExtension
 {

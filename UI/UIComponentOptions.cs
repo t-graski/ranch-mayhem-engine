@@ -29,15 +29,3 @@ public class UIComponentOptions
             $"Color={Color}, Texture={Texture}, Position={Position}, UiAnchor={UiAnchor}, Size={Size}, SizePercent={SizePercent}, SizeUnit={SizeUnit}, Scale={Scale}";
     }
 }
-
-public enum SizeUnit
-{
-    Pixels,
-    Percent
-}
-
-public enum BorderOrientation
-{
-    Inside,
-    Outside
-}

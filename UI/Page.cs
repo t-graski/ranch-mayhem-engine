@@ -18,7 +18,7 @@ public abstract class Page
         {
             Logger.Log(
                 $"{GetType().FullName}::AddComponent Id={component.Id} Adding component with already existing Id. This might cause unexpected issues.",
-                Logger.LogLevel.Warning);
+                LogLevel.Warning);
         }
 
         component.IsVisible = IsVisible;
