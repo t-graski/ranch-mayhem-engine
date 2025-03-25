@@ -79,6 +79,8 @@ public class Text : UIComponent
         UpdateGlobalPosition();
     }
 
+    public string GetContent() => _textOptions.Content;
+
     public Vector2 GetSize()
     {
         return _font.MeasureString(_textOptions.Content);
@@ -91,12 +93,5 @@ public class Text : UIComponent
 
         public Color FontColor = Color.Red;
         // public TextAlignment Alignment = TextAlignment.Center;`
-    }
-
-    public enum TextAlignment
-    {
-        Left,
-        Center,
-        Right
     }
 }

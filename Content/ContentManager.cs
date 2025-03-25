@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ranch_mayhem_engine.UI;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
 
 namespace ranch_mayhem_engine.Content;
@@ -35,7 +36,7 @@ public class ContentManager
                 default:
                     Logger.Log(
                         $"{GetType().FullName}::LoadContent Trying to load content with unknown type, name={item.Name}",
-                        Logger.LogLevel.Warning);
+                        LogLevel.Warning);
                     break;
             }
         }

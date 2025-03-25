@@ -61,7 +61,7 @@ public class Animator
 
                 break;
             default:
-                Logger.Log($"{GetType().FullName}::ctor direction:{direction} is not valid.", Logger.LogLevel.Error);
+                Logger.Log($"{GetType().FullName}::ctor direction:{direction} is not valid.", LogLevel.Error);
                 break;
         }
     }
@@ -166,11 +166,5 @@ public class Animator
             }
             // Logger.Log($"{GetType().FullName}::Update startY= {_startY}, currentY={_currentY}, endY={_endY}");
         }
-    }
-
-    public enum AnimationDirection
-    {
-        Top,
-        Right
     }
 }
