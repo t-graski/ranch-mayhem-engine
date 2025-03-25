@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="1.0.0"></a>
+## [1.0.0](https://www.github.com/t-graski/ranch-mayhem-engine/releases/tag/v1.0.0) (2025-03-25)
+
+### Features
+
+* change rendering responsibility to pages ([c253cf8](https://www.github.com/t-graski/ranch-mayhem-engine/commit/c253cf8420b00e7925c643edc3ccea0441a60227))
+
+### Bug Fixes
+
+* change csproj ([1d4dbe6](https://www.github.com/t-graski/ranch-mayhem-engine/commit/1d4dbe6c1c93602547e0c5d002116c3dbac34878))
+* remove draw calls ([942856d](https://www.github.com/t-graski/ranch-mayhem-engine/commit/942856dff0d43ae3a7c299410be322a5a90b14a1))
+* remove off click action ([3e692bf](https://www.github.com/t-graski/ranch-mayhem-engine/commit/3e692bfe89c64cdde2eedbd6034308b1fdb27089))
+
+### Breaking Changes
+
+* change rendering responsibility to pages ([c253cf8](https://www.github.com/t-graski/ranch-mayhem-engine/commit/c253cf8420b00e7925c643edc3ccea0441a60227))
+
 <a name="0.0.2"></a>
 ## [0.0.2](https://www.github.com/t-graski/ranch-mayhem-engine/releases/tag/v0.0.2) (2025-03-23)
 
