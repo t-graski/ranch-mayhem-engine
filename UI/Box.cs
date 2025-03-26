@@ -21,14 +21,12 @@ public class Box : UIComponent
     {
         if (text.Length == 0)
         {
-            Logger.Log($"Setting text 1");
             _text = null;
             return;
         }
 
         if (_text == null)
         {
-            Logger.Log($"Setting text 2");
             _text = new TextBuilder($"{Id}-inner-text")
                 .SetContent(text)
                 .SetUiAnchor(UIAnchor.CenterX | UIAnchor.CenterY)
@@ -37,19 +35,14 @@ public class Box : UIComponent
                 .Build();
 
             _text.SetParent(this);
-
-            Logger.Log($"text global pos {_text.GlobalPosition} size {_text.GetSize()} parent global {GlobalPosition}");
-
             return;
         }
 
         if (_text.GetContent().Equals(text))
         {
-            Logger.Log($"Setting text 3");
             return;
         }
 
-        Logger.Log($"Setting text 4");
         _text.SetContent(text);
         _text.SetColor(color);
     }

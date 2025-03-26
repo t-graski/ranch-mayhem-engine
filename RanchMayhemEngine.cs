@@ -9,7 +9,7 @@ using ranch_mayhem_engine.UI;
 
 namespace ranch_mayhem_engine;
 
-public sealed class RanchMayhemEngine : Game
+public class RanchMayhemEngine : Game
 {
     private const bool IsFullScreen = false;
     public const int Width = 1280;
