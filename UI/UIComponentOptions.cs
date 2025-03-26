@@ -22,6 +22,7 @@ public class UIComponentOptions
     public Texture2D BorderCornerTexture;
     public int BorderSize;
     public BorderOrientation BorderOrientation = BorderOrientation.Outside;
+    public BorderPosition BorderPosition = BorderPosition.All;
 
     public override string ToString()
     {
