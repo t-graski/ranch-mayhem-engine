@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 
+<a name="2.0.0"></a>
+## [2.0.0](https://www.github.com/t-graski/ranch-mayhem-engine/releases/tag/v2.0.0) (2025-03-28)
+
+### Features
+
+* add border position option ([ade5af7](https://www.github.com/t-graski/ranch-mayhem-engine/commit/ade5af7fe9194d5002508af508eec51538584a63))
+* add hover transition ([e5bdd4f](https://www.github.com/t-graski/ranch-mayhem-engine/commit/e5bdd4f57652d6a301b0c96d37bcd582c1d25e15))
+* change content location ([3b5888f](https://www.github.com/t-graski/ranch-mayhem-engine/commit/3b5888f401048726659a096f057f67633c79e435))
+
+### Bug Fixes
+
+* add monogame content reference attribute ([f7518cc](https://www.github.com/t-graski/ranch-mayhem-engine/commit/f7518ccc23f1e6a10dece57911080872e40bcf9e))
+* remove unneeded logs ([680795e](https://www.github.com/t-graski/ranch-mayhem-engine/commit/680795e6276adbd1200d85d11a74f4e4ff5668e1))
+
+### Breaking Changes
+
+* change content location ([3b5888f](https://www.github.com/t-graski/ranch-mayhem-engine/commit/3b5888f401048726659a096f057f67633c79e435))
+
 <a name="1.1.0"></a>
 ## [1.1.0](https://www.github.com/t-graski/ranch-mayhem-engine/releases/tag/v1.1.0) (2025-03-25)
 
