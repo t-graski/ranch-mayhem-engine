@@ -25,7 +25,7 @@ public abstract class UIComponent
     protected Action OnHover;
     protected Action OffHover;
 
-    private bool _isHovered;
+    protected bool IsHovered;
     protected bool IsClicked;
     protected bool IsActive;
 
@@ -99,6 +99,7 @@ public abstract class UIComponent
             Options.BorderOrientation = options.BorderOrientation;
             Options.BorderTexture = options.BorderTexture;
             Options.BorderCornerTexture = options.BorderCornerTexture ?? Options.BorderTexture;
+            Options.BorderPosition = options.BorderPosition;
 
             _hasBorder = true;
         }
@@ -265,7 +266,7 @@ public abstract class UIComponent
             DrawBorder(spriteBatch);
         }
 
-        if (HoverItem != null && _isHovered)
+        if (HoverItem != null && IsHovered)
         {
             DrawHoverItem(spriteBatch, RanchMayhemEngine.MouseState);
         }
@@ -279,45 +280,79 @@ public abstract class UIComponent
             {
                 var top = GlobalPosition;
                 var topSize = new Vector2(Options.Size.X, Options.BorderSize);
-                DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
+
+                if (Options.BorderPosition.HasFlag(BorderPosition.Top))
+                {
+                    DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
+                }
 
                 var left = new Vector2(GlobalPosition.X, GlobalPosition.Y + Options.BorderSize);
                 var leftSize = new Vector2(Options.BorderSize, Options.Size.Y - 2 * Options.BorderSize);
-                DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
+
+                if (Options.BorderPosition.HasFlag(BorderPosition.Left))
+                {
+                    DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
+                }
 
                 var right = new Vector2(GlobalPosition.X + Options.Size.X - Options.BorderSize, left.Y);
-                DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
+
+                if (Options.BorderPosition.HasFlag(BorderPosition.Right))
+                {
+                    DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
+                }
+
 
                 var bottom = new Vector2(GlobalPosition.X,
                     GlobalPosition.Y + leftSize.Y + Options.BorderSize);
-                DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+                if (Options.BorderPosition.HasFlag(BorderPosition.Top))
+                {
+                    DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+                }
             }
 
             if (Options.BorderOrientation == BorderOrientation.Outside)
             {
                 var top = new Vector2(GlobalPosition.X - Options.BorderSize, GlobalPosition.Y - Options.BorderSize);
                 var topSize = new Vector2(Options.Size.X + Options.BorderSize * 2, Options.BorderSize);
-                DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
+
+                if (Options.BorderPosition.HasFlag(BorderPosition.Top))
+                {
+                    DrawRectangle(spriteBatch, top, topSize, Options.BorderColor);
+                }
 
                 var left = new Vector2(top.X, top.Y + Options.BorderSize);
                 var leftSize = new Vector2(Options.BorderSize, Options.Size.Y);
-                DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
+                if (Options.BorderPosition.HasFlag(BorderPosition.Left))
+                {
+                    DrawRectangle(spriteBatch, left, leftSize, Options.BorderColor);
+                }
 
                 var right = new Vector2(left.X + Options.Size.X + Options.BorderSize, left.Y);
-                DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
+
+                if (Options.BorderPosition.HasFlag(BorderPosition.Right))
+                {
+                    DrawRectangle(spriteBatch, right, leftSize, Options.BorderColor);
+                }
 
                 var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
-                DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+
+                if (Options.BorderPosition.HasFlag(BorderPosition.Bottom))
+                {
+                    DrawRectangle(spriteBatch, bottom, topSize, Options.BorderColor);
+                }
             }
         }
         else
         {
             var topLeftCorner = new Vector2(GlobalPosition.X - Options.BorderSize,
                 GlobalPosition.Y - Options.BorderSize);
+
             var bottomLeftCorner = new Vector2(topLeftCorner.X,
                 topLeftCorner.Y + Options.Size.Y + Options.BorderSize - 1);
+
             var topRightCorner =
                 new Vector2(topLeftCorner.X + Options.Size.X + Options.BorderSize, topLeftCorner.Y);
+
             var bottomRightCorner = new Vector2(topRightCorner.X,
                 topRightCorner.Y + Options.Size.Y + Options.BorderSize - 1);
 
@@ -330,18 +365,34 @@ public abstract class UIComponent
             var right = new Vector2(left.X + Options.Size.X + Options.BorderSize, left.Y);
             var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
 
-            DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topLeftCorner,
-                new Vector2(Options.BorderSize));
-            DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topRightCorner,
-                new Vector2(Options.BorderSize));
-            DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomLeftCorner,
-                new Vector2(Options.BorderSize));
-            DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomRightCorner,
-                new Vector2(Options.BorderSize));
-            DrawTiledTexture(spriteBatch, Options.BorderTexture, top, topSize);
-            DrawTiledTexture(spriteBatch, Options.BorderTexture, left, leftSize, false);
-            DrawTiledTexture(spriteBatch, Options.BorderTexture, right, leftSize, false);
-            DrawTiledTexture(spriteBatch, Options.BorderTexture, bottom, topSize);
+
+            if (Options.BorderPosition == BorderPosition.Top)
+            {
+                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topLeftCorner,
+                    new Vector2(Options.BorderSize));
+                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topRightCorner,
+                    new Vector2(Options.BorderSize));
+                DrawTiledTexture(spriteBatch, Options.BorderTexture, top, topSize);
+            }
+
+            if (Options.BorderPosition == BorderPosition.Left)
+            {
+                DrawTiledTexture(spriteBatch, Options.BorderTexture, left, leftSize, false);
+            }
+
+            if (Options.BorderPosition == BorderPosition.Right)
+            {
+                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomLeftCorner,
+                    new Vector2(Options.BorderSize));
+                DrawTiledTexture(spriteBatch, Options.BorderTexture, right, leftSize, false);
+            }
+
+            if (Options.BorderPosition == BorderPosition.Bottom)
+            {
+                DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomRightCorner,
+                    new Vector2(Options.BorderSize));
+                DrawTiledTexture(spriteBatch, Options.BorderTexture, bottom, topSize);
+            }
         }
     }
 
@@ -428,10 +479,10 @@ public abstract class UIComponent
             } &&
             _bounds.Contains(mouseState.Position))
         {
-            if (!_isHovered)
+            if (!IsHovered)
             {
                 OnHover?.Invoke();
-                _isHovered = !_isHovered;
+                IsHovered = !IsHovered;
             }
         }
 
@@ -446,12 +497,12 @@ public abstract class UIComponent
             OffActive();
         }
 
-        if (_isHovered)
+        if (IsHovered)
         {
             if (_bounds.Contains(mouseState.Position)) return;
 
             OffHover?.Invoke();
-            _isHovered = !_isHovered;
+            IsHovered = !IsHovered;
         }
     }
 

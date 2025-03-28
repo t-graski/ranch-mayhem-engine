@@ -9,11 +9,11 @@ using ranch_mayhem_engine.UI;
 
 namespace ranch_mayhem_engine;
 
-public sealed class RanchMayhemEngine : Game
+public class RanchMayhemEngine : Game
 {
-    private const bool IsFullScreen = false;
-    public const int Width = 1280;
-    public const int Height = 720;
+    private const bool IsFullScreen = true;
+    public const int Width = 1920;
+    public const int Height = 1080;
 
     private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
@@ -49,6 +49,7 @@ public sealed class RanchMayhemEngine : Game
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
+        _spriteBatch.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
         UIManager = new UIManager(_spriteBatch.GraphicsDevice, _spriteBatch);
         UIManager.Initialize();
@@ -110,7 +111,7 @@ public sealed class RanchMayhemEngine : Game
     {
         GraphicsDevice.Clear(Color.LightGoldenrodYellow);
 
-        _spriteBatch.Begin(SpriteSortMode.Deferred, null, SamplerState.PointClamp);
+        _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
         UIManager.RenderBackground();
         UIManager.RenderComponents();
