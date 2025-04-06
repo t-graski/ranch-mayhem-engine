@@ -58,7 +58,7 @@ public static class ContentManager
     {
         if (Sprites.TryGetValue(name, out var item))
         {
-            var extracted = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, item.Width, item.Height);
+            var extracted = new Texture2D(RanchMayhemEngine.UiManager.GraphicsDevice, item.Width, item.Height);
 
             var data = new Color[item.Width * item.Height];
             _textureAtlas.GetData(0, new Rectangle((int)item.Position.X, (int)item.Position.Y, item.Width, item.Height),

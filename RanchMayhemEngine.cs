@@ -1,9 +1,7 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ranch_mayhem_engine.Content;
-using ranch_mayhem_engine.Debug;
 using ranch_mayhem_engine.Pages;
 using ranch_mayhem_engine.UI;
 
@@ -18,9 +16,7 @@ public class RanchMayhemEngine : Game
     private readonly GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
 
-    public static UIManager UIManager { get; private set; }
-    public static ContentManager ContentManager { get; private set; }
-    public static KeyboardManager KeyboardManager { get; private set; }
+    public static UiManager UiManager { get; private set; }
     public static MouseState MouseState { get; private set; }
     public static bool IsFocused { get; private set; } = true;
     private static bool WasFocused { get; set; } = false;
@@ -51,28 +47,10 @@ public class RanchMayhemEngine : Game
         _spriteBatch = new SpriteBatch(GraphicsDevice);
         _spriteBatch.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-        UIManager = new UIManager(_spriteBatch.GraphicsDevice, _spriteBatch);
-        UIManager.Initialize();
+        UiManager = new UiManager(_spriteBatch.GraphicsDevice, _spriteBatch);
+        UiManager.Initialize();
 
-        ContentManager = new ContentManager();
-        ContentManager.LoadContent(Content);
-        ContentManager.LoadDefaultTextureAtlas(Content);
-        ContentManager.LoadAttackAtlas(Content);
-
-        KeyboardManager = new KeyboardManager();
-
-        UIManager.AddComponent(new MenuBar().Initialize());
-        UIManager.AddComponent(new Crops().Initialize());
-        UIManager.AddComponent(new QuickAccess().Initialize());
-        var console = new Pages.Console().Initialize();
-        UIManager.AddComponent(console);
-        var stats = new Stats().Initialize();
-        UIManager.AddComponent(stats);
-
-        KeyboardManager.RegisterBinding(Keys.OemQuestion, console);
-        KeyboardManager.RegisterBinding(Keys.S, stats);
-
-        UIManager.SetBackground(ContentManager.GetTexture("spring_background"));
+        UiManager.SetBackground(ContentManager.GetTexture("spring_background"));
     }
 
     protected override void Update(GameTime gameTime)
@@ -85,7 +63,7 @@ public class RanchMayhemEngine : Game
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
-        UIManager.UpdateComponents(MouseState);
+        UiManager.UpdateComponents(MouseState);
 
         if (!IsActive && !WasFocused)
         {
@@ -113,8 +91,8 @@ public class RanchMayhemEngine : Game
 
         _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
-        UIManager.RenderBackground();
-        UIManager.RenderComponents();
+        UiManager.RenderBackground();
+        UiManager.RenderComponents();
 
         _spriteBatch.End();
 

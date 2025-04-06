@@ -482,3 +482,12 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# Content files
+Content/*.png
+Content/*.jpg
+Content/*.spritefont
+Content/*.json
+Content/*.mgcb
+Content/*.ttf
+Content/*.aseprite
