@@ -7,8 +7,10 @@ public class UiComponentOptions
 {
     public Color Color = Color.Transparent;
     public Texture2D? Texture;
+
     [Obsolete("This attribute is not yet implemented, but will be in the future.")]
     public Texture2D? TextureOverlay;
+
     public Vector2 Position = Vector2.Zero;
     public UiAnchor UiAnchor = UiAnchor.None;
     public Vector2 UiAnchorOffset = Vector2.Zero;
@@ -17,7 +19,7 @@ public class UiComponentOptions
     public SizeUnit SizeUnit = SizeUnit.Pixels;
     public Vector2 Scale = Vector2.One;
 
-    public Color BorderColor = Color.Red;
+    public Color BorderColor = Color.Transparent;
     public Texture2D? BorderTexture;
     public Texture2D? BorderCornerTexture;
     public int BorderSize = 8;
