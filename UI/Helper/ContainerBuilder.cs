@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ranch_mayhem_engine.Content;
 using Vector2 = System.Numerics.Vector2;
 
 namespace ranch_mayhem_engine.UI.Helper;
 
 public class ContainerBuilder
 {
-    private Container _container;
-    private UIComponentOptions _componentOptions;
-    private string _id;
-    private UIComponent _parent;
-    private List<UIComponent> _children;
+    private readonly UIComponentOptions _componentOptions;
+    private readonly string _id;
+    private UiComponent _parent;
+    private List<UiComponent> _children;
     private Action _onClickAction;
 
     public ContainerBuilder(string id)
@@ -21,7 +19,7 @@ public class ContainerBuilder
         _componentOptions = new UIComponentOptions();
     }
 
-    public ContainerBuilder SetParent(UIComponent parent)
+    public ContainerBuilder SetParent(UiComponent parent)
     {
         _parent = parent;
         return this;
@@ -55,9 +53,21 @@ public class ContainerBuilder
         return this;
     }
 
+    public ContainerBuilder SetBorderColor(Color color)
+    {
+        _componentOptions.BorderColor = color;
+        return this;
+    }
+
+    public ContainerBuilder SetBorderPosition(BorderPosition position)
+    {
+        _componentOptions.BorderPosition = position;
+        return this;
+    }
+
     public ContainerBuilder SetBorderTexture(string textureId)
     {
-        _componentOptions.BorderTexture = RanchMayhemEngine.ContentManager.GetTexture(textureId);
+        _componentOptions.BorderTexture = ContentManager.GetTexture(textureId);
         return this;
     }
 
@@ -73,7 +83,7 @@ public class ContainerBuilder
         return this;
     }
 
-    public ContainerBuilder SetChildren(List<UIComponent> children)
+    public ContainerBuilder SetChildren(List<UiComponent> children)
     {
         _children = children;
         return this;
