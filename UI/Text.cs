@@ -86,7 +86,7 @@ public class Text : UiComponent
         return _font.MeasureString(_textOptions.Content);
     }
 
-    public class TextOptions : UIComponentOptions
+    public class TextOptions : UiComponentOptions
     {
         public string Content = "";
         public int FontSize = 12;

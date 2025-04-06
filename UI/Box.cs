@@ -13,7 +13,7 @@ public class Box : UiComponent
     {
     }
 
-    public class BoxOptions : UIComponentOptions
+    public class BoxOptions : UiComponentOptions
     {
     }
 

@@ -14,7 +14,7 @@ public abstract class UiComponent
     public Vector2 LocalPosition { get; private set; }
     public Vector2 GlobalPosition { get; set; }
     private Rectangle _bounds;
-    public UIComponentOptions Options { get; set; } = new();
+    public UiComponentOptions Options { get; set; } = new();
     private UiComponent? HoverItem { get; set; }
     private bool _hasBorder;
     public bool IsAnimating;
@@ -29,7 +29,7 @@ public abstract class UiComponent
 
     public bool CanTriggerClick;
 
-    protected UiComponent(string id, UIComponentOptions options, UiComponent? parent = null, bool scale = true)
+    protected UiComponent(string id, UiComponentOptions options, UiComponent? parent = null, bool scale = true)
     {
         Id = id;
         Parent = parent;
@@ -51,7 +51,7 @@ public abstract class UiComponent
         }
     }
 
-    private void ParseOptions(UIComponentOptions options)
+    private void ParseOptions(UiComponentOptions options)
     {
         var prefix = $"{GetType().FullName}::ctor Id={Id}";
 
@@ -82,7 +82,7 @@ public abstract class UiComponent
         // TODO: check for border options to be either all null or none null.
     }
 
-    private void ApplyOptions(UIComponentOptions options)
+    private void ApplyOptions(UiComponentOptions options)
     {
         Options.Size = ScaleToGlobal(options.Size);
         Options.SizeUnit = options.SizeUnit;

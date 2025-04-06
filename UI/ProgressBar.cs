@@ -75,7 +75,7 @@ public class ProgressBar : UiComponent
     }
 
 
-    public class ProgressBarOptions : UIComponentOptions
+    public class ProgressBarOptions : UiComponentOptions
     {
         public float Fraction;
         public Dictionary<float, Color> Thresholds;

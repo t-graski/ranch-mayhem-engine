@@ -6,7 +6,7 @@ public class Container : UiComponent
 {
     private List<UiComponent> _components;
 
-    public Container(string id, UIComponentOptions options, List<UiComponent> components, UiComponent? parent = null) :
+    public Container(string id, UiComponentOptions options, List<UiComponent> components, UiComponent? parent = null) :
         base(id, options, parent)
     {
         InitializeContainer(components);

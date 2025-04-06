@@ -7,7 +7,7 @@ namespace ranch_mayhem_engine.UI.Helper;
 
 public class ContainerBuilder
 {
-    private readonly UIComponentOptions _componentOptions;
+    private readonly UiComponentOptions _componentOptions;
     private readonly string _id;
     private UiComponent _parent;
     private List<UiComponent> _children;
@@ -16,7 +16,7 @@ public class ContainerBuilder
     public ContainerBuilder(string id)
     {
         _id = id;
-        _componentOptions = new UIComponentOptions();
+        _componentOptions = new UiComponentOptions();
     }
 
     public ContainerBuilder SetParent(UiComponent parent)

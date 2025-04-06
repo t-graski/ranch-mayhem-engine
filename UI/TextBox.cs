@@ -92,7 +92,7 @@ public class TextBox : UiComponent
     //         _textBoxOptions.FontColor);
     // }
 
-    public class TextBoxOptions : UIComponentOptions
+    public class TextBoxOptions : UiComponentOptions
     {
         public int FontSize { get; set; } = RanchMayhemEngineConstants.DefaultFontSize;
         public Color FontColor { get; set; } = RanchMayhemEngineConstants.DefaultFontColor;

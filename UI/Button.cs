@@ -103,7 +103,7 @@ public class Button : UiComponent
         }
     }
 
-    public class ButtonOptions : UIComponentOptions
+    public class ButtonOptions : UiComponentOptions
     {
         public Texture2D? HoverTexture;
         public Texture2D? ClickTexture;

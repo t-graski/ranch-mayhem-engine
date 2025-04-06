@@ -142,7 +142,7 @@ public class Grid : UiComponent
         }
     }
 
-    public class GridOptions : UIComponentOptions
+    public class GridOptions : UiComponentOptions
     {
         public List<int> Columns;
         public List<int> Rows;
