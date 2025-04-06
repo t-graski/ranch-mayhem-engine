@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace ranch_mayhem_engine.UI;
 
-public class UIManager
+public class UiManager
 {
     private const int ReferenceWidth = 1920;
     private const int ReferenceHeight = 1080;
@@ -17,13 +15,13 @@ public class UIManager
     public Vector2 GlobalScale;
 
     public GraphicsDevice GraphicsDevice { get; private set; }
-    public SpriteBatch SpriteBatch { get; private set; }
+    private SpriteBatch SpriteBatch { get; set; }
 
     private List<Page> _pages;
 
-    private Texture2D _background { get; set; }
+    private Texture2D Background { get; set; }
 
-    public UIManager(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
+    public UiManager(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
         Logger.Log($"{GetType().FullName}::ctor", LogLevel.Internal);
         GraphicsDevice = graphicsDevice;
@@ -48,10 +46,10 @@ public class UIManager
 
     public void SetBackground(Texture2D texture)
     {
-        _background = texture;
+        Background = texture;
     }
 
-    public Page GetPage(string id)
+    public Page? GetPage(string id)
     {
         return _pages.Find(component => component.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
     }
@@ -67,9 +65,9 @@ public class UIManager
 
     public void RenderBackground()
     {
-        if (_background != null)
+        if (Background != null)
         {
-            SpriteBatch.Draw(_background, new Rectangle(0, 0, RanchMayhemEngine.Width, RanchMayhemEngine.Height),
+            SpriteBatch.Draw(Background, new Rectangle(0, 0, RanchMayhemEngine.Width, RanchMayhemEngine.Height),
                 Color.White);
         }
     }

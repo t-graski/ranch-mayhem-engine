@@ -5,9 +5,9 @@ namespace ranch_mayhem_engine.UI.Helper;
 public class TextBuilder(string id)
 {
     private readonly Text.TextOptions _textOptions = new();
-    private UIComponent _parent;
+    private UiComponent _parent;
 
-    public TextBuilder SetParent(UIComponent parent)
+    public TextBuilder SetParent(UiComponent parent)
     {
         _parent = parent;
         return this;
@@ -31,7 +31,7 @@ public class TextBuilder(string id)
         return this;
     }
 
-    public TextBuilder SetUiAnchor(UIAnchor anchor)
+    public TextBuilder SetUiAnchor(UiAnchor anchor)
     {
         _textOptions.UiAnchor = anchor;
         return this;
@@ -55,7 +55,7 @@ public class TextBuilder(string id)
 
     public TextBuilder CenterXY()
     {
-        _textOptions.UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY;
+        _textOptions.UiAnchor = UiAnchor.CenterX | UiAnchor.CenterY;
         return this;
     }
 

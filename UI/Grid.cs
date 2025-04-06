@@ -1,16 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 
 namespace ranch_mayhem_engine.UI;
 
-public class Grid : UIComponent
+public class Grid : UiComponent
 {
-    public List<UIComponent> Components;
+    public List<UiComponent> Components;
     private GridOptions _gridOptions;
 
-    public Grid(string id, GridOptions options, List<UIComponent> components,
-        UIComponent parent = null) : base(id,
+    public Grid(string id, GridOptions options, List<UiComponent> components,
+        UiComponent? parent = null) : base(id,
         options, parent)
     {
 #if DEBUG
@@ -43,13 +41,13 @@ public class Grid : UIComponent
         }
     }
 
-    private void InitializeGrid(List<UIComponent> components)
+    private void InitializeGrid(List<UiComponent> components)
     {
         Components = components ?? [];
 
         foreach (var component in Components)
         {
-            component?.SetParent(this);
+            component.SetParent(this);
         }
 
         CalculatePositions();
@@ -94,7 +92,7 @@ public class Grid : UIComponent
 
             if (current != null)
             {
-                if (current.Options.UiAnchor != UIAnchor.None)
+                if (current.Options.UiAnchor != UiAnchor.None)
                 {
                     current.RecalculateSize(current.Options.Size, size);
                     var itemPosition = current.Options.UiAnchor.CalculatePosition(current.Options.Size, size);
@@ -138,6 +136,10 @@ public class Grid : UIComponent
 
     public override void Update()
     {
+        foreach (var component in Components)
+        {
+            component.Update();
+        }
     }
 
     public class GridOptions : UIComponentOptions

@@ -1,15 +1,15 @@
-﻿using System;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ranch_mayhem_engine.Content;
 
 namespace ranch_mayhem_engine.UI;
 
-public class Text : UIComponent
+public class Text : UiComponent
 {
     private readonly TextOptions _textOptions;
     private SpriteFont _font;
 
-    public Text(string id, TextOptions options, UIComponent parent = null,
+    public Text(string id, TextOptions options, UiComponent? parent = null,
         bool scale = true) : base(id, options,
         parent, scale)
     {
@@ -20,7 +20,7 @@ public class Text : UIComponent
     private void InitializeFont()
     {
         var fontWithSize =
-            RanchMayhemEngine.ContentManager.GetFontWithSize(RanchMayhemEngineConstants.DefaultFont,
+            ContentManager.GetFontWithSize(RanchMayhemEngineConstants.DefaultFont,
                 _textOptions.FontSize);
         _font = fontWithSize.font;
 
@@ -31,7 +31,7 @@ public class Text : UIComponent
             scale = CalculateScale(fontWithSize.size, _textOptions.FontSize);
         }
 
-        Options.Scale = new Vector2(scale) * RanchMayhemEngine.UIManager.GlobalScale;
+        Options.Scale = new Vector2(scale) * RanchMayhemEngine.UiManager.GlobalScale;
         Options.Size = _font.MeasureString(_textOptions.Content) * Options.Scale;
 
         // Logger.Log(
@@ -39,7 +39,7 @@ public class Text : UIComponent
         //     Logger.LogLevel.Internal);
     }
 
-    public override void SetParent(UIComponent parent)
+    public override void SetParent(UiComponent parent)
     {
         Parent = parent;
         RecalculateSize();

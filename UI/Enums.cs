@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ranch_mayhem_engine.UI;
+﻿namespace ranch_mayhem_engine.UI;
 
 public enum SizeUnit
 {
@@ -53,7 +51,7 @@ public enum AnimationDirection
 }
 
 [Flags]
-public enum UIAnchor
+public enum UiAnchor
 {
     None = 0,
     Top = 1 << 0,

@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using Microsoft.Xna.Framework;
 
 namespace ranch_mayhem_engine.UI;
@@ -8,8 +6,8 @@ namespace ranch_mayhem_engine.UI;
 
 public class Animator
 {
-    private readonly UIComponent _component;
-    private readonly Dictionary<UIComponent, (float startX, float currentX, float endX)> _children = [];
+    private readonly UiComponent _component;
+    private readonly Dictionary<UiComponent, (float startX, float currentX, float endX)> _children = [];
     private readonly AnimationDirection _direction;
     private readonly float _animationSpeed;
 
@@ -24,7 +22,7 @@ public class Animator
     private bool _isAnimationDone = true;
     private bool _isAnimating = false;
 
-    public Animator(UIComponent component, AnimationDirection direction, float animationSpeed = 0.1f)
+    public Animator(UiComponent component, AnimationDirection direction, float animationSpeed = 0.1f)
     {
         _component = component;
         _animationSpeed = animationSpeed;
@@ -72,7 +70,7 @@ public class Animator
         _isAnimating = true;
 
         _component.IsAnimating = true;
-        foreach (var (key, value) in _children)
+        foreach (var (key, _) in _children)
         {
             key.IsAnimating = true;
         }
@@ -145,7 +143,7 @@ public class Animator
                         _isAnimating = false;
                         _isAnimationDone = true;
 
-                        foreach (var (key, (startX, currentX, endX)) in _children)
+                        foreach (var (key, (startX, _, endX)) in _children)
                         {
                             _children[key] = (startX, endX, endX);
                             key.IsAnimating = false;

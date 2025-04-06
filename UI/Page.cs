@@ -1,18 +1,17 @@
-﻿using System.Collections.Generic;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace ranch_mayhem_engine.UI;
 
 public abstract class Page
 {
-    public string Id { get; protected set; }
+    public string Id { get; protected set; } = Guid.NewGuid().ToString();
     protected bool IsVisible { get; set; } = false;
-    protected List<UIComponent> Components { get; set; } = [];
+    protected List<UiComponent> Components { get; set; } = [];
 
     public abstract Page Initialize();
 
-    protected void AddComponent(UIComponent component)
+    protected void AddComponent(UiComponent component)
     {
         if (Components.Find(c => c.Id.Equals(component.Id)) != null)
         {

@@ -1,18 +1,16 @@
-﻿using System;
-using System.Net.Sockets;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace ranch_mayhem_engine.UI;
 
-public class Button : UIComponent
+public class Button : UiComponent
 {
     private readonly ButtonOptions _buttonOptions;
     private float _transitionProgress = 0f;
     private const float TransitionSpeed = 0.3f;
 
     public Button(string id, ButtonOptions options,
-        UIComponent parent = null) : base(
+        UiComponent? parent = null) : base(
         id, options, parent)
     {
         OnHover = HandleOnHover;
@@ -107,8 +105,8 @@ public class Button : UIComponent
 
     public class ButtonOptions : UIComponentOptions
     {
-        public Texture2D HoverTexture;
-        public Texture2D ClickTexture;
+        public Texture2D? HoverTexture;
+        public Texture2D? ClickTexture;
         public ButtonState State = ButtonState.Normal;
     }
 }

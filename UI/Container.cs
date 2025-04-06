@@ -1,20 +1,18 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework.Graphics;
 
 namespace ranch_mayhem_engine.UI;
 
-public class Container : UIComponent
+public class Container : UiComponent
 {
-    private List<UIComponent> _components;
+    private List<UiComponent> _components;
 
-    public Container(string id, UIComponentOptions options, List<UIComponent> components, UIComponent parent = null) :
+    public Container(string id, UIComponentOptions options, List<UiComponent> components, UiComponent? parent = null) :
         base(id, options, parent)
     {
         InitializeContainer(components);
     }
 
-    private void InitializeContainer(List<UIComponent> components)
+    private void InitializeContainer(List<UiComponent> components)
     {
         _components = components ?? [];
         UpdateParentLocation();
@@ -30,6 +28,12 @@ public class Container : UIComponent
         }
     }
 
+    public override void SetParent(UiComponent parent)
+    {
+        base.SetParent(parent);
+        UpdateParentLocation();
+    }
+
     public override void Draw(SpriteBatch spriteBatch)
     {
         base.Draw(spriteBatch);
@@ -40,11 +44,11 @@ public class Container : UIComponent
         }
     }
 
-    public List<UIComponent> GetChildren() => _components;
+    public List<UiComponent> GetChildren() => _components;
 
-    public T? GetChildById<T>(string id) where T : UIComponent => (T)_components.FirstOrDefault(c => c.Id.Equals(id));
+    public T GetChildById<T>(string id) where T : UiComponent => (T)_components.FirstOrDefault(c => c.Id.Equals(id))!;
 
-    public T? GetFirstChild<T>() where T : UIComponent => (T)_components.FirstOrDefault();
+    public T GetFirstChild<T>() where T : UiComponent => (T)_components.FirstOrDefault()!;
 
     public override void Update()
     {
