@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ranch_mayhem_engine.Content;
-using ranch_mayhem_engine.Pages;
 using ranch_mayhem_engine.UI;
 
 namespace ranch_mayhem_engine;
