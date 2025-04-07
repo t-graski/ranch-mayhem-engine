@@ -4,16 +4,16 @@ using ranch_mayhem_engine.UI.Helper;
 
 namespace ranch_mayhem_engine.UI;
 
-public class Box : UIComponent
+public class Box : UiComponent
 {
-    private Text _text;
+    private Text? _text;
 
-    public Box(string id, BoxOptions options, UIComponent parent = null, bool scale = true) : base(id, options,
+    public Box(string id, BoxOptions options, UiComponent? parent = null, bool scale = true) : base(id, options,
         parent, scale)
     {
     }
 
-    public class BoxOptions : UIComponentOptions
+    public class BoxOptions : UiComponentOptions
     {
     }
 
@@ -29,7 +29,7 @@ public class Box : UIComponent
         {
             _text = new TextBuilder($"{Id}-inner-text")
                 .SetContent(text)
-                .SetUiAnchor(UIAnchor.CenterX | UIAnchor.CenterY)
+                .SetUiAnchor(UiAnchor.CenterX | UiAnchor.CenterY)
                 .SetFontColor(color)
                 .SetFontSize(16)
                 .Build();

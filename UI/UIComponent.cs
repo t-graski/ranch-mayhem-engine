@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Color = Microsoft.Xna.Framework.Color;
@@ -8,22 +6,22 @@ using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
 namespace ranch_mayhem_engine.UI;
 
-public abstract class UIComponent
+public abstract class UiComponent
 {
-    protected UIComponent Parent { get; set; }
+    protected UiComponent? Parent { get; set; }
     public bool IsVisible { get; set; } = true;
     public string Id { get; }
     public Vector2 LocalPosition { get; private set; }
     public Vector2 GlobalPosition { get; set; }
     private Rectangle _bounds;
-    public UIComponentOptions Options { get; set; } = new();
-    private UIComponent HoverItem { get; set; }
+    public UiComponentOptions Options { get; set; } = new();
+    private UiComponent? HoverItem { get; set; }
     private bool _hasBorder;
     public bool IsAnimating;
 
-    public Action OnClick;
-    protected Action OnHover;
-    protected Action OffHover;
+    public Action? OnClick;
+    protected Action? OnHover;
+    protected Action? OffHover;
 
     protected bool IsHovered;
     protected bool IsClicked;
@@ -31,7 +29,7 @@ public abstract class UIComponent
 
     public bool CanTriggerClick;
 
-    protected UIComponent(string id, UIComponentOptions options, UIComponent parent = null, bool scale = true)
+    protected UiComponent(string id, UiComponentOptions options, UiComponent? parent = null, bool scale = true)
     {
         Id = id;
         Parent = parent;
@@ -53,7 +51,7 @@ public abstract class UIComponent
         }
     }
 
-    private void ParseOptions(UIComponentOptions options)
+    private void ParseOptions(UiComponentOptions options)
     {
         var prefix = $"{GetType().FullName}::ctor Id={Id}";
 
@@ -84,7 +82,7 @@ public abstract class UIComponent
         // TODO: check for border options to be either all null or none null.
     }
 
-    private void ApplyOptions(UIComponentOptions options)
+    private void ApplyOptions(UiComponentOptions options)
     {
         Options.Size = ScaleToGlobal(options.Size);
         Options.SizeUnit = options.SizeUnit;
@@ -152,7 +150,7 @@ public abstract class UIComponent
         }
         else if (Options.SizeUnit == SizeUnit.Percent)
         {
-            var viewport = RanchMayhemEngine.UIManager.GraphicsDevice.Viewport;
+            var viewport = RanchMayhemEngine.UiManager.GraphicsDevice.Viewport;
             var width = virtualParentSize?.X ?? viewport.Width;
             var height = virtualParentSize?.Y ?? viewport.Height;
             var newSize = Vector2.Zero;
@@ -176,7 +174,7 @@ public abstract class UIComponent
         }
     }
 
-    public void UpdatePosition(Vector2 position, Vector2 size, UIComponent parent, Vector2? virtualParent)
+    public void UpdatePosition(Vector2 position, Vector2 size, UiComponent? parent, Vector2? virtualParent)
     {
         LocalPosition = position;
         GlobalPosition = CalculateGlobalPosition();
@@ -187,7 +185,7 @@ public abstract class UIComponent
         }
         else if (Options.SizeUnit == SizeUnit.Percent)
         {
-            var viewport = RanchMayhemEngine.UIManager.GraphicsDevice.Viewport;
+            var viewport = RanchMayhemEngine.UiManager.GraphicsDevice.Viewport;
             var width = virtualParent?.X ?? viewport.Width;
             var height = virtualParent?.Y ?? viewport.Height;
             var newSize = Vector2.Zero;
@@ -245,7 +243,7 @@ public abstract class UIComponent
         else
         {
             // Logger.Log($"{GetType().FullName}::Draw Id={Id} Drawing at {GlobalPosition}");
-            var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
+            var texture = new Texture2D(RanchMayhemEngine.UiManager.GraphicsDevice, 1, 1);
             texture.SetData([Options.Color]);
             if (Parent is null)
             {
@@ -366,7 +364,7 @@ public abstract class UIComponent
             var bottom = new Vector2(top.X, top.Y + Options.Size.Y + Options.BorderSize - 1);
 
 
-            if (Options.BorderPosition == BorderPosition.Top)
+            if (Options.BorderPosition.HasFlag(BorderPosition.Top))
             {
                 DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, topLeftCorner,
                     new Vector2(Options.BorderSize));
@@ -375,19 +373,19 @@ public abstract class UIComponent
                 DrawTiledTexture(spriteBatch, Options.BorderTexture, top, topSize);
             }
 
-            if (Options.BorderPosition == BorderPosition.Left)
+            if (Options.BorderPosition.HasFlag(BorderPosition.Left))
             {
                 DrawTiledTexture(spriteBatch, Options.BorderTexture, left, leftSize, false);
             }
 
-            if (Options.BorderPosition == BorderPosition.Right)
+            if (Options.BorderPosition.HasFlag(BorderPosition.Right))
             {
                 DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomLeftCorner,
                     new Vector2(Options.BorderSize));
                 DrawTiledTexture(spriteBatch, Options.BorderTexture, right, leftSize, false);
             }
 
-            if (Options.BorderPosition == BorderPosition.Bottom)
+            if (Options.BorderPosition.HasFlag(BorderPosition.Bottom))
             {
                 DrawTiledTexture(spriteBatch, Options.BorderCornerTexture, bottomRightCorner,
                     new Vector2(Options.BorderSize));
@@ -398,7 +396,7 @@ public abstract class UIComponent
 
     private void DrawRectangle(SpriteBatch spriteBatch, Vector2 position, Vector2 size, Color color)
     {
-        var texture = new Texture2D(RanchMayhemEngine.UIManager.GraphicsDevice, 1, 1);
+        var texture = new Texture2D(RanchMayhemEngine.UiManager.GraphicsDevice, 1, 1);
         texture.SetData([color]);
 
         spriteBatch.Draw(texture,
@@ -411,7 +409,7 @@ public abstract class UIComponent
 
     private void DrawHoverItem(SpriteBatch spriteBatch, MouseState mouseState)
     {
-        var position = new Vector2(mouseState.Position.X - HoverItem.Options.Size.X / 2,
+        var position = new Vector2(mouseState.Position.X - HoverItem!.Options.Size.X / 2,
             mouseState.Position.Y + MousePadding);
 
         if (mouseState.Position.Y + MousePadding + HoverItem.Options.Size.Y >= RanchMayhemEngine.Height)
@@ -506,23 +504,23 @@ public abstract class UIComponent
         }
     }
 
-    public virtual void OffActive()
+    protected virtual void OffActive()
     {
     }
 
     protected static Vector2 ScaleToGlobal(Vector2 position)
     {
-        return position * RanchMayhemEngine.UIManager.GlobalScale;
+        return position * RanchMayhemEngine.UiManager.GlobalScale;
     }
 
     protected static Vector4 ScaleToGlobal(Vector4 position)
     {
-        var globalScale = RanchMayhemEngine.UIManager.GlobalScale;
+        var globalScale = RanchMayhemEngine.UiManager.GlobalScale;
         return new Vector4(position.X * globalScale.Y, position.Y * globalScale.X, position.Z * globalScale.Y,
             position.W * globalScale.X);
     }
 
-    public virtual void SetParent(UIComponent parent)
+    public virtual void SetParent(UiComponent parent)
     {
         // Logger.Log(
         //     $"{GetType().FullName}::SetParent Id:{Id} parent:{parent.Id} parent global pos: {parent.GlobalPosition}");
@@ -538,7 +536,7 @@ public abstract class UIComponent
         GlobalPosition = position;
     }
 
-    public void SetHoverItem(UIComponent item)
+    public void SetHoverItem(UiComponent item)
     {
         HoverItem = item;
     }
@@ -561,7 +559,7 @@ public abstract class UIComponent
         }
         else
         {
-            if (Options.UiAnchor != UIAnchor.None)
+            if (Options.UiAnchor != UiAnchor.None)
             {
                 LocalPosition = Options.UiAnchor.CalculatePosition(Options.Size, new Vector2(-1), Parent);
                 // Logger.Log($"{GetType().FullName}::UpdateGlobalPosition Id:{Id} local pos: {LocalPosition} parent: {Parent.Id}");
@@ -582,9 +580,9 @@ public abstract class UIComponent
         }
     }
 
-    private void UpdateBounds(UIComponent parent)
+    private void UpdateBounds(UiComponent? parent)
     {
-        if (parent == null)
+        if (parent is null)
         {
             _bounds = new Rectangle((int)LocalPosition.X, (int)LocalPosition.Y, (int)Options.Size.X,
                 (int)Options.Size.Y);

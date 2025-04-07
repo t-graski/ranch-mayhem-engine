@@ -1,12 +1,12 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ranch_mayhem_engine.Content;
 
 namespace ranch_mayhem_engine.UI;
 
-public class TextBox : UIComponent
+public class TextBox : UiComponent
 {
     private readonly StringBuilder _text;
     private readonly SpriteFont _font;
@@ -15,14 +15,14 @@ public class TextBox : UIComponent
     private readonly Action<string> _onSubmit;
     private readonly TextBoxOptions _textBoxOptions;
 
-    public TextBox(string id, TextBoxOptions options, Action<string> onSubmit, UIComponent parent = null,
+    public TextBox(string id, TextBoxOptions options, Action<string> onSubmit, UiComponent? parent = null,
         bool scale = true) : base(id,
         options, parent, scale)
     {
         _onSubmit = onSubmit;
         _text = new StringBuilder();
         _background = options.Texture;
-        _font = RanchMayhemEngine.ContentManager.GetFont(RanchMayhemEngineConstants.DefaultFont, options.FontSize);
+        _font = ContentManager.GetFont(RanchMayhemEngineConstants.DefaultFont, options.FontSize);
 
         _textBoxOptions = options;
     }
@@ -31,7 +31,7 @@ public class TextBox : UIComponent
     {
         if (IsClicked)
         {
-            RanchMayhemEngine.KeyboardManager.IsInTextBox = true;
+            KeyboardManager.IsInTextBox = true;
         }
 
         if (IsActive)
@@ -77,9 +77,9 @@ public class TextBox : UIComponent
         }
     }
 
-    public override void OffActive()
+    protected override void OffActive()
     {
-        RanchMayhemEngine.KeyboardManager.IsInTextBox = false;
+        KeyboardManager.IsInTextBox = false;
     }
 
     // public override void Draw(SpriteBatch spriteBatch)
@@ -92,7 +92,7 @@ public class TextBox : UIComponent
     //         _textBoxOptions.FontColor);
     // }
 
-    public class TextBoxOptions : UIComponentOptions
+    public class TextBoxOptions : UiComponentOptions
     {
         public int FontSize { get; set; } = RanchMayhemEngineConstants.DefaultFontSize;
         public Color FontColor { get; set; } = RanchMayhemEngineConstants.DefaultFontColor;

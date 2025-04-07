@@ -2,15 +2,13 @@
 
 namespace ranch_mayhem_engine.UI.Helper;
 
-public class TextBuilder(string id)
+public class TextBuilder : UiComponentBuilder<TextBuilder>
 {
-    private readonly Text.TextOptions _textOptions = new();
-    private UIComponent _parent;
+    private readonly Text.TextOptions _textOptions;
 
-    public TextBuilder SetParent(UIComponent parent)
+    public TextBuilder(string id) : base(id, new Text.TextOptions())
     {
-        _parent = parent;
-        return this;
+        _textOptions = (Text.TextOptions)_componentOptions;
     }
 
     public TextBuilder SetContent(string content)
@@ -31,36 +29,8 @@ public class TextBuilder(string id)
         return this;
     }
 
-    public TextBuilder SetUiAnchor(UIAnchor anchor)
-    {
-        _textOptions.UiAnchor = anchor;
-        return this;
-    }
-
-    public TextBuilder SetPosition(Vector2 position)
-    {
-        _textOptions.Position = position;
-        return this;
-    }
-
-    public TextBuilder SetPosition(float x, float y) => SetPosition(new Vector2(x, y));
-
-    public TextBuilder SetUiAnchorOffset(Vector2 offset)
-    {
-        _textOptions.UiAnchorOffset = offset;
-        return this;
-    }
-
-    public TextBuilder SetUiAnchorOffSet(float x, float y) => SetUiAnchorOffset(new Vector2(x, y));
-
-    public TextBuilder CenterXY()
-    {
-        _textOptions.UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY;
-        return this;
-    }
-
     public Text Build()
     {
-        return new Text(id, _textOptions, _parent);
+        return new Text(_id, _textOptions, _parent);
     }
 }

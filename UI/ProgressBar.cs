@@ -1,19 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
 
 namespace ranch_mayhem_engine.UI;
 
-public class ProgressBar : UIComponent
+public class ProgressBar : UiComponent
 {
     private readonly ProgressBarOptions _progressBarOptions;
     private Color _currentColor;
     private readonly Text _progressText;
 
-    public ProgressBar(string id, ProgressBarOptions options, UIComponent parent = null, bool scale = true) : base(id,
+    public ProgressBar(string id, ProgressBarOptions options, UiComponent? parent = null, bool scale = true) : base(id,
         options, parent, scale)
     {
         _progressBarOptions = options;
@@ -24,7 +19,7 @@ public class ProgressBar : UIComponent
             FontColor = Color.Black,
             FontSize = 12,
             Content = _progressBarOptions.Content,
-            UiAnchor = UIAnchor.CenterX | UIAnchor.CenterY
+            UiAnchor = UiAnchor.CenterX | UiAnchor.CenterY
         });
         _progressText.SetParent(this);
     }
@@ -44,7 +39,7 @@ public class ProgressBar : UIComponent
     //     DrawBorder(spriteBatch);
     // }
 
-    public override void SetParent(UIComponent parent)
+    public override void SetParent(UiComponent parent)
     {
         base.SetParent(parent);
         _progressText.SetParent(this);
@@ -76,14 +71,14 @@ public class ProgressBar : UIComponent
 
     public override void Update()
     {
-        _progressText.SetContent(_progressBarOptions.Content);
+        _progressText.SetContent(_progressBarOptions.Content ?? "");
     }
 
 
-    public class ProgressBarOptions : UIComponentOptions
+    public class ProgressBarOptions : UiComponentOptions
     {
         public float Fraction;
         public Dictionary<float, Color> Thresholds;
-        public string Content;
+        public string? Content;
     }
 }
