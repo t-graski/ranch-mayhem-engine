@@ -1,11 +1,14 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using ranch_mayhem_engine.UI.Helper;
 
 namespace ranch_mayhem_engine.UI;
 
 public class Button : UiComponent
 {
     private readonly ButtonOptions _buttonOptions;
+    public Text? Text;
     private float _transitionProgress = 0f;
     private const float TransitionSpeed = 0.3f;
 
@@ -53,6 +56,17 @@ public class Button : UiComponent
         // Options.Texture = _buttonOptions.HoverTexture;
     }
 
+    public void AddText(string content, Color color, int size = 16)
+    {
+        Text = new TextBuilder($"{Id}-text")
+            .SetParent(this)
+            .SetContent(content)
+            .CenterXY()
+            .SetFontColor(color)
+            .SetFontSize(size)
+            .Build();
+    }
+
     private void HandleOnClick()
     {
         if (_buttonOptions.State == ButtonState.Disabled) return;
@@ -96,11 +110,13 @@ public class Button : UiComponent
     {
         base.Draw(spriteBatch);
 
-        if (IsHovered)
+        if (IsHovered && _buttonOptions.HoverTexture is not null)
         {
             spriteBatch.Draw(_buttonOptions.HoverTexture, GlobalPosition, null, Color.White * _transitionProgress, 0f,
                 Vector2.Zero, Options.Scale, SpriteEffects.None, 0f);
         }
+
+        Text?.Draw(spriteBatch);
     }
 
     public class ButtonOptions : UiComponentOptions

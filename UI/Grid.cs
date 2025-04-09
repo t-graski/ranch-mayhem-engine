@@ -1,4 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ranch_mayhem_engine.UI;
 
@@ -44,6 +47,18 @@ public class Grid : UiComponent
     private void InitializeGrid(List<UiComponent> components)
     {
         Components = components ?? [];
+
+        foreach (var component in Components)
+        {
+            component.SetParent(this);
+        }
+
+        CalculatePositions();
+    }
+
+    public override void SetParent(UiComponent parent)
+    {
+        base.SetParent(parent);
 
         foreach (var component in Components)
         {
