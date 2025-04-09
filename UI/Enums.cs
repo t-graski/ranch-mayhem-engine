@@ -1,4 +1,6 @@
-﻿namespace ranch_mayhem_engine.UI;
+﻿using System;
+
+namespace ranch_mayhem_engine.UI;
 
 public enum SizeUnit
 {

@@ -1,6 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ranch_mayhem_engine.Content;
+using System;
+using ranch_mayhem_engine.Utils;
 
 namespace ranch_mayhem_engine.UI;
 
@@ -37,6 +39,8 @@ public class Text : UiComponent
         // Logger.Log(
         //     $"{GetType().FullName}::InitializeFont Id={Id} Given size: {_textOptions.FontSize}, Found size: {fontWithSize.size}, Using scale: {scale}",
         //     Logger.LogLevel.Internal);
+
+        UpdateGlobalPosition();
     }
 
     public override void SetParent(UiComponent parent)
