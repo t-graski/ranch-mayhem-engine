@@ -1,6 +1,13 @@
 # Change Log
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
+<a name="4.1.0"></a>
+## [4.1.0](https://www.github.com/t-graski/ranch-mayhem-engine/releases/tag/v4.1.0) (2025-04-09)
+
+### Features
+
+* add box builder ([7639624](https://www.github.com/t-graski/ranch-mayhem-engine/commit/763962437db17753c5250ef40a473dafe636e3ae))
+
 <a name="4.0.0"></a>
 ## [4.0.0](https://www.github.com/t-graski/ranch-mayhem-engine/releases/tag/v4.0.0) (2025-04-09)
 
