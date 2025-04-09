@@ -8,7 +8,7 @@ namespace ranch_mayhem_engine.UI;
 
 public abstract class UiComponent
 {
-    protected UiComponent? Parent { get; set; }
+    public UiComponent? Parent { get; set; }
     public bool IsVisible { get; set; } = true;
     public string Id { get; }
     public Vector2 LocalPosition { get; private set; }
@@ -82,7 +82,7 @@ public abstract class UiComponent
         // TODO: check for border options to be either all null or none null.
     }
 
-    private void ApplyOptions(UiComponentOptions options)
+    protected void ApplyOptions(UiComponentOptions options)
     {
         Options.Size = ScaleToGlobal(options.Size);
         Options.SizeUnit = options.SizeUnit;

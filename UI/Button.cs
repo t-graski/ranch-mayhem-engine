@@ -65,9 +65,6 @@ public class Button : UiComponent
             .SetFontColor(color)
             .SetFontSize(size)
             .Build();
-
-        Logger.Log(
-            $"adding text global pos {Text.GlobalPosition} size: {Text.Options.Size} parent size = {Text.Parent?.Options.Size}");
     }
 
     private void HandleOnClick()
