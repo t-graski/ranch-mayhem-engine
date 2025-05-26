@@ -75,6 +75,14 @@ public class Animator
         foreach (var (key, _) in _children)
         {
             key.IsAnimating = true;
+
+            if (key is Box box)
+            {
+                if (box.Text is not null)
+                {
+                    box.Text.IsAnimating = true;
+                }
+            }
         }
     }
 
@@ -109,6 +117,15 @@ public class Animator
                             _endX + child.LocalPosition.X));
 
                         child.GlobalPosition = new Vector2(newPos, child.GlobalPosition.Y);
+
+                        if (child is Box box)
+                        {
+                            if (box.Text is not null)
+                            {
+                                box.Text.GlobalPosition = new Vector2(newPos + box.Text.LocalPosition.X,
+                                    child.GlobalPosition.Y + box.Text.LocalPosition.Y);
+                            }
+                        }
                     }
                 }
 
@@ -149,6 +166,14 @@ public class Animator
                         {
                             _children[key] = (startX, endX, endX);
                             key.IsAnimating = false;
+
+                            if (key is Box box)
+                            {
+                                if (box.Text is not null)
+                                {
+                                    box.Text.IsAnimating = false;
+                                }
+                            }
                         }
                     }
 
@@ -158,6 +183,16 @@ public class Animator
                     {
                         _children[key] = (startX, MathHelper.Lerp(currentX, endX, _animationSpeed), endX);
                         key.GlobalPosition = new Vector2(_children[key].currentX, key.GlobalPosition.Y);
+
+                        if (key is Box box)
+                        {
+                            if (box.Text is not null)
+                            {
+                                box.Text.GlobalPosition =
+                                    new Vector2(_children[key].currentX + box.Text.LocalPosition.X,
+                                        key.GlobalPosition.Y + box.Text.LocalPosition.Y);
+                            }
+                        }
                     }
 
                     break;
