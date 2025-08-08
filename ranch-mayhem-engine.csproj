@@ -24,6 +24,9 @@
         </None>
     </ItemGroup>
     <ItemGroup>
+        <MonoGameContentReference Include="..\Content\Content.mgcb" />
+    </ItemGroup>
+    <ItemGroup>
         <EmbeddedResource Include="Icon.bmp">
             <LogicalName>Icon.bmp</LogicalName>
         </EmbeddedResource>

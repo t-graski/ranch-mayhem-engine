@@ -1,8 +1,8 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ranch_mayhem_engine.Content;
 using ranch_mayhem_engine.UI;
+using ranch_mayhem_engine.Utils;
 
 namespace ranch_mayhem_engine;
 
@@ -21,6 +21,10 @@ public class RanchMayhemEngine : Game
     private static bool WasFocused { get; set; } = false;
     public static double Framerate { get; private set; }
 
+    public static readonly NumberFormatter Nf = new();
+
+    public static GameTime GameTime { get; set; }
+
     public RanchMayhemEngine()
     {
         _graphics = new GraphicsDeviceManager(this);
@@ -28,7 +32,9 @@ public class RanchMayhemEngine : Game
         IsMouseVisible = true;
 
         IsFixedTimeStep = true;
-        TargetElapsedTime = TimeSpan.FromSeconds(1d / 30d);
+        TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
+
+        Window.AllowUserResizing = true;
     }
 
     protected override void Initialize()
@@ -48,13 +54,12 @@ public class RanchMayhemEngine : Game
 
         UiManager = new UiManager(_spriteBatch.GraphicsDevice, _spriteBatch);
         UiManager.Initialize();
-
-        UiManager.SetBackground(ContentManager.GetTexture("spring_background"));
     }
 
     protected override void Update(GameTime gameTime)
     {
         Framerate = (1 / gameTime.ElapsedGameTime.TotalSeconds);
+        GameTime = gameTime;
 
         MouseState = Mouse.GetState();
 
@@ -87,13 +92,16 @@ public class RanchMayhemEngine : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.LightGoldenrodYellow);
+        UiManager.ClearQueue();
 
-        _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
+        // _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
 
         UiManager.RenderBackground();
-        UiManager.RenderComponents();
 
-        _spriteBatch.End();
+        // _spriteBatch.End();
+
+        UiManager.RenderComponents();
+        UiManager.Flush(_spriteBatch);
 
         base.Draw(gameTime);
     }

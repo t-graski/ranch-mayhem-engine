@@ -68,7 +68,7 @@ public class Grid : UiComponent
         CalculatePositions();
     }
 
-    private void CalculatePositions()
+    public void CalculatePositions()
     {
         var position = Vector2.Zero;
         var size = Vector2.Zero;

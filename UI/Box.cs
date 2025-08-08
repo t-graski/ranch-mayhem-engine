@@ -6,10 +6,14 @@ namespace ranch_mayhem_engine.UI;
 
 public class Box : UiComponent
 {
-    private Text? _text;
+    public Text? Text;
 
-    public Box(string id, BoxOptions options, UiComponent? parent = null, bool scale = true) : base(id, options,
-        parent, scale)
+    public Box(string id, BoxOptions options, UiComponent? parent = null, bool scale = true) : base(
+        id,
+        options,
+        parent,
+        scale
+    )
     {
     }
 
@@ -17,40 +21,53 @@ public class Box : UiComponent
     {
     }
 
-    public void SetText(string text, Color color)
+    public void SetText(string text, Color color, int size = 16)
     {
         if (text.Length == 0)
         {
-            _text = null;
+            Text = null;
             return;
         }
 
-        if (_text == null)
+        if (Text == null)
         {
-            _text = new TextBuilder($"{Id}-inner-text")
+            Text = new TextBuilder($"{Id}-inner-text")
                 .SetContent(text)
                 .SetUiAnchor(UiAnchor.CenterX | UiAnchor.CenterY)
                 .SetFontColor(color)
-                .SetFontSize(16)
+                .SetFontSize(size)
                 .Build();
 
-            _text.SetParent(this);
+            Text.SetParent(this);
             return;
         }
 
-        if (_text.GetContent().Equals(text))
+        if (Text.GetContent().Equals(text))
         {
             return;
         }
 
-        _text.SetContent(text);
-        _text.SetColor(color);
+        Text.SetContent(text);
+        Text.SetTextColor(color);
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public void SetTextColor(Color color)
     {
-        base.Draw(spriteBatch);
-        _text?.Draw(spriteBatch);
+        Text?.SetTextColor(color);
+    }
+
+    public override IEnumerable<RenderCommand> Draw()
+    {
+        foreach (var command in base.Draw())
+        {
+            yield return command;
+        }
+
+        if (Text is null) yield break;
+        foreach (var command in Text?.Draw())
+        {
+            yield return command;
+        }
     }
 
     public override void Update()

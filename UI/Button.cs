@@ -8,19 +8,24 @@ namespace ranch_mayhem_engine.UI;
 public class Button : UiComponent
 {
     private readonly ButtonOptions _buttonOptions;
-    public Text? Text;
+    private Text? _text;
     private float _transitionProgress = 0f;
     private const float TransitionSpeed = 0.3f;
 
-    public Button(string id, ButtonOptions options,
-        UiComponent? parent = null) : base(
-        id, options, parent)
+    public Button(
+        string id, ButtonOptions options,
+        UiComponent? parent = null
+    ) : base(
+        id,
+        options,
+        parent
+    )
     {
-        OnHover = HandleOnHover;
-        OffHover = HandleOffHover;
+        OnHover = InternalHandleOnHover;
+        OffHover = InternalHandleOffHover;
 
-        OnClick = HandleOnClick;
-
+        OnClick = InternalHandleOnClick;
+        OffClick = InternalHandleOffClick;
 
 #if DEBUG
         ParseOptions(options);
@@ -48,39 +53,114 @@ public class Button : UiComponent
         }
     }
 
-    private void HandleOnHover()
+    private void InternalHandleOnHover()
     {
         if (_buttonOptions.State == ButtonState.Disabled) return;
 
         Logger.Log($"{GetType().FullName}::HandleOnHover Id={Id}", LogLevel.Internal);
-        // Options.Texture = _buttonOptions.HoverTexture;
+
+        if (_buttonOptions.HoverTexture == null) return;
+
+        Options.Texture = _buttonOptions.HoverTexture;
     }
 
-    public void AddText(string content, Color color, int size = 16)
-    {
-        Text = new TextBuilder($"{Id}-text")
-            .SetParent(this)
-            .SetContent(content)
-            .CenterXY()
-            .SetFontColor(color)
-            .SetFontSize(size)
-            .Build();
-    }
-
-    private void HandleOnClick()
-    {
-        if (_buttonOptions.State == ButtonState.Disabled) return;
-
-        Logger.Log($"{GetType().FullName}::HandleOnClick Id={Id}", LogLevel.Internal);
-        Options.Texture = _buttonOptions.ClickTexture;
-    }
-
-    private void HandleOffHover()
+    private void InternalHandleOffHover()
     {
         if (_buttonOptions.State == ButtonState.Disabled) return;
 
         Logger.Log($"{GetType().FullName}::HandleOffHover Id={Id}", LogLevel.Internal);
         Options.Texture = _buttonOptions.Texture;
+    }
+
+    private void InternalHandleOnClick()
+    {
+        if (_buttonOptions.State == ButtonState.Disabled) return;
+
+        Logger.Log($"{GetType().FullName}::HandleOnClick Id={Id}", LogLevel.Internal);
+
+        if (_buttonOptions.ClickTexture == null) return;
+
+        Options.Texture = _buttonOptions.ClickTexture;
+    }
+
+
+    private void InternalHandleOffClick()
+    {
+        if (_buttonOptions.State == ButtonState.Disabled) return;
+
+        Logger.Log($"{GetType().FullName}::HandleOffClick Id={Id}", LogLevel.Internal);
+
+        Options.Texture = _buttonOptions.Texture;
+    }
+
+    public void SetText(string text, Color color, int size = 16)
+    {
+        if (text.Length == 0)
+        {
+            _text = null;
+            return;
+        }
+
+        if (_text == null)
+        {
+            _text = new TextBuilder($"{Id}-inner-text")
+                .SetContent(text)
+                .SetUiAnchor(UiAnchor.CenterX | UiAnchor.CenterY)
+                .SetFontColor(color)
+                .SetFontSize(size)
+                .Build();
+
+            _text.SetParent(this);
+            return;
+        }
+
+        if (_text.GetContent().Equals(text))
+        {
+            return;
+        }
+
+        _text.SetContent(text);
+        _text.SetTextColor(color);
+    }
+
+    public void AddOnClickAction(Action handler)
+    {
+        var previous = InternalHandleOnClick;
+        OnClick = () =>
+        {
+            previous?.Invoke();
+            handler?.Invoke();
+        };
+    }
+
+    public void AddOffClickAction(Action handler)
+    {
+        var previous = InternalHandleOffClick;
+        OffClick = () =>
+        {
+            previous?.Invoke();
+            handler?.Invoke();
+        };
+    }
+
+    public void AddOnHoverAction(Action handler)
+    {
+        var previous = InternalHandleOnHover;
+        OnHover = () =>
+        {
+            previous?.Invoke();
+            handler?.Invoke();
+        };
+    }
+
+    public void AddOffHoverAction(Action handler)
+    {
+        var previous = InternalHandleOffHover;
+        OffHover = () =>
+        {
+            previous?.Invoke();
+            handler?.Invoke();
+        };
     }
 
     public void ToggleDisabled()
@@ -106,17 +186,49 @@ public class Button : UiComponent
         }
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public override IEnumerable<RenderCommand> Draw()
     {
-        base.Draw(spriteBatch);
+        foreach (var command in base.Draw())
+        {
+            yield return command;
+        }
 
         if (IsHovered && _buttonOptions.HoverTexture is not null)
         {
-            spriteBatch.Draw(_buttonOptions.HoverTexture, GlobalPosition, null, Color.White * _transitionProgress, 0f,
-                Vector2.Zero, Options.Scale, SpriteEffects.None, 0f);
+            yield return new RenderCommand
+            {
+                Id = $"{Id}-button-hover",
+                Texture = _buttonOptions.HoverTexture,
+                Position = GlobalPosition,
+                SourceRect = null,
+                Color = Color.White * _transitionProgress,
+                Rotation = 0f,
+                Origin = Vector2.Zero,
+                Scale = Options.Scale,
+                Effects = SpriteEffects.None,
+                LayerDepth = 0f
+            };
+
+            // spriteBatch.Draw(
+            //     _buttonOptions.HoverTexture,
+            //     GlobalPosition,
+            //     null,
+            //     Color.White * _transitionProgress,
+            //     0f,
+            //     Vector2.Zero,
+            //     Options.Scale,
+            //     SpriteEffects.None,
+            //     0f
+            // );
         }
 
-        Text?.Draw(spriteBatch);
+        if (_text is null) yield break;
+        foreach (var command in _text?.Draw())
+        {
+            yield return command;
+        }
+
+        // _text?.Draw(spriteBatch);
     }
 
     public class ButtonOptions : UiComponentOptions

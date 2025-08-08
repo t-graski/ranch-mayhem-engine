@@ -16,7 +16,7 @@ public class NumberFormatter : IFormatProvider, ICustomFormatter
 
         var formattable = (IFormattable)arg!;
 
-        if (format?.ToUpper() == "N")
+        if (format?.ToUpper() == "CN")
         {
             if (arg is double or float)
             {
@@ -48,12 +48,14 @@ public class NumberFormatter : IFormatProvider, ICustomFormatter
         const double trillion = 1e12;
         const double billion = 1e9;
         const double million = 1e6;
+        const double thousand = 1e3;
 
         return number switch
         {
             >= trillion => $"{number / trillion:0.##}T",
             >= billion => $"{number / billion:0.##}B",
             >= million => $"{number / million:0.##}M",
+            >= thousand * 100 => $"{number / thousand:0.##}k",
             _ => number.ToString($"#,0")
         };
     }

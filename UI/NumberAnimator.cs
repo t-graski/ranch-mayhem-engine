@@ -10,17 +10,17 @@ public class NumberAnimator(float startNumber, float endNumber, float animationS
     private readonly float _endNumber = endNumber;
 
     private bool _isAnimationDone = true;
-    private bool _isAnimating = false;
+    public bool IsAnimating = false;
 
     public void StartAnimation()
     {
         _isAnimationDone = false;
-        _isAnimating = true;
+        IsAnimating = true;
     }
 
     public void FinishAnimation()
     {
-        _isAnimating = false;
+        IsAnimating = false;
         _isAnimationDone = true;
         _currentNumber = _endNumber;
     }

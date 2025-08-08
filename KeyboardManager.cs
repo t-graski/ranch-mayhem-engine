@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using ranch_mayhem_engine.UI;
 
@@ -15,7 +16,8 @@ public static class KeyboardManager
         {
             Logger.Log(
                 $"{typeof(KeyboardManager)}::RegisterBinding key={KeyboardInput.GetCharFromKey(key)} already exists and will be ignored.",
-                LogLevel.Warning);
+                LogLevel.Warning
+            );
         }
     }
 

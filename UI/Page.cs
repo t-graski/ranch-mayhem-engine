@@ -6,8 +6,8 @@ namespace ranch_mayhem_engine.UI;
 public abstract class Page
 {
     public string Id { get; protected set; } = Guid.NewGuid().ToString();
-    protected bool IsVisible { get; set; } = false;
-    protected List<UiComponent> Components { get; set; } = [];
+    public bool IsVisible { get; set; } = false;
+    private List<UiComponent> Components { get; set; } = [];
 
     public abstract Page Initialize();
 
@@ -17,11 +17,16 @@ public abstract class Page
         {
             Logger.Log(
                 $"{GetType().FullName}::AddComponent Id={component.Id} Adding component with already existing Id. This might cause unexpected issues.",
-                LogLevel.Warning);
+                LogLevel.Warning
+            );
         }
 
         component.IsVisible = IsVisible;
         Components.Add(component);
+    }
+
+    protected void EnableCloseButton()
+    {
     }
 
     // public virtual void Draw(SpriteBatch spriteBatch)
@@ -34,7 +39,7 @@ public abstract class Page
     //     }
     // }
 
-    public abstract void Draw(SpriteBatch spriteBatch);
+    public abstract void Draw();
 
     public virtual void Update(MouseState mouseState)
     {

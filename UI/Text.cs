@@ -2,7 +2,6 @@
 using Microsoft.Xna.Framework.Graphics;
 using ranch_mayhem_engine.Content;
 using System;
-using ranch_mayhem_engine.Utils;
 
 namespace ranch_mayhem_engine.UI;
 
@@ -11,9 +10,15 @@ public class Text : UiComponent
     private readonly TextOptions _textOptions;
     private SpriteFont _font;
 
-    public Text(string id, TextOptions options, UiComponent? parent = null,
-        bool scale = true) : base(id, options,
-        parent, scale)
+    public Text(
+        string id, TextOptions options, UiComponent? parent = null,
+        bool scale = true
+    ) : base(
+        id,
+        options,
+        parent,
+        scale
+    )
     {
         _textOptions = options;
         InitializeFont();
@@ -22,8 +27,10 @@ public class Text : UiComponent
     private void InitializeFont()
     {
         var fontWithSize =
-            ContentManager.GetFontWithSize(RanchMayhemEngineConstants.DefaultFont,
-                _textOptions.FontSize);
+            ContentManager.GetFontWithSize(
+                RanchMayhemEngineConstants.DefaultFont,
+                _textOptions.FontSize
+            );
         _font = fontWithSize.font;
 
         var scale = 1.0f;
@@ -55,13 +62,68 @@ public class Text : UiComponent
         Options.Size = _font.MeasureString(_textOptions.Content) * Options.Scale;
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public override IEnumerable<RenderCommand> Draw()
     {
-        spriteBatch.DrawString(_font, _textOptions.Content, GlobalPosition, _textOptions.FontColor, 0f, Vector2.Zero,
-            Options.Scale,
-            SpriteEffects.None, 0.5f);
+        if (_textOptions.Shadow)
+        {
+            yield return new RenderCommand
+            {
+                Id = $"{Id}-text",
+                SpriteFont = _font,
+                Text = _textOptions.Content,
+                Position = new Vector2(GlobalPosition.X + 2, GlobalPosition.Y + 2),
+                Color = _textOptions.ShadowColor,
+                Rotation = 0f,
+                Origin = Vector2.Zero,
+                Scale = Options.Scale,
+                Effects = SpriteEffects.None,
+                LayerDepth = 0.5f
+            };
 
-        DrawBorder(spriteBatch);
+            // spriteBatch.DrawString(
+            //     _font,
+            //     _textOptions.Content,
+            //     new Vector2(GlobalPosition.X + 2, GlobalPosition.Y + 2),
+            //     _textOptions.ShadowColor,
+            //     0f,
+            //     Vector2.Zero,
+            //     Options.Scale,
+            //     SpriteEffects.None,
+            //     0.5f
+            // );
+        }
+
+        yield return new RenderCommand
+        {
+            SpriteFont = _font,
+            Text = _textOptions.Content,
+            Position = GlobalPosition,
+            Color = _textOptions.FontColor,
+            Rotation = 0f,
+            Origin = Vector2.Zero,
+            Scale = Options.Scale,
+            Effects = SpriteEffects.None,
+            LayerDepth = 0.5f
+        };
+
+        // spriteBatch.DrawString(
+        //     _font,
+        //     _textOptions.Content,
+        //     GlobalPosition,
+        //     _textOptions.FontColor,
+        //     0f,
+        //     Vector2.Zero,
+        //     Options.Scale,
+        //     SpriteEffects.None,
+        //     0.5f
+        // );
+
+        foreach (var command in DrawBorder())
+        {
+            yield return command;
+        }
+
+        // DrawBorder(spriteBatch);
     }
 
     private static float CalculateScale(int from, int to)
@@ -73,7 +135,7 @@ public class Text : UiComponent
     {
     }
 
-    public void SetContent(string content)
+    public void SetContent(string content, bool wrap = false)
     {
         if (_textOptions.Content.Equals(content)) return;
 
@@ -81,7 +143,57 @@ public class Text : UiComponent
 
         RecalculateSize();
         UpdateGlobalPosition();
+
+        if (!FitsParent() && wrap && Parent is not null)
+        {
+            Logger.Log($"{Id} is too big to fit in parent", LogLevel.Warning);
+
+            // we have 2 ways of dealing wit this
+            // - First we try and split the text at spaces
+            // - If this doesn't work we make the text smaller
+            // - If this doesn't work either we just leave it
+            var possibleLines = (int)(Parent!.Options.Size.Y / Options.Size.Y);
+
+            var whiteSpaceAmount = _textOptions.Content.Count(char.IsWhiteSpace);
+            var splittingPossible = whiteSpaceAmount > 0 && whiteSpaceAmount <= possibleLines && possibleLines > 1;
+
+            Logger.Log($"{Id} splitting... spacesCount={whiteSpaceAmount} possibleLines={possibleLines}");
+
+            if (splittingPossible)
+            {
+                Logger.Log($"{Id} splitting possible... trying to split", LogLevel.Internal);
+                _textOptions.Content = _textOptions.Content.Replace(" ", "\n");
+                RecalculateSize();
+                UpdateGlobalPosition();
+
+                if (FitsParent())
+                {
+                    Logger.Log($"{Id} splitting successful", LogLevel.Internal);
+                }
+            }
+            else
+            {
+                Logger.Log($"{Id} splitting not possible... trying to scale down", LogLevel.Internal);
+            }
+        }
     }
+
+    private bool FitsParent()
+    {
+        if (Parent is null) return true;
+        return Parent.Bounds.Contains(
+            new Vector2(
+                GlobalPosition.X + Options.Size.X,
+                GlobalPosition.Y + Options.Size.Y
+            )
+        );
+    }
+
+    public void SetTextColor(Color color)
+    {
+        _textOptions.FontColor = color;
+    }
+
 
     public string GetContent() => _textOptions.Content;
 
@@ -96,6 +208,9 @@ public class Text : UiComponent
         public int FontSize = 12;
 
         public Color FontColor = Color.Red;
+        public bool Shadow = true;
+
+        public Color ShadowColor = Color.Black;
         // public TextAlignment Alignment = TextAlignment.Center;`
     }
 }
