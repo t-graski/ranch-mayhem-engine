@@ -14,6 +14,8 @@ public static class ContentManager
     private static readonly Dictionary<string, Texture2D> ExtractedSprites = [];
     private static Texture2D _textureAtlas;
 
+    private static readonly Dictionary<string, Effect> RenderShaders = [];
+
     public static void LoadContentFile(Microsoft.Xna.Framework.Content.ContentManager content, string path)
     {
         var itemsToLoad = LoadJson<ContentItem>(path);
@@ -30,6 +32,9 @@ public static class ContentManager
                     break;
                 case "animated_sprite":
                     LoadAnimatedSprite(item, content);
+                    break;
+                case "shader":
+                    LoadShader(item, content);
                     break;
                 case "unknown":
                 default:
@@ -70,13 +75,11 @@ public static class ContentManager
     {
         if (Sprites.TryGetValue(name, out var item))
         {
-            // Check if we already have this sprite extracted and cached
             if (ExtractedSprites.TryGetValue(name, out var cachedSprite))
             {
                 return cachedSprite;
             }
 
-            // Extract sprite from atlas only once and cache it
             var extracted = new Texture2D(RanchMayhemEngine.UiManager.GraphicsDevice, item.Width, item.Height);
 
             var data = new Color[item.Width * item.Height];
@@ -90,7 +93,6 @@ public static class ContentManager
 
             extracted.SetData(data);
 
-            // Cache the extracted sprite for future use
             ExtractedSprites[name] = extracted;
 
             return extracted;
@@ -104,7 +106,6 @@ public static class ContentManager
         var imageSprite = content.Load<Texture2D>(item.Name);
         const int frameAmount = 3;
         var i = 0;
-
 
         for (var x = 0; x < imageSprite.Width; x += imageSprite.Width / frameAmount)
         {
@@ -125,6 +126,11 @@ public static class ContentManager
         }
     }
 
+    private static void LoadShader(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
+    {
+        RenderShaders.Add(item.Name, content.Load<Effect>(item.Name));
+    }
+
     private static void LoadSprite(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
     {
         Contents.Add(item.Name, content.Load<Texture2D>(item.Name));
@@ -141,6 +147,7 @@ public static class ContentManager
         foreach (var size in item.Sizes)
         {
             var font = content.Load<SpriteFont>($"{item.Name}{size}");
+            font.LineSpacing = size + 8;
 
             if (!Fonts.TryGetValue(item.Name, out var fontSizes))
             {
@@ -154,6 +161,8 @@ public static class ContentManager
 
 
     public static Texture2D GetTexture(string name) => Contents[name];
+
+    public static Effect GetShader(string name) => RenderShaders[name];
 
     private static int GetClosestSize(string name, int size)
     {
@@ -217,7 +226,7 @@ public static class ContentManager
         return items;
     }
 
-    public static void ListSprites()
+    private static void ListSprites()
     {
         foreach (var (key, value) in Contents)
         {
@@ -244,7 +253,7 @@ public static class ContentManager
     {
         public string Name;
         public string Type = "unknown";
-        public List<int> Sizes;
+        public List<int>? Sizes;
     }
 
     private class AtlasItem
