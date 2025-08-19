@@ -9,6 +9,7 @@ namespace ranch_mayhem_engine;
 public class RanchMayhemEngine : Game
 {
     private const bool IsFullScreen = true;
+    public static readonly LogLevel LogLevel = LogLevel.Error;
     public const int Width = 1920;
     public const int Height = 1080;
 
@@ -19,13 +20,13 @@ public class RanchMayhemEngine : Game
     public static MouseState MouseState { get; private set; }
     public static bool IsFocused { get; private set; } = true;
     private static bool WasFocused { get; set; } = false;
-    public static double Framerate { get; private set; }
+    public static double Framerate { get; set; }
 
     public static readonly NumberFormatter Nf = new();
 
-    public static GameTime GameTime { get; set; }
+    public static GameTime GameTime { get; private set; }
 
-    public RanchMayhemEngine()
+    protected RanchMayhemEngine()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
@@ -39,6 +40,7 @@ public class RanchMayhemEngine : Game
 
     protected override void Initialize()
     {
+        _graphics.HardwareModeSwitch = false;
         _graphics.IsFullScreen = IsFullScreen;
         _graphics.PreferredBackBufferWidth = Width;
         _graphics.PreferredBackBufferHeight = Height;
@@ -58,6 +60,9 @@ public class RanchMayhemEngine : Game
 
     protected override void Update(GameTime gameTime)
     {
+#if DEBUG
+        DebugUtils.BeginFrame(gameTime);
+#endif
         Framerate = (1 / gameTime.ElapsedGameTime.TotalSeconds);
         GameTime = gameTime;
 
@@ -87,21 +92,15 @@ public class RanchMayhemEngine : Game
         KeyboardInput.Update();
         KeyboardManager.Update();
         base.Update(gameTime);
+
+#if DEBUG
+        DebugUtils.EndFrame(gameTime);
+#endif
     }
 
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.LightGoldenrodYellow);
-        UiManager.ClearQueue();
-
-        // _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
-
-        UiManager.RenderBackground();
-
-        // _spriteBatch.End();
-
-        UiManager.RenderComponents();
-        UiManager.Flush(_spriteBatch);
 
         base.Draw(gameTime);
     }
