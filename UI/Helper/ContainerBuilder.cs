@@ -120,6 +120,12 @@ public class ContainerBuilder
         return this;
     }
 
+    public ContainerBuilder SetUiAnchorOffSet(Vector2 vector2)
+    {
+        _componentOptions.UiAnchorOffset = vector2;
+        return this;
+    }
+
     public Container Build()
     {
         var container = new Container(_id, _componentOptions, _children, _parent, _background)
