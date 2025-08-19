@@ -8,16 +8,16 @@ namespace ranch_mayhem_engine.UI;
 
 public abstract class UiComponent
 {
-    protected UiComponent? Parent { get; set; }
-    public bool IsVisible { get; set; } = true;
     public string Id { get; }
+    public UiComponent? Parent { get; protected set; }
+    public bool IsVisible { get; set; } = true;
     public Vector2 LocalPosition { get; private set; }
-    public Vector2 GlobalPosition { get; set; }
+    public Vector2 GlobalPosition { get; private set; }
     public Rectangle Bounds { get; private set; }
-    public UiComponentOptions Options { get; set; } = new();
-    public Effect RenderEffect { get; set; }
+    public UiComponentOptions Options { get; } = new();
+    protected Effect RenderShader { get; set; }
     private UiComponent? HoverItem { get; set; }
-    private bool _hasBorder;
+    private bool _hasBorder = false;
     public bool IsAnimating;
 
     public Action? OnClick;
@@ -34,13 +34,24 @@ public abstract class UiComponent
     public bool CanTriggerClick;
     public bool CanTriggerRightClick;
 
+    protected event Action<Vector2>? OnPositionChange;
+
     protected UiComponent(
-        string id, UiComponentOptions options, UiComponent? parent = null, bool scale = true, Effect? renderEffect = null
+        string id, UiComponentOptions options, UiComponent? parent = null, bool scale = true, Effect? renderShader = null
     )
     {
         Id = id;
         Parent = parent;
-        RenderEffect = renderEffect;
+
+        if (Parent is not null)
+        {
+            Parent.OnPositionChange += HandleParentGlobalPositionChange;
+            RenderShader = Parent.RenderShader;
+        }
+        else
+        {
+            RenderShader = renderShader;
+        }
 
 #if DEBUG
         ParseOptions(options);
@@ -208,6 +219,7 @@ public abstract class UiComponent
     {
         LocalPosition = position;
         GlobalPosition = CalculateGlobalPosition();
+        // OnPositionChange?.Invoke(GlobalPosition);
 
         // if (Options.SizeUnit == SizeUnit.Pixels)
         // {
@@ -241,7 +253,7 @@ public abstract class UiComponent
         UpdateBounds(parent);
     }
 
-    private void CalculateScale()
+    protected void CalculateScale()
     {
         if (Options.Texture != null)
         {
@@ -280,7 +292,8 @@ public abstract class UiComponent
                 Origin = Vector2.Zero,
                 Scale = Options.Scale,
                 Effects = SpriteEffects.None,
-                LayerDepth = 0f
+                LayerDepth = 0f,
+                Shader = RenderShader
             };
 
             // spriteBatch.Draw(
@@ -309,7 +322,8 @@ public abstract class UiComponent
                 Origin = Vector2.Zero,
                 Scale = Options.Scale,
                 Effects = SpriteEffects.None,
-                LayerDepth = 0f
+                LayerDepth = 0f,
+                Shader = RenderShader
             };
 
             // spriteBatch.Draw(
@@ -355,7 +369,8 @@ public abstract class UiComponent
                     (int)Options.Size.X,
                     (int)Options.Size.Y
                 ),
-                Color = Options.Color
+                Color = Options.Color,
+                Shader = RenderShader
             };
 
             // spriteBatch.Draw(
@@ -396,10 +411,13 @@ public abstract class UiComponent
         {
             DrawHoverItem(RanchMayhemEngine.MouseState);
         }
+
     }
 
     protected IEnumerable<RenderCommand> DrawBorder()
     {
+        if (!_hasBorder) yield break;
+
         if (Options.BorderTexture == null)
         {
             if (Options.BorderOrientation == BorderOrientation.Inside)
@@ -813,18 +831,17 @@ public abstract class UiComponent
 
     public virtual void SetParent(UiComponent parent)
     {
-        // Logger.Log(
-        //     $"{GetType().FullName}::SetParent Id:{Id} parent:{parent.Id} parent global pos: {parent.GlobalPosition}");
         Parent = parent;
         RecalculateSize(Options.Size, Parent.Options.Size);
         UpdateGlobalPosition();
-        // Logger.Log($"{GetType().FullName}::SetParent Id:{Id} global pos:{GlobalPosition}");
+        Parent.OnPositionChange += HandleParentGlobalPositionChange;
     }
 
     private void SetPosition(Vector2 position)
     {
         LocalPosition = position;
         GlobalPosition = position;
+        // OnPositionChange?.Invoke(GlobalPosition);
     }
 
     public void SetHoverItem(UiComponent item)
@@ -842,7 +859,7 @@ public abstract class UiComponent
 
     protected void UpdateGlobalPosition()
     {
-        if (IsAnimating) return;
+        // if (IsAnimating) return;
 
         if (Parent == null)
         {
@@ -869,6 +886,8 @@ public abstract class UiComponent
 
             UpdateBounds(Parent);
         }
+
+        // OnPositionChange?.Invoke(GlobalPosition);
     }
 
     private void UpdateBounds(UiComponent? parent)
@@ -894,7 +913,7 @@ public abstract class UiComponent
         }
     }
 
-    public void SetTexture(Texture2D texture)
+    public virtual void SetTexture(Texture2D texture)
     {
         if (Options.Texture != texture)
         {
@@ -908,5 +927,35 @@ public abstract class UiComponent
         Options.Color = color;
     }
 
+    public virtual void SetRenderShader(Effect shader)
+    {
+        RenderShader = shader;
+    }
+
     public abstract void Update();
+
+
+    public void SetGlobalPosition(Vector2 position)
+    {
+        GlobalPosition = position;
+
+        // TODO: refactor this to adjust for future UiComponents
+        if (this is Container container)
+        {
+            container.HandleParentGlobalPositionChange(GlobalPosition);
+        }
+
+        OnPositionChange?.Invoke(GlobalPosition);
+    }
+
+    public virtual void ToggleAnimating()
+    {
+        IsAnimating = !IsAnimating;
+    }
+
+    public virtual void HandleParentGlobalPositionChange(Vector2 position)
+    {
+        Logger.Log($"{GetType().FullName}::HandleParentGlobalPositionChange Id={Id} Parent={Parent?.Id}", LogLevel.Internal);
+        GlobalPosition = CalculateGlobalPosition();
+    }
 }

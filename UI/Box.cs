@@ -6,13 +6,14 @@ namespace ranch_mayhem_engine.UI;
 
 public class Box : UiComponent
 {
-    public Text? Text;
+    private Text? _text;
 
-    public Box(string id, BoxOptions options, UiComponent? parent = null, bool scale = true) : base(
+    public Box(string id, BoxOptions options, UiComponent? parent = null, bool scale = true, Effect? renderShader = null) : base(
         id,
         options,
         parent,
-        scale
+        scale,
+        renderShader
     )
     {
     }
@@ -25,35 +26,35 @@ public class Box : UiComponent
     {
         if (text.Length == 0)
         {
-            Text = null;
+            _text = null;
             return;
         }
 
-        if (Text == null)
+        if (_text == null)
         {
-            Text = new TextBuilder($"{Id}-inner-text")
+            _text = new TextBuilder($"{Id}-inner-text")
                 .SetContent(text)
                 .SetUiAnchor(UiAnchor.CenterX | UiAnchor.CenterY)
                 .SetFontColor(color)
                 .SetFontSize(size)
                 .Build();
 
-            Text.SetParent(this);
+            _text.SetParent(this);
             return;
         }
 
-        if (Text.GetContent().Equals(text))
+        if (_text.GetContent().Equals(text))
         {
             return;
         }
 
-        Text.SetContent(text);
-        Text.SetTextColor(color);
+        _text.SetContent(text);
+        _text.SetTextColor(color);
     }
 
     public void SetTextColor(Color color)
     {
-        Text?.SetTextColor(color);
+        _text?.SetTextColor(color);
     }
 
     public override IEnumerable<RenderCommand> Draw()
@@ -63,11 +64,29 @@ public class Box : UiComponent
             yield return command;
         }
 
-        if (Text is null) yield break;
-        foreach (var command in Text?.Draw())
+        if (_text is null) yield break;
+        foreach (var command in _text?.Draw())
         {
             yield return command;
         }
+    }
+
+    public override void ToggleAnimating()
+    {
+        base.ToggleAnimating();
+        _text?.ToggleAnimating();
+    }
+
+    public override void SetRenderShader(Effect shader)
+    {
+        base.SetRenderShader(shader);
+        _text?.SetRenderShader(shader);
+    }
+
+    public override void HandleParentGlobalPositionChange(Vector2 position)
+    {
+        base.HandleParentGlobalPositionChange(position);
+        _text?.HandleParentGlobalPositionChange(position);
     }
 
     public override void Update()

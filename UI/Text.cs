@@ -68,7 +68,7 @@ public class Text : UiComponent
         {
             yield return new RenderCommand
             {
-                Id = $"{Id}-text",
+                Id = $"{Id}-text-shadow",
                 SpriteFont = _font,
                 Text = _textOptions.Content,
                 Position = new Vector2(GlobalPosition.X + 2, GlobalPosition.Y + 2),
@@ -95,6 +95,7 @@ public class Text : UiComponent
 
         yield return new RenderCommand
         {
+            Id = $"{Id}-text",
             SpriteFont = _font,
             Text = _textOptions.Content,
             Position = GlobalPosition,
@@ -103,7 +104,8 @@ public class Text : UiComponent
             Origin = Vector2.Zero,
             Scale = Options.Scale,
             Effects = SpriteEffects.None,
-            LayerDepth = 0.5f
+            LayerDepth = 0.5f,
+            Shader = RenderShader
         };
 
         // spriteBatch.DrawString(
@@ -137,6 +139,15 @@ public class Text : UiComponent
 
     public void SetContent(string content, bool wrap = false)
     {
+#if DEBUG
+        if (string.IsNullOrEmpty(content))
+        {
+            Logger.Log(
+                $"{GetType().FullName}::SetContent Id={Id} Consider using Text::ClearContent to set an empty string as content",
+                LogLevel.Warning
+            );
+        }
+#endif
         if (_textOptions.Content.Equals(content)) return;
 
         _textOptions.Content = content;
@@ -146,13 +157,13 @@ public class Text : UiComponent
 
         if (!FitsParent() && wrap && Parent is not null)
         {
-            Logger.Log($"{Id} is too big to fit in parent", LogLevel.Warning);
+            Logger.Log($"{Id} is too big to fit in parent Content={content}", LogLevel.Warning);
 
             // we have 2 ways of dealing wit this
             // - First we try and split the text at spaces
             // - If this doesn't work we make the text smaller
             // - If this doesn't work either we just leave it
-            var possibleLines = (int)(Parent!.Options.Size.Y / Options.Size.Y);
+            var possibleLines = (int)Math.Round(Parent!.Options.Size.Y / Options.Size.Y);
 
             var whiteSpaceAmount = _textOptions.Content.Count(char.IsWhiteSpace);
             var splittingPossible = whiteSpaceAmount > 0 && whiteSpaceAmount <= possibleLines && possibleLines > 1;
@@ -176,6 +187,12 @@ public class Text : UiComponent
                 Logger.Log($"{Id} splitting not possible... trying to scale down", LogLevel.Internal);
             }
         }
+    }
+
+
+    public void ClearContent()
+    {
+        _textOptions.Content = string.Empty;
     }
 
     private bool FitsParent()
