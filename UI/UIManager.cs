@@ -26,7 +26,12 @@ public class UiManager
     public GraphicsDevice GraphicsDevice { get; }
     public SpriteBatch SpriteBatch { get; }
 
-    private static readonly List<RenderCommand> _queue = [];
+    public static readonly List<RenderCommand> UiQueue = [];
+    public static readonly List<RenderCommand> BackgroundQueue = [];
+    public static readonly List<RenderCommand> PopUpQueue = [];
+    public static readonly List<RenderCommand> OverlayQueue = [];
+
+    public static Page Overlay;
 
     public UiManager(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
@@ -95,8 +100,9 @@ public class UiManager
                 {
                     Texture = Backgrounds[_backgroundIndex],
                     DestinationRect = new Rectangle(0, 0, RanchMayhemEngine.Width, RanchMayhemEngine.Height),
-                    Color = Color.White
-                }
+                    Color = Color.White,
+                },
+                BackgroundQueue
             );
         }
     }
@@ -109,6 +115,15 @@ public class UiManager
         {
             page.Draw();
         }
+    }
+
+    public void RenderPopUp()
+    {
+    }
+
+    public void RenderOverlay()
+    {
+        Overlay.Draw();
     }
 
     public void SetActivePage(string id)
@@ -144,86 +159,142 @@ public class UiManager
         }
     }
 
-    public static void ClearQueue() => _queue.Clear();
+    private static void ClearQueue(List<RenderCommand> q) => q.Clear();
 
-    public static void Enqueue(RenderCommand cmd) => _queue.Add(cmd);
-
-    public static void Enqueue(IEnumerable<RenderCommand> cmds)
+    public static void ClearQueues()
     {
-        foreach (var cmd in cmds)
+        ClearQueue(BackgroundQueue);
+        ClearQueue(UiQueue);
+        ClearQueue(PopUpQueue);
+        ClearQueue(OverlayQueue);
+    }
+
+
+    public static void Enqueue(RenderCommand cmd, List<RenderCommand>? q = null)
+    {
+        if (q == null)
         {
-            _queue.Add(cmd);
+            UiQueue.Add(cmd);
+        }
+        else
+        {
+            q.Add(cmd);
         }
     }
 
-    public static void Flush(SpriteBatch sb)
+    public static void Enqueue(IEnumerable<RenderCommand> cmds, List<RenderCommand>? q = null)
     {
-        var groups = _queue
-            .GroupBy(cmd => cmd.Shader);
-
-        foreach (var group in groups)
+        if (q == null)
         {
-            var shader = group.Key;
+            UiQueue.AddRange(cmds);
+        }
+        else
+        {
+            q.AddRange(cmds);
+        }
+    }
 
+    private static readonly RasterizerState ScissorRaster = new RasterizerState { ScissorTestEnable = true };
+
+    private static void Flush(SpriteBatch sb, IEnumerable<RenderCommand> q)
+    {
+        Effect? currentShader = null;
+        var begun = false;
+
+        void BeginWith(Effect? shader)
+        {
             sb.Begin(
                 sortMode: SpriteSortMode.Deferred,
                 blendState: BlendState.AlphaBlend,
                 samplerState: SamplerState.PointClamp,
                 depthStencilState: DepthStencilState.None,
-                rasterizerState: new RasterizerState { ScissorTestEnable = true }
+                rasterizerState: new RasterizerState { ScissorTestEnable = true },
+                effect: shader
             );
 
-            foreach (var cmd in group)
+            begun = true;
+        }
+
+        foreach (var cmd in q)
+        {
+            if (!begun || !ReferenceEquals(cmd.Shader, currentShader))
             {
-                switch (cmd)
-                {
-                    case { DestinationRect: not null, SourceRect: null }:
-                        sb.Draw(
-                            texture: cmd.Texture,
-                            destinationRectangle: cmd.DestinationRect.Value,
-                            color: cmd.Color
-                        );
-                        break;
-                    case { DestinationRect: not null, SourceRect: not null }:
-                        sb.Draw(
-                            texture: cmd.Texture,
-                            destinationRectangle: cmd.DestinationRect.Value,
-                            sourceRectangle: cmd.SourceRect.Value,
-                            color: cmd.Color
-                        );
-                        break;
-                    case { SpriteFont: not null }:
-                        sb.DrawString(
-                            spriteFont: cmd.SpriteFont,
-                            text: cmd.Text,
-                            position: cmd.Position,
-                            color: cmd.Color,
-                            rotation: 0f,
-                            origin: Vector2.Zero,
-                            scale: cmd.Scale,
-                            effects: cmd.Effects,
-                            layerDepth: cmd.LayerDepth
-                        );
-                        break;
-                    default:
-                        sb.Draw(
-                            texture: cmd.Texture,
-                            position: cmd.Position,
-                            sourceRectangle: cmd.SourceRect,
-                            color: cmd.Color,
-                            rotation: cmd.Rotation,
-                            origin: cmd.Origin,
-                            scale: cmd.Scale,
-                            effects: cmd.Effects,
-                            layerDepth: cmd.LayerDepth
-                        );
-                        break;
-                }
+                if (begun) sb.End();
+                currentShader = cmd.Shader;
+                BeginWith(currentShader);
             }
 
-            sb.End();
+            switch (cmd)
+            {
+                case { DestinationRect: not null, SourceRect: null }:
+                    sb.Draw(
+                        texture: cmd.Texture,
+                        destinationRectangle: cmd.DestinationRect.Value,
+                        color: cmd.Color
+                    );
+                    break;
+                case { DestinationRect: not null, SourceRect: not null }:
+                    sb.Draw(
+                        texture: cmd.Texture,
+                        destinationRectangle: cmd.DestinationRect.Value,
+                        sourceRectangle: cmd.SourceRect.Value,
+                        color: cmd.Color
+                    );
+                    break;
+                case { SpriteFont: not null }:
+                    sb.DrawString(
+                        spriteFont: cmd.SpriteFont,
+                        text: cmd.Text,
+                        position: new Vector2(MathF.Round(cmd.Position.X), MathF.Round(cmd.Position.Y)),
+                        color: cmd.Color,
+                        rotation: 0f,
+                        origin: Vector2.Zero,
+                        scale: cmd.Scale,
+                        effects: cmd.Effects,
+                        layerDepth: cmd.LayerDepth
+                    );
+                    break;
+                default:
+                    sb.Draw(
+                        texture: cmd.Texture,
+                        position: cmd.Position,
+                        sourceRectangle: cmd.SourceRect,
+                        color: cmd.Color,
+                        rotation: cmd.Rotation,
+                        origin: cmd.Origin,
+                        scale: cmd.Scale,
+                        effects: cmd.Effects,
+                        layerDepth: cmd.LayerDepth
+                    );
+                    break;
+            }
         }
+
+        if (begun) sb.End();
+        // if (shader is not null)
+        // {
+        //     foreach (var technique in shader.Techniques)
+        //     {
+        //         shader.CurrentTechnique = technique;
+        //         foreach (var pass in technique.Passes)
+        //         {
+        //             pass.Apply();
+        //         }
+        //     }
+        // }
     }
 
-    public static int RenderQueueLength() => _queue.Count;
+    public static void Flush(SpriteBatch sb)
+    {
+        // Logger.Log($"BackgroundQ={BackgroundQueue.Count}");
+        // Logger.Log($"iUiQ={UiQueue.Count}");
+        // Logger.Log($"PopUpQ={PopUpQueue.Count}");
+        // Logger.Log($"OverlayQ={OverlayQueue.Count}");
+        Flush(sb, BackgroundQueue);
+        Flush(sb, UiQueue);
+        Flush(sb, PopUpQueue);
+        Flush(sb, OverlayQueue);
+    }
+
+    public static int RenderQueueLength() => UiQueue.Count;
 }

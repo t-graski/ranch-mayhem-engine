@@ -14,11 +14,13 @@ public class Button : UiComponent
 
     public Button(
         string id, ButtonOptions options,
-        UiComponent? parent = null
+        UiComponent? parent = null, Effect? shaderEffect = null
     ) : base(
         id,
         options,
-        parent
+        parent,
+        true,
+        shaderEffect
     )
     {
         OnHover = InternalHandleOnHover;
@@ -172,6 +174,35 @@ public class Button : UiComponent
         else
         {
             _buttonOptions.State = ButtonState.Disabled;
+        }
+    }
+
+    public void SetState(ButtonState state)
+    {
+        _buttonOptions.State = state;
+    }
+
+    public override void SetTexture(Texture2D texture)
+    {
+        _buttonOptions.Texture = texture;
+        base.SetTexture(texture);
+    }
+
+    public void SetHoverTexture(Texture2D texture)
+    {
+        if (_buttonOptions.HoverTexture != texture)
+        {
+            _buttonOptions.HoverTexture = texture;
+            CalculateScale();
+        }
+    }
+
+    public void SetClickTexture(Texture2D texture)
+    {
+        if (_buttonOptions.ClickTexture != texture)
+        {
+            _buttonOptions.ClickTexture = texture;
+            CalculateScale();
         }
     }
 

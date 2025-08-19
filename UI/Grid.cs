@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace ranch_mayhem_engine.UI;
 
@@ -10,9 +11,16 @@ public class Grid : UiComponent
     public List<UiComponent> Components;
     private GridOptions _gridOptions;
 
-    public Grid(string id, GridOptions options, List<UiComponent> components,
-        UiComponent? parent = null) : base(id,
-        options, parent)
+    public Grid(
+        string id, GridOptions options, List<UiComponent> components,
+        UiComponent? parent = null, Effect? renderShader = null
+    ) : base(
+        id,
+        options,
+        parent,
+        true,
+        renderShader
+    )
     {
 #if DEBUG
         ParseOptions(options, components.Count);
@@ -40,8 +48,14 @@ public class Grid : UiComponent
         {
             Logger.Log(
                 $"{prefix} More columns/rows ({gridOptions.Columns.Count}x{gridOptions.Rows.Count}) defined than used ({childrenAmount}).",
-                LogLevel.Warning);
+                LogLevel.Warning
+            );
         }
+    }
+
+    public void SetComponents(List<UiComponent> components)
+    {
+        InitializeGrid(components);
     }
 
     private void InitializeGrid(List<UiComponent> components)
@@ -107,6 +121,8 @@ public class Grid : UiComponent
 
             if (current != null)
             {
+                // current.RecalculateSize(size, size);
+
                 if (current.Options.UiAnchor != UiAnchor.None)
                 {
                     current.RecalculateSize(current.Options.Size, size);
@@ -117,12 +133,12 @@ public class Grid : UiComponent
                 else
                 {
                     current.UpdatePosition(position, size, this, size);
+                }
 
-                    if (current is Container container)
-                    {
-                        // Logger.Log($"{GetType().FullName}::CalculatePositions Id={Id} updating parent location for {current.Id}");
-                        container.UpdateParentLocation();
-                    }
+                if (current is Container container)
+                {
+                    // Logger.Log($"{GetType().FullName}::CalculatePositions Id={Id} updating parent location for {current.Id}");
+                    container.UpdateParentLocation();
                 }
             }
 

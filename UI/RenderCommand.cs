@@ -21,4 +21,10 @@ public struct RenderCommand()
     public SpriteFont? SpriteFont = null;
     public string Text = "";
     public string Id = "";
+
+    public override string ToString()
+    {
+        return
+            $"RenderCommand(Id: {Id}, Texture: {Texture?.Name ?? "null"}, Position: {Position}, DestinationRect: {DestinationRect}, SourceRect: {SourceRect}, Color: {Color}, Rotation: {Rotation}, Origin: {Origin}, Scale: {Scale}, Effects: {Effects}, LayerDepth: {LayerDepth}, Shader: {Shader?.Name ?? "null"}, Transform: {Transform})";
+    }
 }
