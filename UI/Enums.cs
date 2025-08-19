@@ -48,7 +48,8 @@ public enum ButtonState
 
 public enum AnimationDirection
 {
-    Top,
+    TopIn,
+    TopOut,
     Right
 }
 

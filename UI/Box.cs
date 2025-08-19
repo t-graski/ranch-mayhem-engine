@@ -8,8 +8,13 @@ public class Box : UiComponent
 {
     private Text? _text;
 
-    public Box(string id, BoxOptions options, UiComponent? parent = null, bool scale = true) : base(id, options,
-        parent, scale)
+    public Box(string id, BoxOptions options, UiComponent? parent = null, bool scale = true, Effect? renderShader = null) : base(
+        id,
+        options,
+        parent,
+        scale,
+        renderShader
+    )
     {
     }
 
@@ -17,7 +22,7 @@ public class Box : UiComponent
     {
     }
 
-    public void SetText(string text, Color color)
+    public void SetText(string text, Color color, int size = 16)
     {
         if (text.Length == 0)
         {
@@ -31,7 +36,7 @@ public class Box : UiComponent
                 .SetContent(text)
                 .SetUiAnchor(UiAnchor.CenterX | UiAnchor.CenterY)
                 .SetFontColor(color)
-                .SetFontSize(16)
+                .SetFontSize(size)
                 .Build();
 
             _text.SetParent(this);
@@ -44,13 +49,44 @@ public class Box : UiComponent
         }
 
         _text.SetContent(text);
-        _text.SetColor(color);
+        _text.SetTextColor(color);
     }
 
-    public override void Draw(SpriteBatch spriteBatch)
+    public void SetTextColor(Color color)
     {
-        base.Draw(spriteBatch);
-        _text?.Draw(spriteBatch);
+        _text?.SetTextColor(color);
+    }
+
+    public override IEnumerable<RenderCommand> Draw()
+    {
+        foreach (var command in base.Draw())
+        {
+            yield return command;
+        }
+
+        if (_text is null) yield break;
+        foreach (var command in _text?.Draw())
+        {
+            yield return command;
+        }
+    }
+
+    public override void ToggleAnimating()
+    {
+        base.ToggleAnimating();
+        _text?.ToggleAnimating();
+    }
+
+    public override void SetRenderShader(Effect shader)
+    {
+        base.SetRenderShader(shader);
+        _text?.SetRenderShader(shader);
+    }
+
+    public override void HandleParentGlobalPositionChange(Vector2 position)
+    {
+        base.HandleParentGlobalPositionChange(position);
+        _text?.HandleParentGlobalPositionChange(position);
     }
 
     public override void Update()

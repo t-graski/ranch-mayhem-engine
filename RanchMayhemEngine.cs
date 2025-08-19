@@ -1,14 +1,15 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using ranch_mayhem_engine.Content;
 using ranch_mayhem_engine.UI;
+using ranch_mayhem_engine.Utils;
 
 namespace ranch_mayhem_engine;
 
 public class RanchMayhemEngine : Game
 {
     private const bool IsFullScreen = true;
+    public static readonly LogLevel LogLevel = LogLevel.Error;
     public const int Width = 1920;
     public const int Height = 1080;
 
@@ -19,20 +20,27 @@ public class RanchMayhemEngine : Game
     public static MouseState MouseState { get; private set; }
     public static bool IsFocused { get; private set; } = true;
     private static bool WasFocused { get; set; } = false;
-    public static double Framerate { get; private set; }
+    public static double Framerate { get; set; }
 
-    public RanchMayhemEngine()
+    public static readonly NumberFormatter Nf = new();
+
+    public static GameTime GameTime { get; private set; }
+
+    protected RanchMayhemEngine()
     {
         _graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
         IsFixedTimeStep = true;
-        TargetElapsedTime = TimeSpan.FromSeconds(1d / 30d);
+        TargetElapsedTime = TimeSpan.FromSeconds(1d / 60d);
+
+        Window.AllowUserResizing = true;
     }
 
     protected override void Initialize()
     {
+        _graphics.HardwareModeSwitch = false;
         _graphics.IsFullScreen = IsFullScreen;
         _graphics.PreferredBackBufferWidth = Width;
         _graphics.PreferredBackBufferHeight = Height;
@@ -48,13 +56,15 @@ public class RanchMayhemEngine : Game
 
         UiManager = new UiManager(_spriteBatch.GraphicsDevice, _spriteBatch);
         UiManager.Initialize();
-
-        UiManager.SetBackground(ContentManager.GetTexture("spring_background"));
     }
 
     protected override void Update(GameTime gameTime)
     {
+#if DEBUG
+        DebugUtils.BeginFrame(gameTime);
+#endif
         Framerate = (1 / gameTime.ElapsedGameTime.TotalSeconds);
+        GameTime = gameTime;
 
         MouseState = Mouse.GetState();
 
@@ -82,18 +92,15 @@ public class RanchMayhemEngine : Game
         KeyboardInput.Update();
         KeyboardManager.Update();
         base.Update(gameTime);
+
+#if DEBUG
+        DebugUtils.EndFrame(gameTime);
+#endif
     }
 
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.LightGoldenrodYellow);
-
-        _spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp);
-
-        UiManager.RenderBackground();
-        UiManager.RenderComponents();
-
-        _spriteBatch.End();
 
         base.Draw(gameTime);
     }

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using System;
 
 namespace ranch_mayhem_engine.UI;
 
@@ -24,7 +22,7 @@ public class UiComponentOptions
     public Color BorderColor = Color.Transparent;
     public Texture2D? BorderTexture;
     public Texture2D? BorderCornerTexture;
-    public int BorderSize = 8;
+    public int BorderSize = 0;
     public BorderOrientation BorderOrientation = BorderOrientation.Outside;
     public BorderPosition BorderPosition = BorderPosition.All;
 }

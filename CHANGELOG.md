@@ -2,6 +2,43 @@
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
 <a name="4.1.0"></a>
+## [4.1.0](https://www.github.com/t-graski/ranch-mayhem/releases/tag/v4.1.0) (2025-08-08)
+
+### Features
+
+* add animated background ([cc227d8](https://www.github.com/t-graski/ranch-mayhem/commit/cc227d8451d8aa81688bfe8ce2bc9391d5c2e2a3))
+* add auto-harvest feature and refactor growing speed logic ([bc3d808](https://www.github.com/t-graski/ranch-mayhem/commit/bc3d8080b60cfff7dea8a14f6e38990fc638e55e))
+* add automators ([ba4554b](https://www.github.com/t-graski/ranch-mayhem/commit/ba4554bf9f70eee0abccc14f7bcea451974ab301))
+* add close button to crop shop ([3dff9b7](https://www.github.com/t-graski/ranch-mayhem/commit/3dff9b7b39e0644c5ecf10465ce4f4d0b80fc97d))
+* add crop growth stages and harvest particle effect ([c24727a](https://www.github.com/t-graski/ranch-mayhem/commit/c24727a5012c9294e876f8d723c5b12bb772f91e))
+* add crop unlock effect ([96194dd](https://www.github.com/t-graski/ranch-mayhem/commit/96194dd23642ebfd2f3497cb56b0dbefa16e8b70))
+* add crop unlocking ([ac066b1](https://www.github.com/t-graski/ranch-mayhem/commit/ac066b19f54d43ccbdab0aa94f54990e3453e94b))
+* add crops icon ([e4675cc](https://www.github.com/t-graski/ranch-mayhem/commit/e4675ccf27da3b805662016947f0a41ca168a475))
+* add first crop implementation ([9ad8867](https://www.github.com/t-graski/ranch-mayhem/commit/9ad886712a6b21a96c27f4596e4616866f6c5729))
+* add growing speed and crop functionality ([32bbd9b](https://www.github.com/t-graski/ranch-mayhem/commit/32bbd9b281fdb23c3f710730a470fecdae9bb784))
+* add growing speed animator ([ed2119e](https://www.github.com/t-graski/ranch-mayhem/commit/ed2119ea1b79da47d26a85673f0a6e235eecd0e9))
+* add icons to menubar ([f8f9d97](https://www.github.com/t-graski/ranch-mayhem/commit/f8f9d97382da114aee30bbcd929db69d06c9410b))
+* add level up popup ([788fd78](https://www.github.com/t-graski/ranch-mayhem/commit/788fd780098b96c2602d6cc01608352bbeb30d48))
+* add new crop shop tiers ([3bb306b](https://www.github.com/t-graski/ranch-mayhem/commit/3bb306bb5b54db877d9398e2e8d41974770cb246))
+* add potato press ([472e0aa](https://www.github.com/t-graski/ranch-mayhem/commit/472e0aa58932538113dc7dd0422381cfa214ccef))
+* add progress bar to automation ([19eb29c](https://www.github.com/t-graski/ranch-mayhem/commit/19eb29c34b91b94a3bf3dfdfa87b90b77a40e492))
+* change content location ([ed9b09a](https://www.github.com/t-graski/ranch-mayhem/commit/ed9b09ac6765bab3c47c443bcbd3c7cb96a5a36e))
+* implement global settings & steam support ([5e67e0c](https://www.github.com/t-graski/ranch-mayhem/commit/5e67e0cc247aefa81ea0af62ea65a2c10412ddc7))
+
+### Bug Fixes
+
+* add new pages ([f932eb5](https://www.github.com/t-graski/ranch-mayhem/commit/f932eb5a4a73ff11103e6011493b35c5ad4d1db8))
+* add new textures to automation ([1946d0c](https://www.github.com/t-graski/ranch-mayhem/commit/1946d0c04531f1e22a35c1ce0f0d8610c5fc4cb1))
+* make color change in crop menu ([a371b29](https://www.github.com/t-graski/ranch-mayhem/commit/a371b2906969e42ed03c2e471e39a690ae6f3182))
+* refactor crop data to use CropDefinition and DTOs ([041fcf6](https://www.github.com/t-graski/ranch-mayhem/commit/041fcf677fe6d4bef1f7945399f5888f51e048df))
+* update menubar ([6acaf44](https://www.github.com/t-graski/ranch-mayhem/commit/6acaf44fac5cae95de7744f1c639d80bc62191be))
+* use abbreviations for numbers ([a1973b9](https://www.github.com/t-graski/ranch-mayhem/commit/a1973b9e1921cf34d871713240119252d6a5e27d))
+
+### Breaking Changes
+
+* change content location ([ed9b09a](https://www.github.com/t-graski/ranch-mayhem/commit/ed9b09ac6765bab3c47c443bcbd3c7cb96a5a36e))
+
+<a name="4.1.0"></a>
 ## [4.1.0](https://www.github.com/t-graski/ranch-mayhem-engine/releases/tag/v4.1.0) (2025-04-09)
 
 ### Features

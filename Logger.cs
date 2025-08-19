@@ -16,6 +16,7 @@ public static class Logger
             _ => "\x1b[39m"
         };
 
-        Console.WriteLine($"{prefix}{message}\x1b[39m");
+        if (level <= RanchMayhemEngine.LogLevel)
+            Console.WriteLine($"{prefix}{message}\x1b[39m");
     }
 }

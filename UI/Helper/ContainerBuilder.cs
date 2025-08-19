@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ranch_mayhem_engine.Content;
-using Vector2 = System.Numerics.Vector2;
 
 namespace ranch_mayhem_engine.UI.Helper;
 
@@ -12,6 +11,7 @@ public class ContainerBuilder
     private UiComponent _parent;
     private List<UiComponent> _children;
     private Action _onClickAction;
+    private Texture2D _background;
 
     public ContainerBuilder(string id)
     {
@@ -53,6 +53,19 @@ public class ContainerBuilder
         return this;
     }
 
+    public ContainerBuilder SetSizePercent(Vector2 size)
+    {
+        _componentOptions.SizeUnit = SizeUnit.Percent;
+        _componentOptions.SizePercent = size;
+        return this;
+    }
+
+    public ContainerBuilder SetTexture(Texture2D texture)
+    {
+        _componentOptions.Texture = texture;
+        return this;
+    }
+
     public ContainerBuilder SetBorderColor(Color color)
     {
         _componentOptions.BorderColor = color;
@@ -67,7 +80,7 @@ public class ContainerBuilder
 
     public ContainerBuilder SetBorderTexture(string textureId)
     {
-        _componentOptions.BorderTexture = ContentManager.GetTexture(textureId);
+        _componentOptions.BorderTexture = ContentManager.GetAtlasSprite(textureId);
         return this;
     }
 
@@ -95,11 +108,29 @@ public class ContainerBuilder
         return this;
     }
 
+    public ContainerBuilder SetBackground(Texture2D background)
+    {
+        _background = background;
+        return this;
+    }
+
+    public ContainerBuilder SetUiAnchor(UiAnchor anchor)
+    {
+        _componentOptions.UiAnchor = anchor;
+        return this;
+    }
+
+    public ContainerBuilder SetUiAnchorOffSet(Vector2 vector2)
+    {
+        _componentOptions.UiAnchorOffset = vector2;
+        return this;
+    }
+
     public Container Build()
     {
-        var container = new Container(_id, _componentOptions, _children, _parent)
+        var container = new Container(_id, _componentOptions, _children, _parent, _background)
         {
-            OnClick = _onClickAction
+            OffClick = _onClickAction
         };
 
         return container;
