@@ -1,6 +1,8 @@
+using System.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using ranch_mayhem_engine.Content;
 using Color = Microsoft.Xna.Framework.Color;
 using Rectangle = Microsoft.Xna.Framework.Rectangle;
 
@@ -13,9 +15,12 @@ public abstract class UiComponent
     public bool IsVisible { get; set; } = true;
     public Vector2 LocalPosition { get; private set; }
     public Vector2 GlobalPosition { get; private set; }
-    public Rectangle Bounds { get; private set; }
+    public Rectangle Bounds { get; protected set; }
     public UiComponentOptions Options { get; } = new();
     protected Effect RenderShader { get; set; }
+    public bool HasHoverShader { get; set; }
+    protected static Effect DefaultHoverShader { get; set; } = ContentManager.GetShader("Outline");
+    protected Effect HoverShader { get; set; } = DefaultHoverShader;
     private UiComponent? HoverItem { get; set; }
     private bool _hasBorder = false;
     public bool IsAnimating;
@@ -23,8 +28,8 @@ public abstract class UiComponent
     public Action? OnClick;
     public Action? OffClick;
     public Action? OnRightClick;
-    protected Action? OnHover;
-    protected Action? OffHover;
+    public Action? OnHover;
+    public Action? OffHover;
 
     protected bool IsHovered;
     protected bool IsClicked;
@@ -68,6 +73,9 @@ public abstract class UiComponent
             GlobalPosition = CalculateGlobalPosition();
             UpdateBounds(parent);
         }
+
+        DefaultHoverShader.Parameters["OutlineColor"].SetValue(Color.White.ToVector4());
+        DefaultHoverShader.Parameters["AlphaThreshold"].SetValue(0.1f);
     }
 
     private void ParseOptions(UiComponentOptions options)
@@ -411,7 +419,6 @@ public abstract class UiComponent
         {
             DrawHoverItem(RanchMayhemEngine.MouseState);
         }
-
     }
 
     protected IEnumerable<RenderCommand> DrawBorder()
@@ -650,7 +657,7 @@ public abstract class UiComponent
         }
 
         HoverItem.SetPosition(position);
-        HoverItem.Draw();
+        UiManager.Enqueue(HoverItem.Draw(), UiManager.OverlayQueue);
     }
 
     protected IEnumerable<RenderCommand> DrawTiledTexture(
@@ -740,6 +747,7 @@ public abstract class UiComponent
     {
         if (!RanchMayhemEngine.IsFocused || !IsVisible) return;
 
+
         if (mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed &&
             Bounds.Contains(mouseState.Position))
         {
@@ -786,6 +794,11 @@ public abstract class UiComponent
             {
                 OnHover?.Invoke();
                 IsHovered = !IsHovered;
+
+                if (HasHoverShader)
+                {
+                    SetRenderShader(HoverShader);
+                }
             }
         }
 
@@ -806,6 +819,11 @@ public abstract class UiComponent
 
             OffHover?.Invoke();
             IsHovered = !IsHovered;
+
+            if (HasHoverShader)
+            {
+                SetRenderShader(null);
+            }
         }
     }
 
@@ -842,6 +860,11 @@ public abstract class UiComponent
         LocalPosition = position;
         GlobalPosition = position;
         // OnPositionChange?.Invoke(GlobalPosition);
+
+        if (this is Container container)
+        {
+            container.HandleParentGlobalPositionChange(GlobalPosition);
+        }
     }
 
     public void SetHoverItem(UiComponent item)
@@ -930,6 +953,14 @@ public abstract class UiComponent
     public virtual void SetRenderShader(Effect shader)
     {
         RenderShader = shader;
+    }
+
+    public virtual void SetHoverShader(Effect? shader)
+    {
+        if (!HasHoverShader) return;
+
+        HoverShader = shader;
+        HoverShader?.Parameters["TexelSize"].SetValue(new Vector2(1f / Options.Size.X, 1f / Options.Size.Y));
     }
 
     public abstract void Update();

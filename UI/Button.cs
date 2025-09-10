@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using ranch_mayhem_engine.Content;
 using ranch_mayhem_engine.UI.Helper;
 
 namespace ranch_mayhem_engine.UI;
@@ -11,6 +12,8 @@ public class Button : UiComponent
     private Text? _text;
     private float _transitionProgress = 0f;
     private const float TransitionSpeed = 0.3f;
+
+    private Effect _outlineShader = ContentManager.GetShader("Outline");
 
     public Button(
         string id, ButtonOptions options,
@@ -64,6 +67,12 @@ public class Button : UiComponent
         if (_buttonOptions.HoverTexture == null) return;
 
         Options.Texture = _buttonOptions.HoverTexture;
+
+        // _outlineShader.Parameters["TexelSize"].SetValue(new Vector2(1f / Options.Size.X, 1f / Options.Size.Y));
+        // _outlineShader.Parameters["OutlineColor"].SetValue(Color.White.ToVector4());
+        // _outlineShader.Parameters["AlphaThreshold"].SetValue(0.1f);
+        //
+        // SetRenderShader(ContentManager.GetShader("Outline"));
     }
 
     private void InternalHandleOffHover()
@@ -72,6 +81,8 @@ public class Button : UiComponent
 
         Logger.Log($"{GetType().FullName}::HandleOffHover Id={Id}", LogLevel.Internal);
         Options.Texture = _buttonOptions.Texture;
+
+        // SetRenderShader(null);
     }
 
     private void InternalHandleOnClick()

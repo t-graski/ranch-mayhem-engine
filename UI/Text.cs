@@ -8,7 +8,7 @@ namespace ranch_mayhem_engine.UI;
 public class Text : UiComponent
 {
     private readonly TextOptions _textOptions;
-    private SpriteFont _font;
+    public SpriteFont Font;
 
     public Text(
         string id, TextOptions options, UiComponent? parent = null,
@@ -31,7 +31,7 @@ public class Text : UiComponent
                 RanchMayhemEngineConstants.DefaultFont,
                 _textOptions.FontSize
             );
-        _font = fontWithSize.font;
+        Font = fontWithSize.font;
 
         var scale = 1.0f;
 
@@ -41,7 +41,7 @@ public class Text : UiComponent
         }
 
         Options.Scale = new Vector2(scale) * RanchMayhemEngine.UiManager.GlobalScale;
-        Options.Size = _font.MeasureString(_textOptions.Content) * Options.Scale;
+        Options.Size = Font.MeasureString(_textOptions.Content) * Options.Scale;
 
         // Logger.Log(
         //     $"{GetType().FullName}::InitializeFont Id={Id} Given size: {_textOptions.FontSize}, Found size: {fontWithSize.size}, Using scale: {scale}",
@@ -59,7 +59,7 @@ public class Text : UiComponent
 
     private void RecalculateSize()
     {
-        Options.Size = _font.MeasureString(_textOptions.Content) * Options.Scale;
+        Options.Size = Font.MeasureString(_textOptions.Content) * Options.Scale;
     }
 
     public override IEnumerable<RenderCommand> Draw()
@@ -69,7 +69,7 @@ public class Text : UiComponent
             yield return new RenderCommand
             {
                 Id = $"{Id}-text-shadow",
-                SpriteFont = _font,
+                SpriteFont = Font,
                 Text = _textOptions.Content,
                 Position = new Vector2(GlobalPosition.X + 2, GlobalPosition.Y + 2),
                 Color = _textOptions.ShadowColor,
@@ -96,7 +96,7 @@ public class Text : UiComponent
         yield return new RenderCommand
         {
             Id = $"{Id}-text",
-            SpriteFont = _font,
+            SpriteFont = Font,
             Text = _textOptions.Content,
             Position = GlobalPosition,
             Color = _textOptions.FontColor,
@@ -216,7 +216,7 @@ public class Text : UiComponent
 
     public Vector2 GetSize()
     {
-        return _font.MeasureString(_textOptions.Content);
+        return Font.MeasureString(_textOptions.Content);
     }
 
     public class TextOptions : UiComponentOptions
