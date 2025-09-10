@@ -1,4 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using ranch_mayhem_engine.UI;
 using JsonSerializer = Newtonsoft.Json.JsonSerializer;
@@ -15,6 +16,7 @@ public static class ContentManager
     private static Texture2D _textureAtlas;
 
     private static readonly Dictionary<string, Effect> RenderShaders = [];
+    private static readonly Dictionary<string, SoundEffect> Sfx = [];
 
     public static void LoadContentFile(Microsoft.Xna.Framework.Content.ContentManager content, string path)
     {
@@ -36,6 +38,9 @@ public static class ContentManager
                 case "shader":
                     LoadShader(item, content);
                     break;
+                case "sfx":
+                    LoadSfx(item, content);
+                    break;
                 case "unknown":
                 default:
                     Logger.Log(
@@ -48,6 +53,8 @@ public static class ContentManager
 
         Logger.Log($"Loaded {Contents.Count} sprites");
         Logger.Log($"Loaded {Fonts.Count} fonts");
+        Logger.Log($"Loaded {RenderShaders.Count} shaders");
+        Logger.Log($"Loaded {Sfx.Count} sfx");
     }
 
     public static void LoadTextureAtlas(
@@ -131,6 +138,11 @@ public static class ContentManager
         RenderShaders.Add(item.Name, content.Load<Effect>(item.Name));
     }
 
+    private static void LoadSfx(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
+    {
+        Sfx.Add(item.Name, content.Load<SoundEffect>($"sfx/{item.Name}"));
+    }
+
     private static void LoadSprite(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
     {
         Contents.Add(item.Name, content.Load<Texture2D>(item.Name));
@@ -163,6 +175,8 @@ public static class ContentManager
     public static Texture2D GetTexture(string name) => Contents[name];
 
     public static Effect GetShader(string name) => RenderShaders[name];
+
+    public static SoundEffect GetSfx(string name) => Sfx[name];
 
     private static int GetClosestSize(string name, int size)
     {
