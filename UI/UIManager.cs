@@ -70,7 +70,7 @@ public class UiManager
         Backgrounds.AddRange(textures);
     }
 
-    private Page? GetPage(string id)
+    public Page? GetPage(string id)
     {
         return _pages.Find(component => component.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
     }
