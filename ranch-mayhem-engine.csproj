@@ -9,7 +9,7 @@
         <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     </PropertyGroup>
     <PropertyGroup>
-        <Version>4.1.0</Version>
+        <Version>4.2.0</Version>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <ApplicationIcon>Icon.ico</ApplicationIcon>
     </PropertyGroup>

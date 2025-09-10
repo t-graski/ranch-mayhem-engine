@@ -1,6 +1,30 @@
 # Change Log
 
 All notable changes to this project will be documented in this file. See [versionize](https://github.com/versionize/versionize) for commit guidelines.
+<a name="4.2.0"></a>
+## [4.2.0](https://www.github.com/t-graski/ranch-mayhem/releases/tag/v4.2.0) (2025-09-10)
+
+### Features
+
+* add ambient and UI sound effects with manager ([8738f07](https://www.github.com/t-graski/ranch-mayhem/commit/8738f07ae207e6c869ab810b9824de8ccf5bdad5))
+* add audio system and shop upgrade hydration ([5d79bbc](https://www.github.com/t-graski/ranch-mayhem/commit/5d79bbcddb9172cac39ab0b745fdc8ab5441a9e2))
+* add crop shop hydration and snapshot functionality ([15703b7](https://www.github.com/t-graski/ranch-mayhem/commit/15703b7d1cbb26231067b26d33ea6b7aa9169b05))
+* Add networking and game state management system ([f6ca4bf](https://www.github.com/t-graski/ranch-mayhem/commit/f6ca4bf3f7cedfb3c2fb9ec3b59a80d0153374f9))
+* add shop detail view ([9c36a1b](https://www.github.com/t-graski/ranch-mayhem/commit/9c36a1b347657644bdff289ce2dd108dff956b9d))
+* add shop UI improvements and grayscale shader ([564c83c](https://www.github.com/t-graski/ranch-mayhem/commit/564c83c6fe58913019114388b9125ee0960a10f6))
+* add special crop system and shop upgrades tab ([743d585](https://www.github.com/t-graski/ranch-mayhem/commit/743d58570a377fa9caf91b27c74d1dc99b3838ac))
+* add tooltips and improve formatting in MenuBar ([9fbe9e7](https://www.github.com/t-graski/ranch-mayhem/commit/9fbe9e74095198c3681c9198a0903694cecf4783))
+* add tutorial page, outline shader, and Charles sprite ([ac33649](https://www.github.com/t-graski/ranch-mayhem/commit/ac3364996f6f435ca320011d1b25fae5a3d6a361))
+* add tutorial system and product management features ([7a1b8a2](https://www.github.com/t-graski/ranch-mayhem/commit/7a1b8a279fe16ca174dd6740f31ca6a0745a026f))
+* add yield and special crop upgrades to shop ([5efdbaa](https://www.github.com/t-graski/ranch-mayhem/commit/5efdbaac91ac95bd845b731c85f1bb3fe1212ff2))
+* implement base Croin currency system and UI updates ([d330d25](https://www.github.com/t-graski/ranch-mayhem/commit/d330d2537735684d10994f39237ed57cce1b9432))
+* implement metrics tracking and crop hydration features ([4e00201](https://www.github.com/t-graski/ranch-mayhem/commit/4e00201d49c844e003d90d74261c5d32feb6b958))
+* integrate automator state and metrics tracking ([abaeef7](https://www.github.com/t-graski/ranch-mayhem/commit/abaeef76d47a55ad1fd1b31d383c5a1b5f08b02f))
+
+### Bug Fixes
+
+* automator particles showing when page is not visible ([2ef52ca](https://www.github.com/t-graski/ranch-mayhem/commit/2ef52cad4fecf0936eb4c5381fb66a042aa12c4f))
+
 <a name="4.1.0"></a>
 ## [4.1.0](https://www.github.com/t-graski/ranch-mayhem-engine/releases/tag/v4.1.0) (2025-08-19)
 
