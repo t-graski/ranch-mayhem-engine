@@ -25,6 +25,8 @@ public abstract class Page
         Components.Add(component);
     }
 
+    public abstract void Dispose();
+
     protected void EnableCloseButton()
     {
     }
@@ -50,9 +52,17 @@ public abstract class Page
         }
     }
 
-    public virtual void ToggleVisibility()
+    public virtual void ToggleVisibility(bool forceInvisible = false)
     {
+        if (forceInvisible)
+        {
+            IsVisible = false;
+            Components.ForEach(c => c.IsVisible = false);
+            return;
+        }
+
         IsVisible = !IsVisible;
+        Logger.Log($"Toggling visibility for {string.Join(", ", Components.Select(c => c.Id))}");
         Components.ForEach(c => c.IsVisible = IsVisible);
     }
 }

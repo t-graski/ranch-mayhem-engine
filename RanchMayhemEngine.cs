@@ -10,6 +10,10 @@ public class RanchMayhemEngine : Game
 {
     private const bool IsFullScreen = true;
     public static readonly LogLevel LogLevel = LogLevel.Error;
+
+    private Point _windowedSize = new(1280, 720);
+    private bool _isBorderlessFullscreen = false;
+
     public const int Width = 1920;
     public const int Height = 1080;
 
@@ -28,7 +32,19 @@ public class RanchMayhemEngine : Game
 
     protected RanchMayhemEngine()
     {
-        _graphics = new GraphicsDeviceManager(this);
+        _graphics = new GraphicsDeviceManager(this)
+        {
+            // !!!
+            // Might cause problems later with weird pixels
+            PreferHalfPixelOffset = false,
+            SynchronizeWithVerticalRetrace = true,
+            IsFullScreen = false,
+            HardwareModeSwitch = false,
+
+            PreferredBackBufferWidth = _windowedSize.X,
+            PreferredBackBufferHeight = _windowedSize.Y,
+        };
+
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
 
@@ -40,23 +56,90 @@ public class RanchMayhemEngine : Game
 
     protected override void Initialize()
     {
-        _graphics.HardwareModeSwitch = false;
-        _graphics.IsFullScreen = IsFullScreen;
-        _graphics.PreferredBackBufferWidth = Width;
-        _graphics.PreferredBackBufferHeight = Height;
+        // _graphics.HardwareModeSwitch = false;
+        // _graphics.IsFullScreen = IsFullScreen;
+        // _graphics.PreferredBackBufferWidth = Width;
+        // _graphics.PreferredBackBufferHeight = Height;
         _graphics.ApplyChanges();
 
+        UiManager = new UiManager(GraphicsDevice, new SpriteBatch(GraphicsDevice));
+
+        Window.ClientSizeChanged += OnClientSizeChanged;
+
         base.Initialize();
+    }
+
+    private void OnClientSizeChanged(object? sender, EventArgs e)
+    {
+        if (_isBorderlessFullscreen)
+        {
+            return;
+        }
+
+        if (_graphics.IsFullScreen || Window.IsBorderless)
+        {
+            return;
+        }
+
+        var bounds = Window.ClientBounds;
+        if (bounds is { Width: > 0, Height: > 0 })
+        {
+            _graphics.PreferredBackBufferWidth = bounds.Width;
+            _graphics.PreferredBackBufferHeight = bounds.Height;
+            _graphics.ApplyChanges();
+            _windowedSize = new Point(bounds.Width, bounds.Height);
+
+            UiManager.FullRebuild();
+        }
     }
 
     protected override void LoadContent()
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
-        _spriteBatch.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
+        // _spriteBatch.GraphicsDevice.SamplerStates[0] = SamplerState.PointClamp;
 
-        UiManager = new UiManager(_spriteBatch.GraphicsDevice, _spriteBatch);
+        // UiManager = new UiManager(_spriteBatch.GraphicsDevice, _spriteBatch);
         UiManager.Initialize();
     }
+
+
+    public void ToggleFullscreen()
+    {
+        _isBorderlessFullscreen = !_isBorderlessFullscreen;
+
+        if (_isBorderlessFullscreen)
+        {
+            var cb = Window.ClientBounds;
+            _windowedSize = new Point(cb.Width, cb.Height);
+
+            var b = SDL2Display.GetCurrentDisplayBounds(Window.Handle);
+
+            var dm = GraphicsAdapter.DefaultAdapter.CurrentDisplayMode;
+            Window.IsBorderless = false;
+            _graphics.HardwareModeSwitch = false;
+            _graphics.IsFullScreen = false;
+
+            Window.Position = new Point(b.X, b.Y);
+            _graphics.PreferredBackBufferWidth = b.Width;
+            _graphics.PreferredBackBufferHeight = b.Height;
+
+            Window.IsBorderless = true;
+        }
+        else
+        {
+            Window.IsBorderless = false;
+            Window.Position = new Point(100, 100);
+            _graphics.HardwareModeSwitch = false;
+            _graphics.IsFullScreen = false;
+            _graphics.PreferredBackBufferWidth = _windowedSize.X;
+            _graphics.PreferredBackBufferHeight = _windowedSize.Y;
+        }
+
+        _graphics.ApplyChanges();
+        UiManager.FullRebuild();
+    }
+
+
 
     protected override void Update(GameTime gameTime)
     {
@@ -71,6 +154,12 @@ public class RanchMayhemEngine : Game
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == Microsoft.Xna.Framework.Input.ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+
+        if (KeyboardInput.CurrentState.IsKeyDown(Keys.F11) && !KeyboardInput.PreviousState.IsKeyDown(Keys.F11))
+        {
+            ToggleFullscreen();
+        }
+
 
         UiManager.UpdateComponents(MouseState);
 
@@ -90,6 +179,7 @@ public class RanchMayhemEngine : Game
 
 
         KeyboardInput.Update();
+        MouseInput.Update();
         KeyboardManager.Update();
         base.Update(gameTime);
 

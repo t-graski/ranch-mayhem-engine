@@ -11,11 +11,19 @@ public class UiManager
     public Page? CurrentPage;
     private List<Page> _pages;
 
+    private readonly Dictionary<string, UiComponent> _byId = new(StringComparer.Ordinal);
+
+    private Func<IEnumerable<Page>> _pageFactory = Array.Empty<Page>;
+
+    public void SetPageFactory(Func<IEnumerable<Page>> pageFactory) => _pageFactory = pageFactory;
+    private bool _rebuilding;
+
+
     private const int ReferenceWidth = 1920;
     private const int ReferenceHeight = 1080;
 
-    private readonly float _globalScaleX;
-    private readonly float _globalScaleY;
+    private float _globalScaleX;
+    private float _globalScaleY;
 
     public Vector2 GlobalScale;
     private List<Texture2D> Backgrounds { get; } = [];
@@ -25,6 +33,11 @@ public class UiManager
 
     public GraphicsDevice GraphicsDevice { get; }
     public SpriteBatch SpriteBatch { get; }
+
+    private RenderTarget2D _uiTarget;
+    private Rectangle _presentDest;
+    private float _presentScale;
+    private Point _presentOffset;
 
     public static readonly List<RenderCommand> UiQueue = [];
     public static readonly List<RenderCommand> BackgroundQueue = [];
@@ -39,6 +52,17 @@ public class UiManager
         GraphicsDevice = graphicsDevice;
         SpriteBatch = spriteBatch;
 
+        _uiTarget = new RenderTarget2D(
+            GraphicsDevice,
+            ReferenceWidth,
+            ReferenceHeight,
+            false,
+            SurfaceFormat.Color,
+            DepthFormat.None,
+            0,
+            RenderTargetUsage.DiscardContents
+        );
+
         var viewport = GraphicsDevice.Viewport;
 
         _globalScaleX = (float)viewport.Width / ReferenceWidth;
@@ -47,6 +71,61 @@ public class UiManager
 
         Pixel = new Texture2D(GraphicsDevice, 1, 1);
         Pixel.SetData([Color.White]);
+    }
+
+    public void FullRebuild()
+    {
+        if (_rebuilding) return;
+        RecalculateScale();
+        _rebuilding = true;
+
+        try
+        {
+            var keepVisibleId = CurrentPage?.Id;
+
+            foreach (var p in _pages)
+            {
+                try
+                {
+                    p.Dispose();
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+
+            _pages.Clear();
+            _byId.Clear();
+            ClearQueues();
+
+            var fresh = _pageFactory?.Invoke() ?? [];
+
+            foreach (var page in fresh)
+            {
+                _pages.Add(page);
+                var root = page.Initialize();
+                // AddComponent(root);
+                page.ToggleVisibility(forceInvisible: true);
+            }
+
+            Logger.Log($"current pages: {string.Join(", ", _pages.Select(p => p.Id))}");
+
+            CurrentPage = _pages.FirstOrDefault(p => p.Id == keepVisibleId) ?? _pages.FirstOrDefault();
+            CurrentPage?.ToggleVisibility(forceInvisible: false);
+        }
+        finally
+        {
+            _rebuilding = false;
+        }
+    }
+
+    private void RecalculateScale()
+    {
+        var vp = GraphicsDevice.Viewport;
+        _globalScaleX = (float)vp.Width / ReferenceWidth;
+        _globalScaleY = (float)vp.Height / ReferenceHeight;
+        GlobalScale = new Vector2(_globalScaleX, _globalScaleY);
     }
 
     public void Initialize()
@@ -70,10 +149,13 @@ public class UiManager
         Backgrounds.AddRange(textures);
     }
 
+    [Obsolete("Use GetPage<T> instead")]
     public Page? GetPage(string id)
     {
         return _pages.Find(component => component.Id.Equals(id, StringComparison.CurrentCultureIgnoreCase));
     }
+
+    public T? GetPage<T>() where T : Page => _pages.OfType<T>().FirstOrDefault();
 
     public void UpdateComponents(MouseState mouseState)
     {
@@ -99,7 +181,12 @@ public class UiManager
                 new RenderCommand
                 {
                     Texture = Backgrounds[_backgroundIndex],
-                    DestinationRect = new Rectangle(0, 0, RanchMayhemEngine.Width, RanchMayhemEngine.Height),
+                    DestinationRect = new Rectangle(
+                        0,
+                        0,
+                        (int)(RanchMayhemEngine.Width * _globalScaleX),
+                        (int)(RanchMayhemEngine.Height * _globalScaleY)
+                    ),
                     Color = Color.White,
                 },
                 BackgroundQueue
@@ -123,7 +210,7 @@ public class UiManager
 
     public void RenderOverlay()
     {
-        Overlay.Draw();
+        // Overlay.Draw();
     }
 
     public void SetActivePage(string id)
@@ -135,7 +222,7 @@ public class UiManager
 
         if (CurrentPage is not null)
         {
-            CurrentPage.IsVisible = false;
+            CurrentPage.ToggleVisibility(forceInvisible: true);
         }
 
         if (id.Equals(CurrentPage?.Id))
@@ -154,7 +241,7 @@ public class UiManager
 
         if (CurrentPage is not null)
         {
-            CurrentPage.IsVisible = false;
+            CurrentPage.ToggleVisibility(forceInvisible: true);
             CurrentPage = null;
         }
     }
@@ -271,17 +358,6 @@ public class UiManager
         }
 
         if (begun) sb.End();
-        // if (shader is not null)
-        // {
-        //     foreach (var technique in shader.Techniques)
-        //     {
-        //         shader.CurrentTechnique = technique;
-        //         foreach (var pass in technique.Passes)
-        //         {
-        //             pass.Apply();
-        //         }
-        //     }
-        // }
     }
 
     public static void Flush(SpriteBatch sb)

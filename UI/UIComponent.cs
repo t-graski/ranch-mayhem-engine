@@ -31,6 +31,9 @@ public abstract class UiComponent
     public Action? OnHover;
     public Action? OffHover;
 
+    public Action? OnScrollUp;
+    public Action? OnScrollDown;
+
     protected bool IsHovered;
     protected bool IsClicked;
     protected bool IsRightClicked;
@@ -811,6 +814,20 @@ public abstract class UiComponent
         {
             IsActive = false;
             OffActive();
+        }
+
+        if (IsHovered)
+        {
+            // check for scrolling
+            var scrollDelta = MouseInput.CurrentState.ScrollWheelValue - MouseInput.PreviousState.ScrollWheelValue;
+            if (scrollDelta > 0)
+            {
+                OnScrollUp?.Invoke();
+            }
+            else if (scrollDelta < 0)
+            {
+                OnScrollDown?.Invoke();
+            }
         }
 
         if (IsHovered)

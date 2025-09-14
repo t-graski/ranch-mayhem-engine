@@ -49,7 +49,7 @@ public class TypeWriterText : UiComponent
         }
 
         _container = new ContainerBuilder($"{Id}-inner-container")
-            .SetSize(new Vector2(longestLineSize.X + 8, (longestLineSize.Y * (lines.Length - 1)) + 8))
+            .SetSize(new Vector2(longestLineSize.X + 8, (longestLineSize.Y * (lines.Length)) + 8))
             .SetColor(_typeWriterTextOptions.Color)
             .SetBorderColor(_typeWriterTextOptions.BorderColor)
             .SetBorderPosition(_typeWriterTextOptions.BorderPosition)
