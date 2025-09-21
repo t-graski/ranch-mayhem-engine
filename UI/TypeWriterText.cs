@@ -87,6 +87,11 @@ public class TypeWriterText : UiComponent
         WasForceCompleted = true;
     }
 
+    public void SetContent(string content)
+    {
+        _text.SetContent(content);
+    }
+
     public override void Update()
     {
         HandleMouse(RanchMayhemEngine.MouseState);
@@ -132,6 +137,13 @@ public class TypeWriterText : UiComponent
     {
         return _container.Draw();
     }
+
+    public override void SetPosition(Vector2 position)
+    {
+        base.SetPosition(position);
+        _container.SetPosition(position);
+        Bounds = new Rectangle((int)_container.LocalPosition.X, (int)_container.LocalPosition.Y, (int)Options.Size.X, (int)Options.Size.Y);
+    }
 }
 
 public sealed class TypeWriterTextOptions : Text.TextOptions
@@ -139,4 +151,5 @@ public sealed class TypeWriterTextOptions : Text.TextOptions
     public int TypeWriterInterval = 25;
     public bool PauseAfterSentence = false;
     public int SentencePauseMs = 300;
+    public bool ShouldTypeWrite => TypeWriterInterval > 0;
 }

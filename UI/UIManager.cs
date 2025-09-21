@@ -7,6 +7,7 @@ namespace ranch_mayhem_engine.UI;
 public class UiManager
 {
     public static Texture2D Pixel;
+    public static Texture2D TransparentPixel;
 
     public Page? CurrentPage;
     private List<Page> _pages;
@@ -71,6 +72,8 @@ public class UiManager
 
         Pixel = new Texture2D(GraphicsDevice, 1, 1);
         Pixel.SetData([Color.White]);
+        TransparentPixel = new Texture2D(GraphicsDevice, 1, 1);
+        TransparentPixel.SetData([Color.Transparent]);
     }
 
     public void FullRebuild()
@@ -109,7 +112,7 @@ public class UiManager
                 page.ToggleVisibility(forceInvisible: true);
             }
 
-            Logger.Log($"current pages: {string.Join(", ", _pages.Select(p => p.Id))}");
+            // Logger.Log($"current pages: {string.Join(", ", _pages.Select(p => p.Id))}");
 
             CurrentPage = _pages.FirstOrDefault(p => p.Id == keepVisibleId) ?? _pages.FirstOrDefault();
             CurrentPage?.ToggleVisibility(forceInvisible: false);

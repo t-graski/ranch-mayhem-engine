@@ -15,6 +15,9 @@ public static class ContentManager
     private static readonly Dictionary<string, Texture2D> ExtractedSprites = [];
     private static Texture2D _textureAtlas;
 
+    private static readonly Dictionary<string, Texture2D> _textureAtlases = [];
+    private static readonly Dictionary<string, string> _spriteToAtlasMap = [];
+
     private static readonly Dictionary<string, Effect> RenderShaders = [];
     private static readonly Dictionary<string, SoundEffect> Sfx = [];
 
@@ -64,12 +67,20 @@ public static class ContentManager
     {
         var items = LoadJson<AtlasItem>(path);
 
+        if (items is not null && items.Count == 0)
+        {
+            Logger.Log($"No items found in atlas definition: {path}", LogLevel.Warning);
+            return;
+        }
+
         foreach (var atlasItem in items)
         {
             Sprites.Add(atlasItem.Name, atlasItem);
+            _spriteToAtlasMap[atlasItem.Name] = atlasName;
         }
 
-        _textureAtlas = content.Load<Texture2D>(atlasName);
+        _textureAtlases[atlasName] = content.Load<Texture2D>(atlasName);
+        // _textureAtlas = content.Load<Texture2D>(atlasName);
         Logger.Log($"Loaded {Sprites.Count} atlas sprites");
     }
 
@@ -80,17 +91,18 @@ public static class ContentManager
 
     public static Texture2D? GetAtlasSprite(string name)
     {
-        if (Sprites.TryGetValue(name, out var item))
+        if (Sprites.TryGetValue(name, out var item) && _spriteToAtlasMap.TryGetValue(name, out var atlasName))
         {
             if (ExtractedSprites.TryGetValue(name, out var cachedSprite))
             {
                 return cachedSprite;
             }
 
+            var atlas = _textureAtlases[atlasName];
             var extracted = new Texture2D(RanchMayhemEngine.UiManager.GraphicsDevice, item.Width, item.Height);
 
             var data = new Color[item.Width * item.Height];
-            _textureAtlas.GetData(
+            atlas.GetData(
                 0,
                 new Rectangle((int)item.Position.X, (int)item.Position.Y, item.Width, item.Height),
                 data,
@@ -176,7 +188,7 @@ public static class ContentManager
 
     public static Effect GetShader(string name) => RenderShaders[name];
 
-    public static SoundEffect GetSfx(string name) => Sfx[name];
+    public static SoundEffect? GetSfx(string name) => Sfx.GetValueOrDefault(name);
 
     private static int GetClosestSize(string name, int size)
     {

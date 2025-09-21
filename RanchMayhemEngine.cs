@@ -140,7 +140,6 @@ public class RanchMayhemEngine : Game
     }
 
 
-
     protected override void Update(GameTime gameTime)
     {
 #if DEBUG
@@ -151,9 +150,11 @@ public class RanchMayhemEngine : Game
 
         MouseState = Mouse.GetState();
 
+#if DEBUG
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == Microsoft.Xna.Framework.Input.ButtonState.Pressed ||
             Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+#endif
 
         if (KeyboardInput.CurrentState.IsKeyDown(Keys.F11) && !KeyboardInput.PreviousState.IsKeyDown(Keys.F11))
         {

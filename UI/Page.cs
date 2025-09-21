@@ -62,7 +62,7 @@ public abstract class Page
         }
 
         IsVisible = !IsVisible;
-        Logger.Log($"Toggling visibility for {string.Join(", ", Components.Select(c => c.Id))}");
+        // Logger.Log($"Toggling visibility for {string.Join(", ", Components.Select(c => c.Id))}");
         Components.ForEach(c => c.IsVisible = IsVisible);
     }
 }

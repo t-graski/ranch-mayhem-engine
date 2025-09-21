@@ -25,9 +25,13 @@ public abstract class UiComponent
     private bool _hasBorder = false;
     public bool IsAnimating;
 
+    public bool AllowClickThrough { get; set; } = false;
+    public bool AllowRightClickThrough { get; set; } = false;
+
     public Action? OnClick;
     public Action? OffClick;
     public Action? OnRightClick;
+    public Action? OffRightClick;
     public Action? OnHover;
     public Action? OffHover;
 
@@ -645,7 +649,7 @@ public abstract class UiComponent
         // );
     }
 
-    private const int MousePadding = 5;
+    private const int MousePadding = 16;
 
     private void DrawHoverItem(MouseState mouseState)
     {
@@ -752,6 +756,7 @@ public abstract class UiComponent
 
 
         if (mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed &&
+            (MouseInput.PreviousState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released || AllowClickThrough) &&
             Bounds.Contains(mouseState.Position))
         {
             if (!IsClicked)
@@ -764,12 +769,17 @@ public abstract class UiComponent
 
         if (IsClicked && mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
         {
-            OffClick?.Invoke();
+            if (Bounds.Contains(mouseState.Position))
+            {
+                OffClick?.Invoke();
+            }
+
             IsClicked = !IsClicked;
             CanTriggerClick = true;
         }
 
         if (mouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed &&
+            (MouseInput.PreviousState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Released || AllowRightClickThrough) &&
             Bounds.Contains(mouseState.Position))
         {
             if (!IsRightClicked)
@@ -781,7 +791,11 @@ public abstract class UiComponent
 
         if (IsRightClicked && mouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
         {
-            OnRightClick?.Invoke();
+            if (Bounds.Contains(mouseState.Position))
+            {
+                OnRightClick?.Invoke();
+            }
+
             IsRightClicked = !IsRightClicked;
             CanTriggerRightClick = true;
         }
@@ -872,7 +886,7 @@ public abstract class UiComponent
         Parent.OnPositionChange += HandleParentGlobalPositionChange;
     }
 
-    private void SetPosition(Vector2 position)
+    public virtual void SetPosition(Vector2 position)
     {
         LocalPosition = position;
         GlobalPosition = position;
