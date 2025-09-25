@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework;
 namespace ranch_mayhem_engine.UI;
 
 // TODO: Find a way to animate all children of UIComponent, but not parents.
-
 public class Animator
 {
     private readonly UiComponent _component;

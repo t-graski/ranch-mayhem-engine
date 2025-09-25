@@ -7,7 +7,7 @@ namespace ranch_mayhem_engine.UI;
 
 public class Text : UiComponent
 {
-    private readonly TextOptions _textOptions;
+    public readonly TextOptions _textOptions;
     public SpriteFont Font;
 
     public Text(
