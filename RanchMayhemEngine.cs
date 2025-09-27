@@ -9,7 +9,7 @@ namespace ranch_mayhem_engine;
 public class RanchMayhemEngine : Game
 {
     private const bool IsFullScreen = true;
-    public static readonly LogLevel LogLevel = LogLevel.Error;
+    public const LogLevel LogLevel = UI.LogLevel.Error;
 
     private Point _windowedSize = new(1280, 720);
     private bool _isBorderlessFullscreen = false;

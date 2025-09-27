@@ -49,7 +49,8 @@ public abstract class UiComponent
     protected event Action<Vector2>? OnPositionChange;
 
     protected UiComponent(
-        string id, UiComponentOptions options, UiComponent? parent = null, bool scale = true, Effect? renderShader = null
+        string id, UiComponentOptions options, UiComponent? parent = null, bool scale = true,
+        Effect? renderShader = null
     )
     {
         Id = id;
@@ -534,7 +535,8 @@ public abstract class UiComponent
 
             if (Options.BorderPosition.HasFlag(BorderPosition.Top))
             {
-                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, topLeftCorner, new Vector2(Options.BorderSize)))
+                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, topLeftCorner,
+                             new Vector2(Options.BorderSize)))
                 {
                     yield return command;
                 }
@@ -551,7 +553,8 @@ public abstract class UiComponent
                 //     new Vector2(Options.BorderSize)
                 // );
 
-                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, topRightCorner, new Vector2(Options.BorderSize)))
+                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, topRightCorner,
+                             new Vector2(Options.BorderSize)))
                 {
                     yield return command;
                 }
@@ -576,7 +579,8 @@ public abstract class UiComponent
 
             if (Options.BorderPosition.HasFlag(BorderPosition.Right))
             {
-                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, bottomLeftCorner, new Vector2(Options.BorderSize)))
+                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, bottomLeftCorner,
+                             new Vector2(Options.BorderSize)))
                 {
                     yield return command;
                 }
@@ -597,7 +601,8 @@ public abstract class UiComponent
 
             if (Options.BorderPosition.HasFlag(BorderPosition.Bottom))
             {
-                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, bottomRightCorner, new Vector2(Options.BorderSize)))
+                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, bottomRightCorner,
+                             new Vector2(Options.BorderSize)))
                 {
                     yield return command;
                 }
@@ -754,9 +759,14 @@ public abstract class UiComponent
     {
         if (!RanchMayhemEngine.IsFocused || !IsVisible) return;
 
+        if (RanchMayhemEngine.UiManager.IsInputDisabled && !RanchMayhemEngine.UiManager.InputExceptions.Contains(Id))
+        {
+            return;
+        }
 
         if (mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed &&
-            (MouseInput.PreviousState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released || AllowClickThrough) &&
+            (MouseInput.PreviousState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released ||
+             AllowClickThrough) &&
             Bounds.Contains(mouseState.Position))
         {
             if (!IsClicked)
@@ -779,7 +789,8 @@ public abstract class UiComponent
         }
 
         if (mouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed &&
-            (MouseInput.PreviousState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Released || AllowRightClickThrough) &&
+            (MouseInput.PreviousState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Released ||
+             AllowRightClickThrough) &&
             Bounds.Contains(mouseState.Position))
         {
             if (!IsRightClicked)
@@ -1017,7 +1028,8 @@ public abstract class UiComponent
 
     public virtual void HandleParentGlobalPositionChange(Vector2 position)
     {
-        Logger.Log($"{GetType().FullName}::HandleParentGlobalPositionChange Id={Id} Parent={Parent?.Id}", LogLevel.Internal);
+        Logger.Log($"{GetType().FullName}::HandleParentGlobalPositionChange Id={Id} Parent={Parent?.Id}",
+            LogLevel.Internal);
         GlobalPosition = CalculateGlobalPosition();
     }
 }

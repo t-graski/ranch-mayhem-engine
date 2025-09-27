@@ -19,7 +19,6 @@ public class UiManager
     public void SetPageFactory(Func<IEnumerable<Page>> pageFactory) => _pageFactory = pageFactory;
     private bool _rebuilding;
 
-
     private const int ReferenceWidth = 1920;
     private const int ReferenceHeight = 1080;
 
@@ -46,6 +45,9 @@ public class UiManager
     public static readonly List<RenderCommand> OverlayQueue = [];
 
     public static Page Overlay;
+
+    public bool IsInputDisabled;
+    public List<string> InputExceptions = [];
 
     public UiManager(GraphicsDevice graphicsDevice, SpriteBatch spriteBatch)
     {
@@ -79,6 +81,7 @@ public class UiManager
     public void FullRebuild()
     {
         if (_rebuilding) return;
+        EnabledInput();
         RecalculateScale();
         _rebuilding = true;
 
@@ -116,6 +119,11 @@ public class UiManager
 
             CurrentPage = _pages.FirstOrDefault(p => p.Id == keepVisibleId) ?? _pages.FirstOrDefault();
             CurrentPage?.ToggleVisibility(forceInvisible: false);
+
+            // TODO: add a hook to - for now this is fine
+            // Action? UiRebuilt;
+
+            GetPage("tutorial")?.SetVisibility(true);
         }
         finally
         {
@@ -240,7 +248,8 @@ public class UiManager
 
     public void CloseActivePage()
     {
-        Logger.Log($"{GetType().FullName}::CloseActivePage Current active page: {CurrentPage?.Id ?? "None"}", LogLevel.Internal);
+        Logger.Log($"{GetType().FullName}::CloseActivePage Current active page: {CurrentPage?.Id ?? "None"}",
+            LogLevel.Internal);
 
         if (CurrentPage is not null)
         {
@@ -376,4 +385,16 @@ public class UiManager
     }
 
     public static int RenderQueueLength() => UiQueue.Count;
+
+    public void DisableInputExcept(IReadOnlyList<string> exceptions)
+    {
+        IsInputDisabled = true;
+        InputExceptions = exceptions.ToList();
+    }
+
+    public void EnabledInput()
+    {
+        IsInputDisabled = false;
+        InputExceptions.Clear();
+    }
 }

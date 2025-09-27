@@ -65,4 +65,10 @@ public abstract class Page
         // Logger.Log($"Toggling visibility for {string.Join(", ", Components.Select(c => c.Id))}");
         Components.ForEach(c => c.IsVisible = IsVisible);
     }
+
+    public void SetVisibility(bool visible)
+    {
+        IsVisible = visible;
+        Components.ForEach(c => c.IsVisible = visible);
+    }
 }
