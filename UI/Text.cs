@@ -7,7 +7,7 @@ namespace ranch_mayhem_engine.UI;
 
 public class Text : UiComponent
 {
-    private readonly TextOptions _textOptions;
+    public readonly TextOptions _textOptions;
     public SpriteFont Font;
 
     public Text(
@@ -155,7 +155,7 @@ public class Text : UiComponent
         RecalculateSize();
         UpdateGlobalPosition();
 
-        if (!FitsParent() && wrap && Parent is not null)
+        if (wrap && !FitsParent() && Parent is not null)
         {
             Logger.Log($"{Id} is too big to fit in parent Content={content}", LogLevel.Warning);
 

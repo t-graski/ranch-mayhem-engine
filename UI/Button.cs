@@ -44,17 +44,17 @@ public class Button : UiComponent
 
         if (buttonOptions.Texture == null)
         {
-            Logger.Log($"{prefix} Texture is null");
+            Logger.Log($"{prefix} Texture is null", LogLevel.Warning);
         }
 
         if (buttonOptions.HoverTexture == null)
         {
-            Logger.Log($"{prefix} HoverTexture is null");
+            Logger.Log($"{prefix} HoverTexture is null", LogLevel.Warning);
         }
 
         if (buttonOptions.ClickTexture == null)
         {
-            Logger.Log($"{prefix} ClickTexture is null");
+            Logger.Log($"{prefix} ClickTexture is null", LogLevel.Warning);
         }
     }
 

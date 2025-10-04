@@ -14,7 +14,7 @@ public abstract class UiComponent
     public UiComponent? Parent { get; protected set; }
     public bool IsVisible { get; set; } = true;
     public Vector2 LocalPosition { get; private set; }
-    public Vector2 GlobalPosition { get; private set; }
+    public Vector2 GlobalPosition { get; set; }
     public Rectangle Bounds { get; protected set; }
     public UiComponentOptions Options { get; } = new();
     protected Effect RenderShader { get; set; }
@@ -25,11 +25,18 @@ public abstract class UiComponent
     private bool _hasBorder = false;
     public bool IsAnimating;
 
+    public bool AllowClickThrough { get; set; } = false;
+    public bool AllowRightClickThrough { get; set; } = false;
+
     public Action? OnClick;
     public Action? OffClick;
     public Action? OnRightClick;
+    public Action? OffRightClick;
     public Action? OnHover;
     public Action? OffHover;
+
+    public Action? OnScrollUp;
+    public Action? OnScrollDown;
 
     protected bool IsHovered;
     protected bool IsClicked;
@@ -42,7 +49,8 @@ public abstract class UiComponent
     protected event Action<Vector2>? OnPositionChange;
 
     protected UiComponent(
-        string id, UiComponentOptions options, UiComponent? parent = null, bool scale = true, Effect? renderShader = null
+        string id, UiComponentOptions options, UiComponent? parent = null, bool scale = true,
+        Effect? renderShader = null
     )
     {
         Id = id;
@@ -527,7 +535,8 @@ public abstract class UiComponent
 
             if (Options.BorderPosition.HasFlag(BorderPosition.Top))
             {
-                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, topLeftCorner, new Vector2(Options.BorderSize)))
+                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, topLeftCorner,
+                             new Vector2(Options.BorderSize)))
                 {
                     yield return command;
                 }
@@ -544,7 +553,8 @@ public abstract class UiComponent
                 //     new Vector2(Options.BorderSize)
                 // );
 
-                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, topRightCorner, new Vector2(Options.BorderSize)))
+                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, topRightCorner,
+                             new Vector2(Options.BorderSize)))
                 {
                     yield return command;
                 }
@@ -569,7 +579,8 @@ public abstract class UiComponent
 
             if (Options.BorderPosition.HasFlag(BorderPosition.Right))
             {
-                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, bottomLeftCorner, new Vector2(Options.BorderSize)))
+                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, bottomLeftCorner,
+                             new Vector2(Options.BorderSize)))
                 {
                     yield return command;
                 }
@@ -590,7 +601,8 @@ public abstract class UiComponent
 
             if (Options.BorderPosition.HasFlag(BorderPosition.Bottom))
             {
-                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, bottomRightCorner, new Vector2(Options.BorderSize)))
+                foreach (var command in DrawTiledTexture(Options.BorderCornerTexture, bottomRightCorner,
+                             new Vector2(Options.BorderSize)))
                 {
                     yield return command;
                 }
@@ -642,7 +654,7 @@ public abstract class UiComponent
         // );
     }
 
-    private const int MousePadding = 5;
+    private const int MousePadding = 16;
 
     private void DrawHoverItem(MouseState mouseState)
     {
@@ -747,8 +759,14 @@ public abstract class UiComponent
     {
         if (!RanchMayhemEngine.IsFocused || !IsVisible) return;
 
+        if (RanchMayhemEngine.UiManager.IsInputDisabled && !RanchMayhemEngine.UiManager.InputExceptions.Contains(Id))
+        {
+            return;
+        }
 
         if (mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed &&
+            (MouseInput.PreviousState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released ||
+             AllowClickThrough) &&
             Bounds.Contains(mouseState.Position))
         {
             if (!IsClicked)
@@ -761,12 +779,18 @@ public abstract class UiComponent
 
         if (IsClicked && mouseState.LeftButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
         {
-            OffClick?.Invoke();
+            if (Bounds.Contains(mouseState.Position))
+            {
+                OffClick?.Invoke();
+            }
+
             IsClicked = !IsClicked;
             CanTriggerClick = true;
         }
 
         if (mouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Pressed &&
+            (MouseInput.PreviousState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Released ||
+             AllowRightClickThrough) &&
             Bounds.Contains(mouseState.Position))
         {
             if (!IsRightClicked)
@@ -778,7 +802,11 @@ public abstract class UiComponent
 
         if (IsRightClicked && mouseState.RightButton == Microsoft.Xna.Framework.Input.ButtonState.Released)
         {
-            OnRightClick?.Invoke();
+            if (Bounds.Contains(mouseState.Position))
+            {
+                OnRightClick?.Invoke();
+            }
+
             IsRightClicked = !IsRightClicked;
             CanTriggerRightClick = true;
         }
@@ -811,6 +839,20 @@ public abstract class UiComponent
         {
             IsActive = false;
             OffActive();
+        }
+
+        if (IsHovered)
+        {
+            // check for scrolling
+            var scrollDelta = MouseInput.CurrentState.ScrollWheelValue - MouseInput.PreviousState.ScrollWheelValue;
+            if (scrollDelta > 0)
+            {
+                OnScrollUp?.Invoke();
+            }
+            else if (scrollDelta < 0)
+            {
+                OnScrollDown?.Invoke();
+            }
         }
 
         if (IsHovered)
@@ -855,7 +897,7 @@ public abstract class UiComponent
         Parent.OnPositionChange += HandleParentGlobalPositionChange;
     }
 
-    private void SetPosition(Vector2 position)
+    public virtual void SetPosition(Vector2 position)
     {
         LocalPosition = position;
         GlobalPosition = position;
@@ -986,7 +1028,8 @@ public abstract class UiComponent
 
     public virtual void HandleParentGlobalPositionChange(Vector2 position)
     {
-        Logger.Log($"{GetType().FullName}::HandleParentGlobalPositionChange Id={Id} Parent={Parent?.Id}", LogLevel.Internal);
+        Logger.Log($"{GetType().FullName}::HandleParentGlobalPositionChange Id={Id} Parent={Parent?.Id}",
+            LogLevel.Internal);
         GlobalPosition = CalculateGlobalPosition();
     }
 }

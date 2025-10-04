@@ -8,19 +8,32 @@ namespace ranch_mayhem_engine;
 public static class KeyboardManager
 {
     public static bool IsInTextBox { get; set; }
-    public static Keys PressedKey { get; set; }
-    private static readonly Dictionary<Keys, Page> _keyBindings = new();
+    public static Keys PressedKey { get; set; } = Keys.None;
+    private static readonly Dictionary<Keys, Action> _keyBindings = new();
 
-    public static void RegisterBinding(Keys key, Page page)
+    public static bool RegisterBinding(Keys key, Action handler)
     {
-        if (!_keyBindings.TryAdd(key, page))
+        if (!_keyBindings.TryAdd(key, handler))
         {
             Logger.Log(
                 $"{typeof(KeyboardManager)}::RegisterBinding key={KeyboardInput.GetCharFromKey(key)} already exists and will be ignored.",
                 LogLevel.Warning
             );
+            return false;
         }
+
+        return true;
     }
+
+    public static bool RegisterBinding(Keys key, string pageId) => RegisterBinding(
+        key,
+        () =>
+        {
+            var page = RanchMayhemEngine.UiManager?.GetPage(pageId);
+            page?.ToggleVisibility();
+            Logger.Log($"toggling page {pageId}");
+        }
+    );
 
     public static void ResetPressedKey()
     {
@@ -32,16 +45,17 @@ public static class KeyboardManager
         if (IsInTextBox) return;
 
         var currentState = KeyboardInput.CurrentState;
+        var pressed = currentState.GetPressedKeys();
+        if (pressed.Length == 0) return;
 
-        if (currentState.GetPressedKeys().Length == 0) return;
+        var key = pressed[0];
+        if (!KeyboardInput.IsNewKeyPress(key)) return;
 
-        if (!KeyboardInput.IsNewKeyPress(currentState.GetPressedKeys()[0])) return;
+        PressedKey = key;
 
-        PressedKey = currentState.GetPressedKeys()[0];
-
-        if (_keyBindings.TryGetValue(currentState.GetPressedKeys()[0], out var page))
+        if (_keyBindings.TryGetValue(key, out var action))
         {
-            page.ToggleVisibility();
+            action?.Invoke();
         }
     }
 }

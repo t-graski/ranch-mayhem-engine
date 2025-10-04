@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 
 namespace ranch_mayhem_engine;
 
 public static class KeyboardInput
 {
-    private static KeyboardState _previousState;
+    public static KeyboardState PreviousState;
     public static KeyboardState CurrentState;
 
     public static void Update()
     {
-        _previousState = CurrentState;
+        PreviousState = CurrentState;
         CurrentState = Keyboard.GetState();
     }
 
     public static bool IsNewKeyPress(Keys key)
     {
-        return CurrentState.IsKeyDown(key) && !_previousState.IsKeyDown(key);
+        return CurrentState.IsKeyDown(key) && !PreviousState.IsKeyDown(key);
     }
 
     public static char? GetCharFromKey(Keys key)
