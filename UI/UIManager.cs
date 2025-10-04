@@ -88,6 +88,7 @@ public class UiManager
         try
         {
             var keepVisibleId = CurrentPage?.Id;
+            var tutorialWasVisible = GetPage("tutorial")?.IsVisible ?? false;
 
             foreach (var p in _pages)
             {
@@ -123,7 +124,8 @@ public class UiManager
             // TODO: add a hook to - for now this is fine
             // Action? UiRebuilt;
 
-            GetPage("tutorial")?.SetVisibility(true);
+            if (tutorialWasVisible)
+                GetPage("tutorial")?.SetVisibility(true);
         }
         finally
         {
@@ -152,7 +154,6 @@ public class UiManager
     public void SetBackground(Texture2D texture)
     {
         Backgrounds.Add(texture);
-        Logger.Log($"loading background image {texture.Name} {texture.Width}x{texture.Height}");
     }
 
     public void SetBackgrounds(List<Texture2D> textures)

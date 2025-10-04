@@ -81,7 +81,7 @@ public static class ContentManager
 
         _textureAtlases[atlasName] = content.Load<Texture2D>(atlasName);
         // _textureAtlas = content.Load<Texture2D>(atlasName);
-        Logger.Log($"Loaded {Sprites.Count} atlas sprites");
+        Logger.Log($"Loaded {items.Count} atlas sprites");
     }
 
     public static bool HasAtlasSprite(string name)
@@ -128,7 +128,8 @@ public static class ContentManager
 
         for (var x = 0; x < imageSprite.Width; x += imageSprite.Width / frameAmount)
         {
-            var extracted = new Texture2D(RanchMayhemEngine.UiManager.GraphicsDevice, imageSprite.Width / 3, imageSprite.Height);
+            var extracted = new Texture2D(RanchMayhemEngine.UiManager.GraphicsDevice, imageSprite.Width / 3,
+                imageSprite.Height);
             var data = new Color[imageSprite.Width / 3 * imageSprite.Height];
 
             imageSprite.GetData(
@@ -172,6 +173,7 @@ public static class ContentManager
         {
             var font = content.Load<SpriteFont>($"{item.Name}{size}");
             font.LineSpacing = size + 8;
+            font.DefaultCharacter = '?';
 
             if (!Fonts.TryGetValue(item.Name, out var fontSizes))
             {

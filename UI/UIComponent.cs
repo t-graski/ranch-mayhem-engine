@@ -14,7 +14,7 @@ public abstract class UiComponent
     public UiComponent? Parent { get; protected set; }
     public bool IsVisible { get; set; } = true;
     public Vector2 LocalPosition { get; private set; }
-    public Vector2 GlobalPosition { get; private set; }
+    public Vector2 GlobalPosition { get; set; }
     public Rectangle Bounds { get; protected set; }
     public UiComponentOptions Options { get; } = new();
     protected Effect RenderShader { get; set; }

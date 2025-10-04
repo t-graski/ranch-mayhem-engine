@@ -7,9 +7,10 @@
         <TieredCompilation>false</TieredCompilation>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+        <GenerateAssemblyVersionInfo>false</GenerateAssemblyVersionInfo>
     </PropertyGroup>
     <PropertyGroup>
-        <Version>4.2.0</Version>
+        <NerdbankGitVersioningVersioning>false</NerdbankGitVersioningVersioning>
         <ApplicationManifest>app.manifest</ApplicationManifest>
         <ApplicationIcon>Icon.ico</ApplicationIcon>
     </PropertyGroup>
