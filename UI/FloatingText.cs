@@ -21,7 +21,7 @@ public class FloatingText : UiComponent
             .SetContent(_options.Content)
             .SetFontColor(_options.FontColor)
             .SetPosition(Bezier(_options.Start, _options.Control, _options.End, 0f))
-            .SetFontSize(16)
+            .SetFontSize(_options.FontSize)
             .Build();
     }
 

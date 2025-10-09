@@ -99,7 +99,7 @@ public class Text : UiComponent
             SpriteFont = Font,
             Text = _textOptions.Content,
             Position = GlobalPosition,
-            Color = _textOptions.FontColor,
+            Color = ApplyOpacity(_textOptions.FontColor),
             Rotation = 0f,
             Origin = Vector2.Zero,
             Scale = Options.Scale,

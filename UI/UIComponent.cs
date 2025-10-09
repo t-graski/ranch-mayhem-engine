@@ -21,6 +21,7 @@ public abstract class UiComponent
     public bool HasHoverShader { get; set; }
     protected static Effect DefaultHoverShader { get; set; } = ContentManager.GetShader("Outline");
     protected Effect HoverShader { get; set; } = DefaultHoverShader;
+    public float Opacity { get; private set; } = 1f;
     private UiComponent? HoverItem { get; set; }
     private bool _hasBorder = false;
     public bool IsAnimating;
@@ -47,6 +48,7 @@ public abstract class UiComponent
     public bool CanTriggerRightClick;
 
     protected event Action<Vector2>? OnPositionChange;
+
 
     protected UiComponent(
         string id, UiComponentOptions options, UiComponent? parent = null, bool scale = true,
@@ -81,9 +83,6 @@ public abstract class UiComponent
             GlobalPosition = CalculateGlobalPosition();
             UpdateBounds(parent);
         }
-
-        DefaultHoverShader.Parameters["OutlineColor"].SetValue(Color.White.ToVector4());
-        DefaultHoverShader.Parameters["AlphaThreshold"].SetValue(0.1f);
     }
 
     private void ParseOptions(UiComponentOptions options)
@@ -293,6 +292,17 @@ public abstract class UiComponent
         Options.TextureOverlay = texture;
     }
 
+    public void SetOpacity(float value)
+    {
+        Opacity = Math.Clamp(value, 0f, 1f);
+    }
+
+    protected Color ApplyOpacity(Color color)
+    {
+        if (Opacity >= 0.999f) return color;
+        return new Color(color.R, color.G, color.B, (byte)(color.A * Opacity));
+    }
+
     public virtual IEnumerable<RenderCommand> Draw()
     {
         if (this is Container { Background: not null } container)
@@ -303,7 +313,7 @@ public abstract class UiComponent
                 Texture = container.Background,
                 Position = GlobalPosition,
                 SourceRect = null,
-                Color = Color.White,
+                Color = ApplyOpacity(Color.White),
                 Rotation = 0f,
                 Origin = Vector2.Zero,
                 Scale = Options.Scale,
@@ -333,7 +343,7 @@ public abstract class UiComponent
                 Texture = Options.Texture,
                 Position = GlobalPosition,
                 SourceRect = null,
-                Color = Color.White,
+                Color = ApplyOpacity(Color.White),
                 Rotation = 0f,
                 Origin = Vector2.Zero,
                 Scale = Options.Scale,
@@ -385,7 +395,7 @@ public abstract class UiComponent
                     (int)Options.Size.X,
                     (int)Options.Size.Y
                 ),
-                Color = Options.Color,
+                Color = ApplyOpacity(Options.Color),
                 Shader = RenderShader
             };
 
@@ -636,7 +646,7 @@ public abstract class UiComponent
                 (int)Math.Floor(size.X),
                 (int)Math.Floor(size.Y)
             ),
-            Color = color
+            Color = ApplyOpacity(color)
         };
         //
         // var texture = new Texture2D(RanchMayhemEngine.UiManager.GraphicsDevice, 1, 1);
@@ -663,7 +673,7 @@ public abstract class UiComponent
             mouseState.Position.Y + MousePadding
         );
 
-        if (mouseState.Position.Y + MousePadding + HoverItem.Options.Size.Y >= RanchMayhemEngine.Height)
+        if (mouseState.Position.Y + MousePadding + HoverItem.Options.Size.Y >= RanchMayhemEngine.WindowedSize.Y)
         {
             position.Y = mouseState.Position.Y - MousePadding - HoverItem.Options.Size.Y;
         }
@@ -716,7 +726,7 @@ public abstract class UiComponent
                     Texture = texture,
                     DestinationRect = destRect,
                     SourceRect = srcRect,
-                    Color = Color.White
+                    Color = ApplyOpacity(Color.White)
                 };
 
                 // spriteBatch.Draw(texture, destRect, srcRect, Color.White);
@@ -742,7 +752,7 @@ public abstract class UiComponent
                     Texture = texture,
                     DestinationRect = new Rectangle(rect.Left, y, Options.BorderSize, height),
                     SourceRect = new Rectangle(0, 0, Options.BorderSize, height),
-                    Color = Color.White
+                    Color = ApplyOpacity(Color.White)
                 };
 
                 // spriteBatch.Draw(
@@ -901,6 +911,7 @@ public abstract class UiComponent
     {
         LocalPosition = position;
         GlobalPosition = position;
+        UpdateBounds(Parent);
         // OnPositionChange?.Invoke(GlobalPosition);
 
         if (this is Container container)
@@ -912,6 +923,11 @@ public abstract class UiComponent
     public void SetHoverItem(UiComponent item)
     {
         HoverItem = item;
+    }
+
+    public Vector2 GetScaledGlobalPosition()
+    {
+        return ScaleToGlobal(GlobalPosition);
     }
 
     private Vector2 CalculateGlobalPosition()

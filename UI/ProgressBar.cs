@@ -130,8 +130,11 @@ public class ProgressBar : UiComponent
 
     public void SetContent(string content) => _progressBarOptions.Content = content;
 
-    public void SetTextThresholds(Dictionary<float, string> thresholds) => _progressBarOptions.TextThresholds = thresholds;
-    public void SetColorThresholds(Dictionary<float, Color> thresholds) => _progressBarOptions.ColorThresholds = thresholds;
+    public void SetTextThresholds(Dictionary<float, string> thresholds) =>
+        _progressBarOptions.TextThresholds = thresholds;
+
+    public void SetColorThresholds(Dictionary<float, Color> thresholds) =>
+        _progressBarOptions.ColorThresholds = thresholds;
 
     public override void Update()
     {
