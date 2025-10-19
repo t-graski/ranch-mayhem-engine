@@ -52,9 +52,9 @@ public class NumberFormatter : IFormatProvider, ICustomFormatter
 
         return number switch
         {
-            >= trillion => $"{number / trillion:0.##}T",
-            >= billion => $"{number / billion:0.##}B",
-            >= million => $"{number / million:0.##}M",
+            >= trillion => $"{number / trillion:0.##}t",
+            >= billion => $"{number / billion:0.##}b",
+            >= million => $"{number / million:0.##}m",
             >= thousand * 100 => $"{number / thousand:0.##}k",
             _ => number.ToString($"#,0")
         };
