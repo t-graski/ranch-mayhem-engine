@@ -31,6 +31,8 @@ public abstract class Page
     {
     }
 
+    public abstract void OnAppear();
+
     // public virtual void Draw(SpriteBatch spriteBatch)
     // {
     //     if (!IsVisible) return;
