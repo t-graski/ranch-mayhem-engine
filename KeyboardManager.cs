@@ -8,6 +8,7 @@ namespace ranch_mayhem_engine;
 public static class KeyboardManager
 {
     public static bool IsInTextBox { get; set; }
+    public static bool KeyBindingsDisabled { get; set; }
     public static Keys PressedKey { get; set; } = Keys.None;
     private static readonly Dictionary<Keys, Action> _keyBindings = new();
 
@@ -31,6 +32,7 @@ public static class KeyboardManager
         {
             var page = RanchMayhemEngine.UiManager?.GetPage(pageId);
             page?.ToggleVisibility();
+            page?.OnAppear();
             Logger.Log($"toggling page {pageId}");
         }
     );
@@ -43,6 +45,7 @@ public static class KeyboardManager
     public static void Update()
     {
         if (IsInTextBox) return;
+        if (KeyBindingsDisabled) return;
 
         var currentState = KeyboardInput.CurrentState;
         var pressed = currentState.GetPressedKeys();
