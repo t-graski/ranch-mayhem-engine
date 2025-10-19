@@ -79,7 +79,7 @@ public static class ContentManager
             _spriteToAtlasMap[atlasItem.Name] = atlasName;
         }
 
-        _textureAtlases[atlasName] = content.Load<Texture2D>(atlasName);
+        _textureAtlases[atlasName] = content.Load<Texture2D>($"sprites/{atlasName}");
         // _textureAtlas = content.Load<Texture2D>(atlasName);
         Logger.Log($"Loaded {items.Count} atlas sprites");
     }
@@ -122,7 +122,7 @@ public static class ContentManager
 
     private static void LoadAnimatedSprite(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
     {
-        var imageSprite = content.Load<Texture2D>(item.Name);
+        var imageSprite = content.Load<Texture2D>($"sprites/{item.Name}");
         const int frameAmount = 3;
         var i = 0;
 
@@ -148,7 +148,7 @@ public static class ContentManager
 
     private static void LoadShader(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
     {
-        RenderShaders.Add(item.Name, content.Load<Effect>(item.Name));
+        RenderShaders.Add(item.Name, content.Load<Effect>($"fx/{item.Name}"));
     }
 
     private static void LoadSfx(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
@@ -158,7 +158,7 @@ public static class ContentManager
 
     private static void LoadSprite(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
     {
-        Contents.Add(item.Name, content.Load<Texture2D>(item.Name));
+        Contents.Add(item.Name, content.Load<Texture2D>($"sprites/{item.Name}"));
     }
 
     private static void LoadFont(ContentItem item, Microsoft.Xna.Framework.Content.ContentManager content)
@@ -171,7 +171,7 @@ public static class ContentManager
 
         foreach (var size in item.Sizes)
         {
-            var font = content.Load<SpriteFont>($"{item.Name}{size}");
+            var font = content.Load<SpriteFont>($"fonts/{item.Name}{size}");
             font.LineSpacing = size + 8;
             font.DefaultCharacter = '?';
 
