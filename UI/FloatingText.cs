@@ -50,10 +50,12 @@ public class FloatingText : UiComponent
     {
         if (IsVisible)
         {
-            UiManager.Enqueue(_text.Draw());
+            return _text.Draw();
         }
 
-        return base.Draw();
+        return Array.Empty<RenderCommand>();
+
+        // return base.Draw();
     }
 }
 
