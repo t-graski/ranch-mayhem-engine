@@ -9,7 +9,7 @@ namespace ranch_mayhem_engine.UI;
 public class Grid : UiComponent
 {
     public List<UiComponent> Components;
-    private GridOptions _gridOptions;
+    private readonly GridOptions _gridOptions;
 
     public Grid(
         string id, GridOptions options, List<UiComponent> components,
@@ -155,15 +155,135 @@ public class Grid : UiComponent
         }
     }
 
-    // public override void Draw(SpriteBatch spriteBatch)
-    // {
-    //     base.Draw(spriteBatch);
-    //     foreach (var component in _components)
-    //     {
-    //         component.Draw(spriteBatch);
-    //         component.HandleMouse(RanchMayhemEngine.MouseState);
-    //     }
-    // }
+    public override IEnumerable<RenderCommand> Draw()
+    {
+        foreach (var command in base.Draw())
+        {
+            yield return command;
+        }
+    }
+
+    private IEnumerable<RenderCommand> DrawConnections()
+    {
+        for (var c = 0; c < _gridOptions.Columns.Count; c++)
+        {
+            for (var r = 0; r < _gridOptions.Rows.Count; r++)
+            {
+                if (IsLastRow(r) && !_gridOptions.DrawConnectionToBottom)
+                {
+                    continue;
+                }
+
+                var currIdx = r * _gridOptions.Columns.Count + c;
+                var curr = Components[currIdx];
+
+                if (IsLastRow(r))
+                {
+                    yield return new RenderCommand
+                    {
+                        Id = $"{Id}-connection-bottom-{curr.Id}",
+                        Position = new Vector2(curr.GlobalPosition.X + (curr.Options.Size.X / 2 - 4),
+                            curr.GlobalPosition.Y + curr.Options.Size.Y - 1),
+                        Texture = UiManager.Pixel,
+                        Color = Color.White,
+                        SourceRect = null,
+                        Rotation = 0f,
+                        Origin = Vector2.Zero,
+                        Scale = new Vector2(8,
+                            GlobalPosition.Y + Options.Size.Y - (curr.GlobalPosition.Y + curr.Options.Size.Y) + 1),
+                        LayerDepth = 0f,
+                    };
+
+                    continue;
+                }
+
+                if (IsFirstRow(r) && _gridOptions.DrawConnectionFromTop)
+                {
+                    yield return new RenderCommand
+                    {
+                        Id = $"{Id}-connection-top-{curr.Id}",
+                        Position = new Vector2(curr.GlobalPosition.X + (curr.Options.Size.X / 2 - 4),
+                            GlobalPosition.Y),
+                        Texture = UiManager.Pixel,
+                        Color = Color.White,
+                        SourceRect = null,
+                        Rotation = 0f,
+                        Origin = Vector2.Zero,
+                        Scale = new Vector2(8, curr.GlobalPosition.Y - GlobalPosition.Y),
+                        LayerDepth = 0f,
+                    };
+                }
+
+
+                var nextIdx = currIdx + _gridOptions.Columns.Count;
+                var next = Components[nextIdx];
+
+                yield return new RenderCommand
+                {
+                    Id = $"{Id}-connection-{curr.Id}-{next.Id}",
+                    Position = new Vector2(curr.GlobalPosition.X + (curr.Options.Size.X / 2 - 4),
+                        curr.GlobalPosition.Y + curr.Options.Size.Y - 1),
+                    Texture = UiManager.Pixel,
+                    Color = Color.White,
+                    SourceRect = null,
+                    Rotation = 0f,
+                    Origin = Vector2.Zero,
+                    Scale = new Vector2(8, next.GlobalPosition.Y - (curr.GlobalPosition.Y + curr.Options.Size.Y) + 1),
+                    LayerDepth = 0f,
+                };
+            }
+        }
+
+        yield break;
+
+        bool IsLastRow(int row) => row == _gridOptions.Rows.Count - 1;
+        bool IsFirstRow(int row) => row == 0;
+    }
+
+    public IEnumerable<RenderCommand> DrawConnectionFromTo(int? fromIdx, int? toIdx, Texture2D texture2D,
+        Effect? shader = null)
+    {
+        if (fromIdx == null && toIdx == null) yield break;
+        if (fromIdx != null && (fromIdx < 0 || fromIdx >= Components.Count)) yield break;
+        if (toIdx != null && (toIdx < 0 || toIdx >= Components.Count)) yield break;
+
+        var fromComponent = fromIdx != null ? Components[fromIdx.Value] : null;
+        var toComponent = toIdx != null ? Components[toIdx.Value] : null;
+
+        const int width = 12;
+
+        var startX = fromComponent != null
+            ? fromComponent.GlobalPosition.X + (fromComponent.Options.Size.X / 2 - (width / 2))
+            : toComponent != null
+                ? toComponent.GlobalPosition.X + (toComponent.Options.Size.X / 2 - (width / 2))
+                : GlobalPosition.X + (Options.Size.X / 2 - (width / 2));
+
+        var startY = fromComponent != null
+            ? fromComponent.GlobalPosition.Y + fromComponent.Options.Size.Y - 1
+            : GlobalPosition.Y;
+
+        var endY = toComponent != null
+            ? toComponent.GlobalPosition.Y
+            : GlobalPosition.Y + Options.Size.Y;
+
+
+        var textureSize = new Vector2(texture2D.Width, texture2D.Height);
+        var scale = new Vector2(width / textureSize.X, (endY - startY) / textureSize.Y);
+
+        yield return new RenderCommand
+        {
+            Id = $"{Id}-connection-from-{fromIdx?.ToString() ?? "top"}-to-{toIdx?.ToString() ?? "bottom"}",
+            Position = new Vector2(startX, startY),
+            Texture = texture2D,
+            Color = Color.White,
+            SourceRect = null,
+            Rotation = 0f,
+            Origin = Vector2.Zero,
+            Scale = scale,
+            LayerDepth = 0f,
+            Shader = shader
+        };
+    }
 
     public override void Update()
     {
@@ -173,12 +293,22 @@ public class Grid : UiComponent
         }
     }
 
+    public int GetColumnsCnt() => _gridOptions.Columns.Count;
+    public int GetRowsCnt() => _gridOptions.Rows.Count;
+
     public class GridOptions : UiComponentOptions
     {
         public List<int> Columns;
         public List<int> Rows;
         public int ColumnGap;
         public int RowGap;
+
+        public bool ColumnConnection;
+
+        public bool DrawConnectionFromTop;
+        public bool DrawConnectionToBottom;
+
+        public Texture2D ConnectionTexture;
 
         public Vector4 Padding = Vector4.Zero;
     }
