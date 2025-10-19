@@ -126,6 +126,8 @@ public class UiManager
 
             if (tutorialWasVisible)
                 GetPage("tutorial")?.SetVisibility(true);
+
+            GetPage("menu-bar").SetVisibility(true);
         }
         finally
         {
@@ -245,6 +247,7 @@ public class UiManager
 
         CurrentPage = GetPage(id);
         CurrentPage?.ToggleVisibility();
+        CurrentPage?.OnAppear();
     }
 
     public void CloseActivePage()
@@ -296,7 +299,7 @@ public class UiManager
 
     private static readonly RasterizerState ScissorRaster = new RasterizerState { ScissorTestEnable = true };
 
-    private static void Flush(SpriteBatch sb, IEnumerable<RenderCommand> q)
+    public static void Flush(SpriteBatch sb, IEnumerable<RenderCommand> q)
     {
         Effect? currentShader = null;
         var begun = false;
@@ -373,7 +376,7 @@ public class UiManager
         if (begun) sb.End();
     }
 
-    public static void Flush(SpriteBatch sb)
+    private static void Flush(SpriteBatch sb)
     {
         // Logger.Log($"BackgroundQ={BackgroundQueue.Count}");
         // Logger.Log($"iUiQ={UiQueue.Count}");
