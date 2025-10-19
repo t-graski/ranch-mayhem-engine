@@ -130,7 +130,10 @@ public class Text : UiComponent
 
     private static float CalculateScale(int from, int to)
     {
-        return (float)Math.Pow(1.2, Math.Log(to / (double)from, 1.2));
+        // return (float)Math.Pow(1.2, Math.Log(to / (double)from, 1.2));
+        var f = to / (float)from;
+        var k = Math.Max(1, (int)MathF.Round(f));
+        return k;
     }
 
     public override void Update()
