@@ -9,7 +9,8 @@ public class Box : UiComponent
 {
     private Text? _text;
 
-    public Box(string id, BoxOptions options, UiComponent? parent = null, bool scale = true, Effect? renderShader = null) : base(
+    public Box(string id, BoxOptions options, UiComponent? parent = null, bool scale = true,
+        Effect? renderShader = null) : base(
         id,
         options,
         parent,
