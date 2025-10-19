@@ -1,4 +1,3 @@
-using System.Data;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -48,7 +47,6 @@ public abstract class UiComponent
     public bool CanTriggerRightClick;
 
     protected event Action<Vector2>? OnPositionChange;
-
 
     protected UiComponent(
         string id, UiComponentOptions options, UiComponent? parent = null, bool scale = true,
@@ -300,7 +298,8 @@ public abstract class UiComponent
     protected Color ApplyOpacity(Color color)
     {
         if (Opacity >= 0.999f) return color;
-        return new Color(color.R, color.G, color.B, (byte)(color.A * Opacity));
+        // return new Color(color.R, color.G, color.B, (byte)(color.A * Opacity));
+        return color * Opacity;
     }
 
     public virtual IEnumerable<RenderCommand> Draw()
@@ -911,6 +910,19 @@ public abstract class UiComponent
     {
         LocalPosition = position;
         GlobalPosition = position;
+        UpdateBounds(Parent);
+        // OnPositionChange?.Invoke(GlobalPosition);
+
+        if (this is Container container)
+        {
+            container.HandleParentGlobalPositionChange(GlobalPosition);
+        }
+    }
+
+    public void MovePosition(Vector2 delta)
+    {
+        LocalPosition += delta;
+        GlobalPosition = CalculateGlobalPosition();
         UpdateBounds(Parent);
         // OnPositionChange?.Invoke(GlobalPosition);
 
