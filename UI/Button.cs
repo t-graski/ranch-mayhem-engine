@@ -13,8 +13,6 @@ public class Button : UiComponent
     private float _transitionProgress = 0f;
     private const float TransitionSpeed = 0.3f;
 
-    private Effect _outlineShader = ContentManager.GetShader("Outline");
-
     public Button(
         string id, ButtonOptions options,
         UiComponent? parent = null, Effect? shaderEffect = null
@@ -94,6 +92,11 @@ public class Button : UiComponent
         if (_buttonOptions.ClickTexture == null) return;
 
         Options.Texture = _buttonOptions.ClickTexture;
+
+        if (_buttonOptions.MoveText != 0 && _text != null)
+        {
+            _text.MovePosition(new Vector2(0, _buttonOptions.MoveText));
+        }
     }
 
 
@@ -104,6 +107,11 @@ public class Button : UiComponent
         Logger.Log($"{GetType().FullName}::HandleOffClick Id={Id}", LogLevel.Internal);
 
         Options.Texture = _buttonOptions.Texture;
+
+        if (_buttonOptions.MoveText != 0 && _text != null)
+        {
+            _text.MovePosition(new Vector2(0, -_buttonOptions.MoveText));
+        }
     }
 
     public void SetText(string text, Color color, int size = 16)
@@ -134,6 +142,11 @@ public class Button : UiComponent
 
         _text.SetContent(text);
         _text.SetTextColor(color);
+    }
+
+    public void ClearText()
+    {
+        _text?.ClearContent();
     }
 
     public void AddOnClickAction(Action handler)
@@ -278,5 +291,6 @@ public class Button : UiComponent
         public Texture2D? HoverTexture;
         public Texture2D? ClickTexture;
         public ButtonState State = ButtonState.Normal;
+        public int MoveText = 0;
     }
 }

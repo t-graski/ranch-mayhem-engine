@@ -39,6 +39,11 @@ public static class EasingFunctions
             : (1f + EaseOutBounce(2f * t - 1f)) / 2f;
     }
 
+    public static float EaseInQuad(float t)
+    {
+        return t * t;
+    }
+
     public static float ApplyEasing(float start, float end, float progress, Func<float, float> easingFunction)
     {
         var easedProgress = easingFunction(progress);

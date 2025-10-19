@@ -74,7 +74,7 @@ public class Animator
                 _endY = -_component.Options.Size.Y;
                 break;
             case AnimationDirection.Right:
-                _startX = _component.GlobalPosition.X + 2000;
+                _startX = _component.GlobalPosition.X + 500;
                 _currentX = _startX;
                 _endX = _component.GlobalPosition.X;
                 _component.SetGlobalPosition(new Vector2(_startX, _component.GlobalPosition.Y));

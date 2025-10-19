@@ -21,7 +21,7 @@ public class FloatingText : UiComponent
             .SetContent(_options.Content)
             .SetFontColor(_options.FontColor)
             .SetPosition(Bezier(_options.Start, _options.Control, _options.End, 0f))
-            .SetFontSize(16)
+            .SetFontSize(_options.FontSize)
             .Build();
     }
 
@@ -50,10 +50,12 @@ public class FloatingText : UiComponent
     {
         if (IsVisible)
         {
-            UiManager.Enqueue(_text.Draw());
+            return _text.Draw();
         }
 
-        return base.Draw();
+        return Array.Empty<RenderCommand>();
+
+        // return base.Draw();
     }
 }
 

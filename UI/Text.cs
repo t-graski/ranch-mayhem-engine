@@ -99,7 +99,7 @@ public class Text : UiComponent
             SpriteFont = Font,
             Text = _textOptions.Content,
             Position = GlobalPosition,
-            Color = _textOptions.FontColor,
+            Color = ApplyOpacity(_textOptions.FontColor),
             Rotation = 0f,
             Origin = Vector2.Zero,
             Scale = Options.Scale,
@@ -130,7 +130,10 @@ public class Text : UiComponent
 
     private static float CalculateScale(int from, int to)
     {
-        return (float)Math.Pow(1.2, Math.Log(to / (double)from, 1.2));
+        // return (float)Math.Pow(1.2, Math.Log(to / (double)from, 1.2));
+        var f = to / (float)from;
+        var k = Math.Max(1, (int)MathF.Round(f));
+        return k;
     }
 
     public override void Update()

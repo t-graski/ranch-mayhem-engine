@@ -28,8 +28,8 @@ public class ProgressBar : UiComponent
             $"{Id}-text",
             new Text.TextOptions
             {
-                FontColor = Color.White,
-                FontSize = 12,
+                FontColor = _progressBarOptions.TextColor,
+                FontSize = _progressBarOptions.TextSize,
                 UiAnchor = UiAnchor.CenterX | UiAnchor.CenterY
             }
         );
@@ -54,12 +54,6 @@ public class ProgressBar : UiComponent
             Color = _currentColor
         };
 
-        // spriteBatch.Draw(
-        //     texture,
-        //     new Rectangle((int)GlobalPosition.X, (int)GlobalPosition.Y, (int)Options.Size.X, (int)Options.Size.Y),
-        //     _currentColor
-        // );
-
         foreach (var command in DrawTiledTexture(
                      _progressBarOptions.ProgressTexture,
                      GlobalPosition,
@@ -76,14 +70,15 @@ public class ProgressBar : UiComponent
             yield return command;
         }
 
-        // _progressText.Draw(spriteBatch);
-
         foreach (var command in DrawBorder())
         {
             yield return command;
         }
+    }
 
-        // DrawBorder(spriteBatch);
+    public override void SetTexture(Texture2D texture)
+    {
+        _progressBarOptions.ProgressTexture = texture;
     }
 
     public override void SetParent(UiComponent parent)
@@ -92,9 +87,9 @@ public class ProgressBar : UiComponent
         _progressText.SetParent(this);
     }
 
-    public void SetFraction(float fraction)
+    public void SetFraction(double fraction)
     {
-        _progressBarOptions.Fraction = MathHelper.Clamp(fraction, 0, 1);
+        _progressBarOptions.Fraction = MathHelper.Clamp((float)fraction, 0, 1);
         if (!_progressBarOptions.SmoothUpdate) _currentFraction = _progressBarOptions.Fraction;
         UpdateColor(fraction);
         UpdateText(fraction);
@@ -102,6 +97,7 @@ public class ProgressBar : UiComponent
 
     private void UpdateColor(double fraction)
     {
+        if (_progressBarOptions.ColorThresholds is null) return;
         foreach (var (key, value) in _progressBarOptions.ColorThresholds.Reverse())
         {
             if (fraction >= key)
@@ -116,6 +112,7 @@ public class ProgressBar : UiComponent
 
     private void UpdateText(double fraction)
     {
+        if (_progressBarOptions.TextThresholds is null) return;
         foreach (var (key, value) in _progressBarOptions.TextThresholds.Reverse())
         {
             if (fraction >= key)
@@ -130,12 +127,22 @@ public class ProgressBar : UiComponent
 
     public void SetContent(string content) => _progressBarOptions.Content = content;
 
-    public void SetTextThresholds(Dictionary<float, string> thresholds) => _progressBarOptions.TextThresholds = thresholds;
-    public void SetColorThresholds(Dictionary<float, Color> thresholds) => _progressBarOptions.ColorThresholds = thresholds;
+    public void SetTextThresholds(Dictionary<float, string> thresholds) =>
+        _progressBarOptions.TextThresholds = thresholds;
+
+    public void SetColorThresholds(Dictionary<float, Color> thresholds) =>
+        _progressBarOptions.ColorThresholds = thresholds;
 
     public override void Update()
     {
-        _progressText.SetContent(_currentText ?? "");
+        if (string.IsNullOrEmpty(_currentText))
+        {
+            _progressText.ClearContent();
+        }
+        else
+        {
+            _progressText.SetContent(_currentText);
+        }
 
         if (!_progressBarOptions.SmoothUpdate) return;
 
@@ -154,9 +161,12 @@ public class ProgressBar : UiComponent
     public class ProgressBarOptions : UiComponentOptions
     {
         public double Fraction;
-        public Dictionary<float, Color> ColorThresholds;
-        public Dictionary<float, string> TextThresholds;
+        public Dictionary<float, Color>? ColorThresholds;
+        public Dictionary<float, string>? TextThresholds;
         public string? Content;
+
+        public int TextSize = 12;
+        public Color TextColor = Color.WhiteSmoke;
 
         public Texture2D ProgressTexture;
         public bool SmoothUpdate;

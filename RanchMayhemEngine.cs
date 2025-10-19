@@ -11,7 +11,7 @@ public class RanchMayhemEngine : Game
     private const bool IsFullScreen = true;
     public const LogLevel LogLevel = UI.LogLevel.Error;
 
-    private Point _windowedSize = new(1280, 720);
+    public static Point WindowedSize = new(1280, 720);
     private bool _isBorderlessFullscreen = false;
 
     public const int Width = 1920;
@@ -41,8 +41,8 @@ public class RanchMayhemEngine : Game
             IsFullScreen = false,
             HardwareModeSwitch = false,
 
-            PreferredBackBufferWidth = _windowedSize.X,
-            PreferredBackBufferHeight = _windowedSize.Y,
+            PreferredBackBufferWidth = WindowedSize.X,
+            PreferredBackBufferHeight = WindowedSize.Y,
         };
 
         Content.RootDirectory = "Content";
@@ -87,7 +87,7 @@ public class RanchMayhemEngine : Game
             _graphics.PreferredBackBufferWidth = bounds.Width;
             _graphics.PreferredBackBufferHeight = bounds.Height;
             _graphics.ApplyChanges();
-            _windowedSize = new Point(bounds.Width, bounds.Height);
+            WindowedSize = new Point(bounds.Width, bounds.Height);
 
             UiManager.FullRebuild();
         }
@@ -110,7 +110,7 @@ public class RanchMayhemEngine : Game
         if (_isBorderlessFullscreen)
         {
             var cb = Window.ClientBounds;
-            _windowedSize = new Point(cb.Width, cb.Height);
+            WindowedSize = new Point(cb.Width, cb.Height);
 
             var b = SDL2Display.GetCurrentDisplayBounds(Window.Handle);
 
@@ -131,8 +131,8 @@ public class RanchMayhemEngine : Game
             Window.Position = new Point(100, 100);
             _graphics.HardwareModeSwitch = false;
             _graphics.IsFullScreen = false;
-            _graphics.PreferredBackBufferWidth = _windowedSize.X;
-            _graphics.PreferredBackBufferHeight = _windowedSize.Y;
+            _graphics.PreferredBackBufferWidth = WindowedSize.X;
+            _graphics.PreferredBackBufferHeight = WindowedSize.Y;
         }
 
         _graphics.ApplyChanges();
@@ -149,12 +149,6 @@ public class RanchMayhemEngine : Game
         GameTime = gameTime;
 
         MouseState = Mouse.GetState();
-
-#if DEBUG
-        if (GamePad.GetState(PlayerIndex.One).Buttons.Back == Microsoft.Xna.Framework.Input.ButtonState.Pressed ||
-            Keyboard.GetState().IsKeyDown(Keys.Escape))
-            // Exit();
-#endif
 
         if (KeyboardInput.CurrentState.IsKeyDown(Keys.F11) && !KeyboardInput.PreviousState.IsKeyDown(Keys.F11))
         {
