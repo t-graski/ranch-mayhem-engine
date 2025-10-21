@@ -20,7 +20,8 @@ public class TypeWriterText : UiComponent
     private Container _container;
 
     public TypeWriterText(
-        string id, TypeWriterTextOptions options, UiComponent? parent = null, bool scale = true, Effect? renderShader = null
+        string id, TypeWriterTextOptions options, UiComponent? parent = null, bool scale = true,
+        Effect? renderShader = null
     ) : base(id, options, parent, scale, renderShader)
     {
         _typeWriterTextOptions = options;
@@ -30,26 +31,17 @@ public class TypeWriterText : UiComponent
 
     private void Initialize()
     {
+        const int padding = 4;
+        
         _text = new TextBuilder($"{Id}-inner-text")
             .SetContent(_typeWriterTextOptions.Content)
             .SetFontColor(_typeWriterTextOptions.FontColor)
             .SetFontSize(_typeWriterTextOptions.FontSize)
-            .SetPosition(new Vector2(4, 4))
+            .SetPosition(new Vector2(padding, padding))
             .Build();
-
-        var lines = _typeWriterTextOptions.Content.Split('\n');
-        var longestLineSize = new Vector2(0, 0);
-        foreach (var line in lines)
-        {
-            var lineSize = _text.Font.MeasureString(line);
-            if (lineSize.X > longestLineSize.X)
-            {
-                longestLineSize = lineSize;
-            }
-        }
-
+        
         _container = new ContainerBuilder($"{Id}-inner-container")
-            .SetSize(new Vector2(longestLineSize.X + 8, (longestLineSize.Y * (lines.Length)) + 8))
+            .SetSize(100, 100)
             .SetColor(_typeWriterTextOptions.Color)
             .SetBorderColor(_typeWriterTextOptions.BorderColor)
             .SetBorderPosition(_typeWriterTextOptions.BorderPosition)
@@ -59,8 +51,13 @@ public class TypeWriterText : UiComponent
             .SetChildren([_text])
             .Build();
 
+        var textSize = _text.GetUnscaledSize();
+        
+        _container.SetSizePixels(new Vector2(textSize.X + padding * 2, textSize.Y + padding * 2));
+
         Options.Size = _container.Options.Size;
-        Bounds = new Rectangle((int)_container.LocalPosition.X, (int)_container.LocalPosition.Y, (int)Options.Size.X, (int)Options.Size.Y);
+        Bounds = new Rectangle((int)_container.LocalPosition.X, (int)_container.LocalPosition.Y, (int)Options.Size.X,
+            (int)Options.Size.Y);
     }
 
     public void StartWriting()
@@ -111,7 +108,8 @@ public class TypeWriterText : UiComponent
         else
         {
             _typeWriterTimer += deltaMs;
-            while (_typeWriterTimer >= _typeWriterTextOptions.TypeWriterInterval && _visibleCharCount < _fullText.Length)
+            while (_typeWriterTimer >= _typeWriterTextOptions.TypeWriterInterval &&
+                   _visibleCharCount < _fullText.Length)
             {
                 _typeWriterTimer -= _typeWriterTextOptions.TypeWriterInterval;
                 _visibleCharCount++;
@@ -142,7 +140,8 @@ public class TypeWriterText : UiComponent
     {
         base.SetPosition(position);
         _container.SetPosition(position);
-        Bounds = new Rectangle((int)_container.LocalPosition.X, (int)_container.LocalPosition.Y, (int)Options.Size.X, (int)Options.Size.Y);
+        Bounds = new Rectangle((int)_container.LocalPosition.X, (int)_container.LocalPosition.Y, (int)Options.Size.X,
+            (int)Options.Size.Y);
     }
 }
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -116,7 +117,7 @@ public class UiManager
                 page.ToggleVisibility(forceInvisible: true);
             }
 
-            // Logger.Log($"current pages: {string.Join(", ", _pages.Select(p => p.Id))}");
+            Logger.Log($"current pages: {string.Join(", ", _pages.Select(p => p.Id))}");
 
             CurrentPage = _pages.FirstOrDefault(p => p.Id == keepVisibleId) ?? _pages.FirstOrDefault();
             CurrentPage?.ToggleVisibility(forceInvisible: false);
@@ -299,10 +300,21 @@ public class UiManager
 
     private static readonly RasterizerState ScissorRaster = new RasterizerState { ScissorTestEnable = true };
 
+    private static int _metricsCounter = 0;
+    private static RenderMetrics _renderMetrics = new RenderMetrics();
+
     public static void Flush(SpriteBatch sb, IEnumerable<RenderCommand> q)
     {
         Effect? currentShader = null;
         var begun = false;
+
+        var scissorsStack = new Stack<Rectangle>();
+        var gd = sb.GraphicsDevice;
+        var defaultScissor = gd.Viewport.Bounds;
+
+        gd.ScissorRectangle = defaultScissor;
+        var metrics = new RenderMetrics();
+        var stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
         void BeginWith(Effect? shader)
         {
@@ -316,15 +328,42 @@ public class UiManager
             );
 
             begun = true;
+            metrics.BatchCount++;
         }
 
         foreach (var cmd in q)
         {
+            metrics.TotalCommands++;
+            if (cmd is { ScissorPush: true, ScissorRect: not null })
+            {
+                if (begun) sb.End();
+
+                var rect = cmd.ScissorRect.Value;
+                scissorsStack.Push(gd.ScissorRectangle);
+                gd.ScissorRectangle = rect;
+
+                BeginWith(currentShader);
+                metrics.ScissorChanges++;
+                continue;
+            }
+
+            if (cmd.ScissorPop)
+            {
+                if (begun) sb.End();
+
+                gd.ScissorRectangle = scissorsStack.Count > 0 ? scissorsStack.Pop() : defaultScissor;
+
+                BeginWith(currentShader);
+                metrics.ScissorChanges++;
+                continue;
+            }
+
             if (!begun || !ReferenceEquals(cmd.Shader, currentShader))
             {
                 if (begun) sb.End();
                 currentShader = cmd.Shader;
                 BeginWith(currentShader);
+                metrics.ShaderChanges++;
             }
 
             switch (cmd)
@@ -335,6 +374,7 @@ public class UiManager
                         destinationRectangle: cmd.DestinationRect.Value,
                         color: cmd.Color
                     );
+                    metrics.TextureDraws++;
                     break;
                 case { DestinationRect: not null, SourceRect: not null }:
                     sb.Draw(
@@ -343,6 +383,7 @@ public class UiManager
                         sourceRectangle: cmd.SourceRect.Value,
                         color: cmd.Color
                     );
+                    metrics.TextureDraws++;
                     break;
                 case { SpriteFont: not null }:
                     sb.DrawString(
@@ -356,6 +397,8 @@ public class UiManager
                         effects: cmd.Effects,
                         layerDepth: cmd.LayerDepth
                     );
+                    metrics.TextDraws++;
+                    metrics.TotalCharacters += cmd.Text?.Length ?? 0;
                     break;
                 default:
                     sb.Draw(
@@ -369,11 +412,52 @@ public class UiManager
                         effects: cmd.Effects,
                         layerDepth: cmd.LayerDepth
                     );
+                    metrics.TextureDraws++;
                     break;
             }
         }
 
         if (begun) sb.End();
+
+        stopwatch.Stop();
+        metrics.ElapsedMs = stopwatch.Elapsed.TotalMilliseconds;
+
+        _renderMetrics.TotalCommands += metrics.TotalCommands;
+        _renderMetrics.BatchCount += metrics.BatchCount;
+        _renderMetrics.TextDraws += metrics.TextDraws;
+        _renderMetrics.TotalCharacters += metrics.TotalCharacters;
+        _renderMetrics.TextureDraws += metrics.TextureDraws;
+        _renderMetrics.ShaderChanges += metrics.ShaderChanges;
+        _renderMetrics.ScissorChanges += metrics.ScissorChanges;
+        _renderMetrics.ElapsedMs += metrics.ElapsedMs;
+
+        _frameCounter++;
+
+        if (_frameCounter >= 60)
+        {
+            // Logger.Log(
+            //     $"[RENDER METRICS] Commands: {metrics.TotalCommands} | Batches: {metrics.BatchCount} | TextDraws: {metrics.TextDraws} ({metrics.TotalCharacters} chars) | TextureDraws: {metrics.TextureDraws} | ShaderChanges: {metrics.ShaderChanges} | ScissorChanges: {metrics.ScissorChanges} | Elapsed: {metrics.ElapsedMs:F2} ms");
+            var avg = _renderMetrics;
+
+            // Logger.Log(
+            //     $"[RENDER METRICS - 60 FRAMES AVERAGE] Commands: {avg.TotalCommands / 60} | Batches: {avg.BatchCount / 60} | TextDraws: {avg.TextDraws / 60} ({avg.TotalCharacters / 60} chars) | TextureDraws: {avg.TextureDraws / 60} | ShaderChanges: {avg.ShaderChanges / 60} | ScissorChanges: {avg.ScissorChanges / 60} | Elapsed: {avg.ElapsedMs / 60:F2} ms");
+            _frameCounter = 0;
+            _renderMetrics = new RenderMetrics();
+        }
+    }
+
+    private static int _frameCounter = 0;
+
+    private struct RenderMetrics
+    {
+        public int TotalCommands;
+        public int BatchCount;
+        public int TextDraws;
+        public int TotalCharacters;
+        public int TextureDraws;
+        public int ShaderChanges;
+        public int ScissorChanges;
+        public double ElapsedMs;
     }
 
     private static void Flush(SpriteBatch sb)
