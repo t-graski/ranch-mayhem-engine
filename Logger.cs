@@ -19,7 +19,6 @@ public static class Logger
         if (level <= RanchMayhemEngine.LogLevel)
         {
             Console.WriteLine($"{prefix}{message}\x1b[39m");
-            // write to rm.log
             try
             {
                 File.AppendAllText("rm.log", $"{DateTime.Now:yyyy-MM-dd HH:mm:ss} - {level.ToString().ToUpper(),-8} - {message}\n");

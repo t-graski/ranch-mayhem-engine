@@ -22,6 +22,10 @@ public struct RenderCommand()
     public string Text = "";
     public string Id = "";
 
+    public bool ScissorPush;
+    public bool ScissorPop;
+    public Rectangle? ScissorRect;
+
     public override string ToString()
     {
         return

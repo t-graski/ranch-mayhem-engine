@@ -12,7 +12,7 @@ public abstract class UiComponent
     public string Id { get; }
     public UiComponent? Parent { get; protected set; }
     public bool IsVisible { get; set; } = true;
-    public Vector2 LocalPosition { get; private set; }
+    public Vector2 LocalPosition { get; set; }
     public Vector2 GlobalPosition { get; set; }
     public Rectangle Bounds { get; protected set; }
     public UiComponentOptions Options { get; } = new();
@@ -38,7 +38,7 @@ public abstract class UiComponent
     public Action? OnScrollUp;
     public Action? OnScrollDown;
 
-    protected bool IsHovered;
+    public bool IsHovered;
     protected bool IsClicked;
     protected bool IsRightClicked;
     protected bool IsActive;
@@ -232,34 +232,6 @@ public abstract class UiComponent
     {
         LocalPosition = position;
         GlobalPosition = CalculateGlobalPosition();
-        // OnPositionChange?.Invoke(GlobalPosition);
-
-        // if (Options.SizeUnit == SizeUnit.Pixels)
-        // {
-        //     Options.Size = size;
-        // }
-        // else if (Options.SizeUnit == SizeUnit.Percent)
-        // {
-        //     var viewport = RanchMayhemEngine.UiManager.GraphicsDevice.Viewport;
-        //     var width = virtualParent?.X ?? viewport.Width;
-        //     var height = virtualParent?.Y ?? viewport.Height;
-        //     var newSize = Vector2.Zero;
-        //
-        //     if (Options.SizePercent.X != 0 && Options.SizePercent.Y != 0)
-        //     {
-        //         newSize = new Vector2(width * (Options.SizePercent.X / 100), height * (Options.SizePercent.Y / 100));
-        //     }
-        //     else if (Options.SizePercent.Y == 0)
-        //     {
-        //         newSize = new Vector2(width * (Options.SizePercent.X / 100));
-        //     }
-        //     else if (Options.SizePercent.X == 0)
-        //     {
-        //         newSize = new Vector2(height * (Options.SizePercent.Y / 100));
-        //     }
-        //
-        //     Options.Size = newSize;
-        // }
 
         RecalculateSize(size, virtualParent);
         CalculateScale();
@@ -917,6 +889,11 @@ public abstract class UiComponent
         {
             container.HandleParentGlobalPositionChange(GlobalPosition);
         }
+
+        if (this is Box box)
+        {
+            box.HandleParentGlobalPositionChange(GlobalPosition);
+        }
     }
 
     public void MovePosition(Vector2 delta)
@@ -983,7 +960,7 @@ public abstract class UiComponent
         // OnPositionChange?.Invoke(GlobalPosition);
     }
 
-    private void UpdateBounds(UiComponent? parent)
+    public void UpdateBounds(UiComponent? parent)
     {
         if (parent is null)
         {
