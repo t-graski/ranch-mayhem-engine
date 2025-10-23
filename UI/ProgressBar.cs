@@ -30,7 +30,7 @@ public class ProgressBar : UiComponent
             {
                 FontColor = _progressBarOptions.TextColor,
                 FontSize = _progressBarOptions.TextSize,
-                UiAnchor = UiAnchor.CenterX | UiAnchor.CenterY
+                UiAnchor = _progressBarOptions.TextAnchor,
             }
         );
 
@@ -167,6 +167,7 @@ public class ProgressBar : UiComponent
 
         public int TextSize = 12;
         public Color TextColor = Color.WhiteSmoke;
+        public UiAnchor TextAnchor = UiAnchor.CenterX | UiAnchor.CenterY;
 
         public Texture2D ProgressTexture;
         public bool SmoothUpdate;
