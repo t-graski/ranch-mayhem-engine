@@ -1,5 +1,4 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
+﻿using Microsoft.Xna.Framework.Input;
 
 namespace ranch_mayhem_engine.UI;
 
@@ -8,8 +7,14 @@ public abstract class Page
     public string Id { get; protected set; } = Guid.NewGuid().ToString();
     public bool IsVisible { get; set; } = false;
     private List<UiComponent> Components { get; set; } = [];
+    public ReopenPolicy ReopenBehavior { get; set; } = ReopenPolicy.ReopenIfVisible;
 
     public abstract Page Initialize();
+
+    protected Page(ReopenPolicy policy = ReopenPolicy.ReopenIfVisible)
+    {
+        ReopenBehavior = policy;
+    }
 
     protected void AddComponent(UiComponent component)
     {
@@ -72,5 +77,11 @@ public abstract class Page
     {
         IsVisible = visible;
         Components.ForEach(c => c.IsVisible = visible);
+    }
+
+    public enum ReopenPolicy
+    {
+        ReopenIfVisible,
+        AlwaysReopen,
     }
 }

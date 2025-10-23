@@ -89,7 +89,21 @@ public class UiManager
         try
         {
             var keepVisibleId = CurrentPage?.Id;
-            var tutorialWasVisible = GetPage("tutorial")?.IsVisible ?? false;
+            var openPages = _pages
+                .Where(p => p is { IsVisible: true, ReopenBehavior: Page.ReopenPolicy.ReopenIfVisible })
+                .Select(p => p.Id)
+                .ToList();
+
+            openPages.AddRange(_pages
+                .Where(p => p.ReopenBehavior == Page.ReopenPolicy.AlwaysReopen)
+                .Select(p => p.Id));
+
+            Logger.Log($"Pages and policy: {string.Join(", ", _pages.Select(p => $"{p.Id}({p.ReopenBehavior})"))}");
+
+            // var tutorialWasVisible = GetPage("tutorial")?.IsVisible ?? false;
+            // var trumpetWasVisible = GetPage("Invasion Trumpet")?.IsVisible ?? false;
+
+            Logger.Log($"[REBUILDING] OPEN PAGES {string.Join(", ", openPages)}");
 
             foreach (var p in _pages)
             {
@@ -122,13 +136,25 @@ public class UiManager
             CurrentPage = _pages.FirstOrDefault(p => p.Id == keepVisibleId) ?? _pages.FirstOrDefault();
             CurrentPage?.ToggleVisibility(forceInvisible: false);
 
-            // TODO: add a hook to - for now this is fine
-            // Action? UiRebuilt;
+            foreach (var id in openPages.Distinct())
+            {
+                GetPage(id).SetVisibility(true);
+            }
 
-            if (tutorialWasVisible)
-                GetPage("tutorial")?.SetVisibility(true);
+            foreach (var page in _pages.Where(p => p.ReopenBehavior == Page.ReopenPolicy.AlwaysReopen))
+            {
+                page.SetVisibility(true);
+            }
 
-            GetPage("menu-bar").SetVisibility(true);
+            // foreach (var openPage in openPages)
+            // {
+            //     GetPage(openPage).SetVisibility(true);
+            // }
+            //
+            // if (GetPage("menu-bar").== Page.ReopenPolicy.AlwaysReopen)
+            // {
+            //     GetPage("menu-bar")?.SetVisibility(true);
+            // }
         }
         finally
         {
