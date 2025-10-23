@@ -35,10 +35,9 @@ public class Text : UiComponent
 
         Options.Scale = new Vector2(scale) * RanchMayhemEngine.UiManager.GlobalScale;
 
-        Logger.Log(
-            $"{Id} scale calculated: {Options.Scale} (font size: {fontWithSize.size} requested: {_textOptions.FontSize})");
-
         // Options.Size = Font.MeasureString(_textOptions.Content) * Options.Scale;
+        // Logger.Log(
+        //     $"{Id} Font.LineSpacing: {Font.LineSpacing}, FonSize: {_textOptions.FontSize}, Scale: {Options.Scale} WSize: {RanchMayhemEngine.WindowedSize}");
 
         _dirty = true;
         UpdateGlobalPosition();
@@ -75,7 +74,7 @@ public class Text : UiComponent
         // }
 
         var oldSize = Options.Size;
-        _layout = Layout(runs, GetMaxWidth(), lineSpacingScale: 1.0f);
+        _layout = Layout(runs, GetMaxWidth(), lineSpacingScale: 1);
 
         var bounds = MeasureLayoutBounds(_layout);
         var unscaledSize = bounds.Size();
@@ -545,7 +544,6 @@ public class Text : UiComponent
 
     private Color ResolveColor(string name, Color fallback)
     {
-        // basic set; extend as needed
         return name switch
         {
             "black" => Color.Black,
@@ -557,17 +555,17 @@ public class Text : UiComponent
             "yellow" => Color.Yellow,
             "cyan" => Color.Cyan,
             "magenta" => Color.Magenta,
-            "orange" => new Color(255, 165, 0),
-            "purple" => new Color(128, 0, 128),
-            "brown" => new Color(150, 75, 0),
-            "pink" => new Color(255, 192, 203),
-            "lime" => new Color(0, 255, 0),
-            "teal" => new Color(0, 128, 128),
-            "navy" => new Color(0, 0, 128),
-            "olive" => new Color(128, 128, 0),
+            "orange" => Color.Orange,
+            "purple" => Color.Purple,
+            "brown" => Color.Brown,
+            "pink" => Color.Pink,
+            "lime" => Color.Lime,
+            "teal" => Color.Teal,
+            "navy" => Color.Navy,
+            "olive" => Color.Olive,
             "maroon" => new Color(128, 0, 0),
-            "silver" => new Color(192, 192, 192),
-            "gold" => new Color(255, 215, 0),
+            "silver" => Color.Silver,
+            "gold" => Color.Gold,
             _ => fallback
         };
     }
@@ -578,6 +576,7 @@ public class Text : UiComponent
         float x = 0f;
         float y = 0f;
 
+        // var lineHeight = Font.LineSpacing;
         var lineHeight = Font.LineSpacing * (float)lineSpacingScale;
 
         bool AtLineStart() => Math.Abs(x) < 0.0001f;
