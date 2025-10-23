@@ -9,6 +9,7 @@
 
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ranch_mayhem_engine.Content;
 
 namespace ranch_mayhem_engine.UI;
 
@@ -24,6 +25,8 @@ public class NodeBuilder
     private float? _angle;
     private float? _distance;
     private Vector2? _preferredSize;
+    private NodeSize _size = NodeSize.Medium;
+    private NodeType _type = NodeType.Gray;
     private object? _data;
 
     public NodeBuilder(string id)
@@ -46,6 +49,12 @@ public class NodeBuilder
     public NodeBuilder I(Texture2D icon)
     {
         _icon = icon;
+        return this;
+    }
+
+    public NodeBuilder I(string id)
+    {
+        _icon = ContentManager.GetAtlasSprite(id);
         return this;
     }
 
@@ -77,6 +86,18 @@ public class NodeBuilder
     {
         _angle = angle;
         _distance = distance;
+        return this;
+    }
+
+    public NodeBuilder NS(NodeSize size = NodeSize.Medium)
+    {
+        _size = size;
+        return this;
+    }
+
+    public NodeBuilder NT(NodeType type = NodeType.Gray)
+    {
+        _type = type;
         return this;
     }
 
@@ -118,7 +139,9 @@ public class NodeBuilder
             Angle = _angle,
             Distance = _distance,
             PreferredSize = _preferredSize,
-            Data = _data
+            Data = _data,
+            Size = _size,
+            Type = _type
         };
     }
 }

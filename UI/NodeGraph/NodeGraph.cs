@@ -34,7 +34,9 @@ public class NodeGraph : UiComponent
     // public int Points { get; private set; }
 
     public Action<Node>? OnAllocated;
+    public Action<Node>? OnDeallocated;
     public Action<Node>? OnClickNode;
+    public Action<Node>? OnRightClickNode;
 
     public bool DebugShowAllNodes { get; set; } = false;
 
@@ -42,6 +44,7 @@ public class NodeGraph : UiComponent
         Effect? renderShader = null) : base(id, options, parent, scale, renderShader)
     {
         _options = options;
+        _camZoom = _options.ZoomMin;
     }
 
     // public void SetPoints(int p) => Points = Math.Max(0, p);
@@ -78,7 +81,7 @@ public class NodeGraph : UiComponent
         for (var i = 0; i < _nodes.Count; i++)
         {
             _children.Add([]);
-            _state.Add(false);
+            _state.Add(_nodes[i].IsAllocated);
             _worldPosition.Add(Vector2.Zero);
         }
 
@@ -101,7 +104,7 @@ public class NodeGraph : UiComponent
         if (root >= 0)
         {
             Logger.Log($"Root node: {_nodes[root].Id} Allocated at start: {_nodes[root].StartAllocated}");
-            _state[root] = _nodes[root].StartAllocated;
+            // _state[root] = _nodes[root].StartAllocated;
         }
 
         foreach (var n in _nodes)
@@ -162,7 +165,7 @@ public class NodeGraph : UiComponent
         if (root >= 0)
         {
             _cameraPosition = _worldPosition[root];
-            _camZoom = 1f;
+            _camZoom = _options.ZoomMin;
             ApplyLayoutToComponents();
         }
     }
@@ -285,6 +288,11 @@ public class NodeGraph : UiComponent
             {
                 box.HandleParentGlobalPositionChange(comp.GlobalPosition);
             }
+
+            if (comp is Container container)
+            {
+                container.HandleParentGlobalPositionChange(comp.GlobalPosition);
+            }
         }
     }
 
@@ -292,8 +300,21 @@ public class NodeGraph : UiComponent
     {
         if (!_idx.TryGetValue(id, out var i)) return;
         _state[i] = true;
-        _nodes[i].Component?.ChangeTexture(ContentManager.GetAtlasSprite("wheat")!);
         OnAllocated?.Invoke(_nodes[i]);
+
+        UpdateAvailability();
+    }
+
+    public void DeallocateNode(string id, int levelAfter = 0)
+    {
+        if (!_idx.TryGetValue(id, out var i)) return;
+        if (levelAfter == 0)
+        {
+            _state[i] = false;
+        }
+
+        OnDeallocated?.Invoke(_nodes[i]);
+
         UpdateAvailability();
     }
 
@@ -531,15 +552,11 @@ public class NodeGraph : UiComponent
 
             if (!c.IsVisible)
             {
-                // TODO: disable interaction
-                c.CanTriggerClick = false;
                 continue;
             }
 
             if (!Intersects(c, clip))
             {
-                // TODO: disable interaction
-                c.CanTriggerClick = false;
                 continue;
             }
 
@@ -548,6 +565,12 @@ public class NodeGraph : UiComponent
             {
                 c.CanTriggerClick = false;
                 OnClickNode?.Invoke(_nodes[i]);
+            }
+
+            if (c.CanTriggerRightClick)
+            {
+                c.CanTriggerRightClick = false;
+                OnRightClickNode?.Invoke(_nodes[i]);
             }
         }
     }
@@ -590,6 +613,16 @@ public class NodeGraph : UiComponent
             {
                 foreach (var renderCommand in comp.Draw())
                 {
+                    // Logger.Log($"Node graph drawing node '{_nodes[i].Id}' type '{comp.GetType().Name}' global pos: '{comp.GlobalPosition}'");
+                    //
+                    // if (_nodes[i].Component is Container c)
+                    // {
+                    //     var child = c.GetFirstChild<Box>();
+                    //
+                    //     Logger.Log(
+                    //         $"First child of container is '{child?.Id}' type '{child?.GetType().Name}' global pos: {child?.GlobalPosition}'");
+                    // }
+
                     yield return renderCommand;
                 }
             }
@@ -650,100 +683,100 @@ public class NodeGraph : UiComponent
         }
     }
 
-    private void AutoLayout()
-    {
-        var root = RootIndex();
-        if (root < 0) return;
-
-        var depth = new Dictionary<int, int> { [root] = 0 };
-        var q = new Queue<int>();
-        q.Enqueue(root);
-
-        while (q.Count > 0)
-        {
-            var u = q.Dequeue();
-            foreach (var v in _children[u].Where(v => !depth.ContainsKey(v)))
-            {
-                depth[v] = depth[u] + 1;
-                q.Enqueue(v);
-            }
-        }
-
-        var groups = new Dictionary<int, List<int>>();
-
-        foreach (var (key, value) in depth)
-        {
-            if (!groups.TryGetValue(value, out var list))
-            {
-                groups[value] = list = [];
-            }
-
-            list.Add(key);
-        }
-
-        _worldPosition[root] = new Vector2(_options.RootX, _options.RootY);
-
-        foreach (var (L, list) in groups.OrderBy(k => k.Key))
-        {
-            if (L == 0) continue;
-
-            var y = _options.RootY + L * _options.LevelGap;
-
-            // split by side
-            var left = list.Where(i => ResolveSide(i, depth) < 0).OrderBy(i => _nodes[i].Order).ToList();
-            var right = list.Where(i => ResolveSide(i, depth) > 0).OrderBy(i => _nodes[i].Order).ToList();
-
-            // pack from center outwards: left to the left, right to the right
-            PlaceRow(left, y, toRight: false);
-            PlaceRow(right, y, toRight: true);
-        }
-
-        return;
-
-
-        int ResolveSide(int i, Dictionary<int, int> depthMap)
-        {
-            if (i == root) return 0;
-            var ni = _nodes[i];
-            if (ni.Side == NodeSide.Left) return -1;
-            if (ni.Side == NodeSide.Right) return +1;
-
-            // Auto: inherit first ancestor’s explicit side; otherwise alternate by X order
-            var pId = ni.ParentId;
-            while (pId != null)
-            {
-                var pi = _idx[pId];
-                var side = _nodes[pi].Side;
-                if (side == NodeSide.Left) return -1;
-                if (side == NodeSide.Right) return +1;
-                pId = _nodes[pi].ParentId;
-            }
-
-            // fallback: push everything to right by default
-            return +1;
-        }
-
-        void PlaceRow(List<int> row, float y, bool toRight)
-        {
-            if (row.Count == 0) return;
-
-            var gap = _options.SiblingGap;
-            if (toRight)
-            {
-                // center → outward to the right
-                var startX = _options.RootX + gap;
-                for (int i = 0; i < row.Count; i++)
-                    _worldPosition[row[i]] = new Vector2(startX + i * gap, y);
-            }
-            else
-            {
-                // center → outward to the left
-                var startX = _options.RootX - gap;
-                for (int i = 0; i < row.Count; i++)
-                    _worldPosition[row[i]] = new Vector2(startX - i * gap, y);
-            }
-        }
-    }
+    // private void AutoLayout()
+    // {
+    //     var root = RootIndex();
+    //     if (root < 0) return;
+    //
+    //     var depth = new Dictionary<int, int> { [root] = 0 };
+    //     var q = new Queue<int>();
+    //     q.Enqueue(root);
+    //
+    //     while (q.Count > 0)
+    //     {
+    //         var u = q.Dequeue();
+    //         foreach (var v in _children[u].Where(v => !depth.ContainsKey(v)))
+    //         {
+    //             depth[v] = depth[u] + 1;
+    //             q.Enqueue(v);
+    //         }
+    //     }
+    //
+    //     var groups = new Dictionary<int, List<int>>();
+    //
+    //     foreach (var (key, value) in depth)
+    //     {
+    //         if (!groups.TryGetValue(value, out var list))
+    //         {
+    //             groups[value] = list = [];
+    //         }
+    //
+    //         list.Add(key);
+    //     }
+    //
+    //     _worldPosition[root] = new Vector2(_options.RootX, _options.RootY);
+    //
+    //     foreach (var (L, list) in groups.OrderBy(k => k.Key))
+    //     {
+    //         if (L == 0) continue;
+    //
+    //         var y = _options.RootY + L * _options.LevelGap;
+    //
+    //         // split by side
+    //         var left = list.Where(i => ResolveSide(i, depth) < 0).OrderBy(i => _nodes[i].Order).ToList();
+    //         var right = list.Where(i => ResolveSide(i, depth) > 0).OrderBy(i => _nodes[i].Order).ToList();
+    //
+    //         // pack from center outwards: left to the left, right to the right
+    //         PlaceRow(left, y, toRight: false);
+    //         PlaceRow(right, y, toRight: true);
+    //     }
+    //
+    //     return;
+    //
+    //
+    //     int ResolveSide(int i, Dictionary<int, int> depthMap)
+    //     {
+    //         if (i == root) return 0;
+    //         var ni = _nodes[i];
+    //         if (ni.Side == NodeSide.Left) return -1;
+    //         if (ni.Side == NodeSide.Right) return +1;
+    //
+    //         // Auto: inherit first ancestor’s explicit side; otherwise alternate by X order
+    //         var pId = ni.ParentId;
+    //         while (pId != null)
+    //         {
+    //             var pi = _idx[pId];
+    //             var side = _nodes[pi].Side;
+    //             if (side == NodeSide.Left) return -1;
+    //             if (side == NodeSide.Right) return +1;
+    //             pId = _nodes[pi].ParentId;
+    //         }
+    //
+    //         // fallback: push everything to right by default
+    //         return +1;
+    //     }
+    //
+    //     void PlaceRow(List<int> row, float y, bool toRight)
+    //     {
+    //         if (row.Count == 0) return;
+    //
+    //         var gap = _options.SiblingGap;
+    //         if (toRight)
+    //         {
+    //             // center → outward to the right
+    //             var startX = _options.RootX + gap;
+    //             for (int i = 0; i < row.Count; i++)
+    //                 _worldPosition[row[i]] = new Vector2(startX + i * gap, y);
+    //         }
+    //         else
+    //         {
+    //             // center → outward to the left
+    //             var startX = _options.RootX - gap;
+    //             for (int i = 0; i < row.Count; i++)
+    //                 _worldPosition[row[i]] = new Vector2(startX - i * gap, y);
+    //         }
+    //     }
+    // }
 
     private void UpdateAvailability()
     {
